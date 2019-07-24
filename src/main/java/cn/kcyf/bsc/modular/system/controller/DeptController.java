@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/dept")
-public class DeptController {
+public class DeptController extends BasicController{
     protected static SuccessResponseData SUCCESS_TIP = new SuccessResponseData();
     @Autowired
     private DeptService deptService;

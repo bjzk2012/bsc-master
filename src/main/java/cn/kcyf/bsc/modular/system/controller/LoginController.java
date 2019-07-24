@@ -3,11 +3,16 @@ package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.modular.system.entity.Menu;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import cn.kcyf.security.util.KaptchaException;
+import com.google.code.kaptcha.servlet.KaptchaServlet;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -26,7 +32,7 @@ import java.util.List;
  */
 @Controller
 @Api(value = "登录相关", description = "登录相关")
-public class LoginController {
+public class LoginController extends BasicController{
 
     @Autowired
     private UserService userService;
@@ -62,54 +68,26 @@ public class LoginController {
         }
     }
 
-    /**
-     * 点击登录执行的动作
-     *
-     * @author Tom
-     */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ApiOperation("点击登录执行的动作")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户名", name = "username", required = true, paramType = "query", type = "string"),
-            @ApiImplicitParam(value = "密码", name = "password", required = true, paramType = "query", type = "string"),
-            @ApiImplicitParam(value = "是否记住密码", name = "remember", paramType = "query", type = "boolean"),
-            @ApiImplicitParam(value = "验证码", name = "kaptcha", paramType = "query", type = "string")
-    })
-    public String loginVali(HttpSession session, String username, String password, String remember, String kaptcha, Model model) {
-        Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password.toCharArray());
-
-        //如果开启了记住我功能
-//        if ("on".equals(remember)) {
-//            token.setRememberMe(true);
-//        } else {
-//            token.setRememberMe(false);
-//        }
-
-//        // 验证码校验
-//        if (StringUtils.isEmpty(kaptcha)){
-//            model.addAttribute("tips", "未输入验证码，无法登陆");
-//            return "/login.html";
-//        } else if(!kaptcha.equals(session.getAttribute(Constants.KAPTCHA_SESSION_KEY))){
-//            model.addAttribute("tips", "验证码输入错误，无法登陆");
-//            return "/login.html";
-//        }
-
-        //执行shiro登录操作
-//        currentUser.login(token);
-
-        return "redirect:/";
-    }
-
-    /**
-     * 退出登录
-     *
-     * @author Tom
-     */
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    @ApiOperation("退出登录")
-    public String logOut() {
-        SecurityUtils.getSubject().logout();
-        return "redirect:/login";
+    @RequestMapping(value = "login")
+    public String login(HttpServletRequest request, Model modelMap) {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null && subject.isAuthenticated()){
+            return "redirect:/";
+        }
+        String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
+        String error = null;
+        if (KaptchaException.class.getName().equals(exceptionClassName)) {
+            error = "验证码不正确";
+        } else if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
+            error = "用户不存在或密码错误";
+        } else if (IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
+            error = "用户不存在或密码错误";
+        } else if (ExcessiveAttemptsException.class.getName().equals(exceptionClassName)){
+            error = "密码错误次数已达上限，请10分钟后再试";
+        } else if (exceptionClassName != null) {
+            error = "未知错误：" + exceptionClassName;
+        }
+        modelMap.addAttribute("tips", error);
+        return "/login.html";
     }
 }

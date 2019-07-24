@@ -1,5 +1,6 @@
 package cn.kcyf.bsc.config;
 
+import cn.kcyf.bsc.core.view.ErrorView;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.google.code.kaptcha.util.Config;
@@ -27,7 +28,16 @@ public class WebConfig {
         params.put("kaptcha.session.key", "code");
         params.put("kaptcha.textproducer.char.length", "4");
         params.put("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        params.put("kaptcha.session.key", "KAPTCHA_SESSION_KEY");
         registrationBean.setInitParameters(params);
         return registrationBean;
+    }
+
+    /**
+     * 默认错误页面，返回json
+     */
+    @Bean("error")
+    public ErrorView error() {
+        return new ErrorView();
     }
 }
