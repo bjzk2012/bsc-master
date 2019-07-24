@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    hibernate:
+      naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      ddl-auto: update
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://mysql-server:3306/bsc?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    username: root
+    password: root

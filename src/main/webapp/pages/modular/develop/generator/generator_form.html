@@ -1,0 +1,78 @@
+@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/develop/generator/generator_form.js"]}){
+<form id="generatorForm" action="/generator/generator" lay-filter="generatorForm" class="layui-form model-form" method="get">
+    <input name="dataSourceId" type="hidden" value="${dataSourceId!}"/>
+    <input name="tables" type="hidden" value="${tables!}"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">模板路径<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="templatePrefixPath" placeholder="请输入模板路径" type="text" class="layui-input" lay-verify="required" required value="template"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">表前缀<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="tablePrefix" placeholder="请输入表前缀" type="text" class="layui-input" lay-verify="required" required value="sys_"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">包名<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="proPackage" placeholder="请输入包名" type="text" class="layui-input" lay-verify="required" required value="cn.stylefeng.guns"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">核心包名<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="coreBasePackage" placeholder="请输入核心包" type="text" class="layui-input" lay-verify="required" required value="cn.stylefeng.guns.core"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">model<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="entityPackageName" placeholder="请输入entity包名" type="text" class="layui-input" lay-verify="required" required lay-data="cn.stylefeng.guns.modular.%s.entity" value="cn.stylefeng.guns.modular.test.entity"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">mapper<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="mapperPackageName" placeholder="请输入mapper包名" type="text" class="layui-input" lay-verify="required" required lay-data="cn.stylefeng.guns.modular.%s.mapper" value="cn.stylefeng.guns.modular.test.mapper"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">service<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="servicePackageName" placeholder="请输入service包名" type="text" class="layui-input" lay-verify="required" required lay-data="cn.stylefeng.guns.modular.%s.service" value="cn.stylefeng.guns.modular.test.service"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">controller<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="controllerPackageName" placeholder="请输入controller包名" type="text" class="layui-input" lay-verify="required" required lay-data="cn.stylefeng.guns.modular.%s.controller" value="cn.stylefeng.guns.modular.test.controller"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">父类<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="superEntityClass" placeholder="请输入父类" type="text" class="layui-input" lay-verify="required" required value="cn.stylefeng.guns.core.entity.TableDomain"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">模块名<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input id="moduleName" name="moduleName" placeholder="请输入模块名" type="text" class="layui-input" lay-verify="required" required value="test"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">父级菜单<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input id="menuId" name="menuId" type="hidden">
+            <input id="pcodeName" name="pcodeName" placeholder="请输入父级编号" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="btnSubmit" lay-submit>生成</button>
+    </div>
+</form>
+@}
