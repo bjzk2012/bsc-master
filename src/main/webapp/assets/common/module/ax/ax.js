@@ -33,8 +33,11 @@ layui.define(['jquery'], function (exports) {
                 },
                 success: function (data) {
                     result = data;
-                    if (me.success !== undefined) {
+                    if (me.success !== undefined && result.success) {
                         me.success(data);
+                    }
+                    if (me.error !== undefined && !result.success) {
+                        me.error(data);
                     }
                 },
                 error: function (data) {

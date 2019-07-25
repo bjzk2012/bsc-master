@@ -1,7 +1,12 @@
 @layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/user/user_edit.js"]}){
 <form id="userForm" lay-filter="userForm" class="layui-form model-form">
-    <input name="userId" type="hidden"/>
-    <input name="account" type="hidden"/>
+    <input name="id" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="account" placeholder="请输入账号" type="text" class="layui-input" readonly/>
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">姓名<span style="color: red;">*</span></label>
         <div class="layui-input-block">
@@ -15,6 +20,18 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">密码<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="password" placeholder="请输入密码" type="password" class="layui-input" lay-verify="required|psw" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">重复密码<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input name="rePassword" placeholder="请输入重复密码" type="password" class="layui-input" lay-verify="required|psw|repsw" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">邮箱<span style="color: red;">*</span></label>
         <div class="layui-input-block">
             <input name="email" placeholder="请输入邮箱" type="text" class="layui-input" lay-verify="required|email" required />
@@ -23,21 +40,34 @@
     <div class="layui-form-item">
         <label class="layui-form-label">性别</label>
         <div class="layui-input-block">
-            <input type="radio" name="sex" value="M" title="男" checked/>
-            <input type="radio" name="sex" value="F" title="女"/>
+            <input type="radio" name="sex" value="MAN" title="男" checked/>
+            <input type="radio" name="sex" value="WOMAN" title="女"/>
         </div>
     </div>
-    <!--<div class="layui-form-item">-->
-        <!--<label class="layui-form-label">部门<span style="color: red;">*</span></label>-->
-        <!--<div class="layui-input-block">-->
-            <!--<input id="deptId" name="deptId" type="hidden">-->
-            <!--<input id="deptName" name="deptName" placeholder="请输入部门" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>-->
-        <!--</div>-->
-    <!--</div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">部门<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input id="deptId" name="deptId" type="hidden">
+            <input id="deptName" name="deptName" placeholder="请输入部门" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input id="roleId" name="deptId" type="hidden">
+            <input id="roleName" name="deptName" placeholder="请输入角色" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">电话</label>
         <div class="layui-input-block">
             <input name="phone" placeholder="请输入电话" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input name="address" placeholder="请输入地址" type="text" class="layui-input"/>
         </div>
     </div>
     <div class="layui-form-item text-right">

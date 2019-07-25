@@ -22,6 +22,7 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
     //获取用户信息
     var ajax = new $ax(Feng.ctxPath + "/mgr/getUserInfo?userId=" + Feng.getUrlParam("userId"));
     var result = ajax.start();
+    console.log(result.data)
     form.val('userForm', result.data);
 
     // 点击部门时

@@ -65,6 +65,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
+            area: ['600px', '800px'],
             title: '添加用户',
             content: Feng.ctxPath + '/mgr/user_add',
             end: function () {
@@ -94,6 +95,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
+            area: ['600px', '800px'],
             title: '编辑用户',
             content: Feng.ctxPath + '/mgr/user_edit?userId=' + data.id,
             end: function () {

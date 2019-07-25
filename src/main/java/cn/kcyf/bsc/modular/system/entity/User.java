@@ -3,9 +3,7 @@ package cn.kcyf.bsc.modular.system.entity;
 import cn.kcyf.bsc.modular.system.enumerate.Sex;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.orm.jpa.entity.TableDomain;
-
 import com.alibaba.fastjson.annotation.JSONField;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 
 /**
  * <p>
@@ -47,18 +46,20 @@ public class User extends TableDomain {
      */
     @Column(name = "account", unique = true, nullable = false)
     @NotBlank(message = "用户账号不能为空")
-    @Size(min = 8, max = 36, message = "用户账号长度不正确")
+    @Size(min = 6, max = 36, message = "用户账号必须6到36位")
     @Pattern(regexp = "\\w+", message = "用户账号只能是单词字符（字母，数字，下划线，中横线）")
     private String account;
     /**
      * 密码
      */
     @Column(name = "password")
+    @JSONField(deserialize = false)
     private String password;
     /**
      * md5密码盐
      */
     @Column(name = "salt")
+    @JSONField(serialize = false, deserialize = false)
     private String salt;
     /**
      * 名字
@@ -93,7 +94,7 @@ public class User extends TableDomain {
      * 电话
      */
     @Column(name = "phone")
-    @Pattern(regexp = "/^[1][3,4,5,6,7,8,9][0-9]{9}$/", message = "手机号码格式不正确")
+    @Pattern(regexp = "(^\\s*$)|(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)", message = "电话必须是固定电话或手机号码")
     private String phone;
     /**
      *
@@ -106,6 +107,16 @@ public class User extends TableDomain {
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JSONField(serialize = false, deserialize = false)
     private Set<Role> roles;
+    public String getRoleId(){
+        if (this.roles != null){
+            List<Long> roleIds = new ArrayList<Long>();
+            for (Role role : this.roles){
+                roleIds.add(role.getId());
+            }
+            return StringUtils.join(roleIds, ",");
+        }
+        return "";
+    }
     public String getRoleName(){
         if (this.roles != null){
             List<String> roleNames = new ArrayList<String>();
@@ -114,7 +125,7 @@ public class User extends TableDomain {
             }
             return StringUtils.join(roleNames, ",");
         }
-        return "--";
+        return "";
     }
     /**
      * 部门
@@ -123,11 +134,17 @@ public class User extends TableDomain {
     @JoinColumn(name = "dept_id")
     @JSONField(serialize = false, deserialize = false)
     private Dept dept;
+    public Long getDeptId(){
+        if (this.dept != null){
+            return this.dept.getId();
+        }
+        return null;
+    }
     public String getDeptName(){
         if (this.dept != null){
             return this.dept.getFullName();
         }
-        return "--";
+        return "";
     }
     /**
      * 状态
@@ -138,7 +155,7 @@ public class User extends TableDomain {
         if (this.status != null){
             return this.status.getMessage();
         }
-        return "--";
+        return "";
     }
 
 }

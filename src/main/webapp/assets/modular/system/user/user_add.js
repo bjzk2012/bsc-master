@@ -40,12 +40,14 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
 
     // 添加表单验证方法
     form.verify({
+        act: [/^[\w]{6,36}$/, '用户账号必须6到36位，只能是单词字符（字母，数字，下划线，中横线）'],
         psw: [/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'],
-        repsw: function (value) {
-            if (value !== $('#userForm input[name=password]').val()) {
-                return '两次密码输入不一致';
-            }
-        }
+        phone: [/ (^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)/, "电话必须是固定电话或手机号码"],
+        // repsw: function (value) {
+        //     if (value !== $('#userForm input[name=password]').val()) {
+        //         return '两次密码输入不一致';
+        //     }
+        // }
     });
 
     // 渲染时间选择框
@@ -64,9 +66,10 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
             //关掉对话框
             admin.closeThisDialog();
         }, function (data) {
-            Feng.error("添加失败！" + data.responseJSON.message)
+            Feng.error("添加失败！" + data.message)
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });
