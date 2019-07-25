@@ -25,7 +25,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
     MgrUser.initColumn = function () {
         return [[
             {type: 'checkbox'},
-            {field: 'userId', hide: true, sort: true, title: '用户id'},
+            {field: 'id', hide: true, sort: true, title: '用户id'},
             {field: 'account', sort: true, title: '账号'},
             {field: 'name', sort: true, title: '姓名'},
             {field: 'sexName', sort: true, title: '性别'},
@@ -95,7 +95,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         top.layui.admin.open({
             type: 2,
             title: '编辑用户',
-            content: Feng.ctxPath + '/mgr/user_edit?userId=' + data.userId,
+            content: Feng.ctxPath + '/mgr/user_edit?userId=' + data.id,
             end: function () {
                 admin.getTempData('formOk') && table.reload(MgrUser.tableId);
             }
@@ -115,7 +115,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
             }, function (data) {
                 Feng.error("删除失败!" + data.responseJSON.message + "!");
             });
-            ajax.set("userId", data.userId);
+            ajax.set("userId", data.id);
             ajax.start();
         };
         Feng.confirm("是否删除用户" + data.account + "?", operation);
@@ -131,7 +131,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
             type: 2,
             title: '角色分配',
             area: ['300px', '400px'],
-            content: Feng.ctxPath + '/mgr/role_assign?userId=' + data.userId,
+            content: Feng.ctxPath + '/mgr/role_assign?userId=' + data.id,
             end: function () {
                 table.reload(MgrUser.tableId);
             }
@@ -150,7 +150,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
             }, function (data) {
                 Feng.error("重置密码失败!");
             });
-            ajax.set("userId", data.userId);
+            ajax.set("userId", data.id);
             ajax.start();
         });
     };

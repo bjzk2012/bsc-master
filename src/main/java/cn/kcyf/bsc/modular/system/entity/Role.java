@@ -55,11 +55,7 @@ public class Role extends TableDomain {
     /**
      * 角色权限关联表
      */
-    @JoinTable(name = "sys_role_menu_relation",
-            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "menu_id", referencedColumnName = "id")}
-    )
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<Menu> menus;
 
 }

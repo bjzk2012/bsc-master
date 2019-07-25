@@ -11,15 +11,15 @@ public class ErrorResponseData extends ResponseData {
     private String exceptionClazz;
 
     public ErrorResponseData(String message) {
-        super(false, ResponseData.DEFAULT_ERROR_CODE, message, (Object)null);
+        super(false, ResponseData.DEFAULT_ERROR_CODE, message, (Object)null, 0l);
     }
 
     public ErrorResponseData(Integer code, String message) {
-        super(false, code, message, (Object)null);
+        super(false, code, message, (Object)null, 0l);
     }
 
     public ErrorResponseData(Integer code, String message, Object object) {
-        super(false, code, message, object);
+        super(false, code, message, object, 0l);
     }
 
     public String getExceptionClazz() {

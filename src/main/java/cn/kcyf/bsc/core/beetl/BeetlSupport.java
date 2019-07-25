@@ -23,5 +23,6 @@ public class BeetlSupport extends BeetlGroupUtilConfiguration {
 
         //全局共享方法
         groupTemplate.registerFunctionPackage("shiro", new ShiroSupport());
+        groupTemplate.registerFunctionPackage("tool", new ToolsSupport());
     }
 }

@@ -1,12 +1,15 @@
 package cn.kcyf.bsc.core.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.domain.Page;
 
 @Data
 @EqualsAndHashCode
 @ToString
+@AllArgsConstructor
 public class ResponseData {
     public static final String DEFAULT_SUCCESS_MESSAGE = "请求成功";
     public static final String DEFAULT_ERROR_MESSAGE = "网络异常";
@@ -16,15 +19,9 @@ public class ResponseData {
     private Integer code;
     private String message;
     private Object data;
+    private long count;
 
     public ResponseData() {
-    }
-
-    public ResponseData(Boolean success, Integer code, String message, Object data) {
-        this.success = success;
-        this.code = code;
-        this.message = message;
-        this.data = data;
     }
 
     public static SuccessResponseData success() {
@@ -37,6 +34,10 @@ public class ResponseData {
 
     public static SuccessResponseData success(Integer code, String message, Object object) {
         return new SuccessResponseData(code, message, object);
+    }
+
+    public static ResponseData list(Page<?> page) {
+        return new ResponseData(Boolean.TRUE, 0, DEFAULT_SUCCESS_MESSAGE, page.getContent(), page.getTotalElements());
     }
 
     public static ErrorResponseData error(String message) {

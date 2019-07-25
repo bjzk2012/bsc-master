@@ -4,17 +4,22 @@ import cn.kcyf.bsc.modular.system.enumerate.Sex;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -72,6 +77,12 @@ public class User extends TableDomain {
     @Column(name = "sex")
     @Enumerated
     private Sex sex;
+    public String getSexName(){
+        if (this.sex != null){
+            return this.sex.getRemark();
+        }
+        return "--";
+    }
     /**
      * 电子邮件
      */
@@ -92,22 +103,42 @@ public class User extends TableDomain {
     /**
      * 角色
      */
-    @JoinTable(name = "sys_user_role_relation",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
-    )
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JSONField(serialize = false, deserialize = false)
     private Set<Role> roles;
+    public String getRoleName(){
+        if (this.roles != null){
+            List<String> roleNames = new ArrayList<String>();
+            for (Role role : this.roles){
+                roleNames.add(role.getName());
+            }
+            return StringUtils.join(roleNames, ",");
+        }
+        return "--";
+    }
     /**
      * 部门
      */
     @ManyToOne
     @JoinColumn(name = "dept_id")
+    @JSONField(serialize = false, deserialize = false)
     private Dept dept;
+    public String getDeptName(){
+        if (this.dept != null){
+            return this.dept.getFullName();
+        }
+        return "--";
+    }
     /**
      * 状态
      */
     @Column(name = "status")
     private Status status;
+    public String getStatusName(){
+        if (this.status != null){
+            return this.status.getMessage();
+        }
+        return "--";
+    }
 
 }

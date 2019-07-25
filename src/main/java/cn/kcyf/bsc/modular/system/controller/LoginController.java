@@ -1,6 +1,8 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.model.MenuNode;
+import cn.kcyf.bsc.core.model.MenuNodeComparator;
 import cn.kcyf.bsc.modular.system.entity.Menu;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.security.util.KaptchaException;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,11 +48,9 @@ public class LoginController extends BasicController{
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("跳转到主页")
     public String index(Model model) {
-        //获取当前用户角色列表
-
-        List<Menu> menus = userService.getUserMenus();
+        List<MenuNode> menus = userService.getUserMenus(getUser().getId());
+        Collections.sort(menus, new MenuNodeComparator());
         model.addAttribute("menus", menus);
-
         return "/index.html";
     }
 
