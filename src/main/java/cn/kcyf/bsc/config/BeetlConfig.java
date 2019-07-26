@@ -19,16 +19,17 @@ public class BeetlConfig {
 
     @Autowired
     BeetlProperties beetlProperties;
+    @Autowired
+    BeetlSupport beetlSupport;
 
     /**
      * beetl的配置
      */
     @Bean(initMethod = "init")
     public BeetlSupport beetlConfiguration() {
-        BeetlSupport beetlConfiguration = new BeetlSupport();
-        beetlConfiguration.setResourceLoader(new ClasspathResourceLoader(BeetlConfig.class.getClassLoader(), beetlProperties.getPrefix()));
-        beetlConfiguration.setConfigProperties(beetlProperties.getProperties());
-        return beetlConfiguration;
+        beetlSupport.setResourceLoader(new ClasspathResourceLoader(BeetlConfig.class.getClassLoader(), beetlProperties.getPrefix()));
+        beetlSupport.setConfigProperties(beetlProperties.getProperties());
+        return beetlSupport;
     }
 
     /**

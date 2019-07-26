@@ -3,14 +3,17 @@ package cn.kcyf.bsc.modular.system.entity;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.enumerate.YesOrNo;
 import cn.kcyf.orm.jpa.entity.TableDomain;
-
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -18,7 +21,6 @@ import java.util.Set;
  * </p>
  *
  * @author Tom
- * @since 2018-12-07
  */
 @Data
 @ToString
@@ -31,26 +33,25 @@ public class Menu extends TableDomain {
      * 菜单编号
      */
     @Column(name = "code")
+    @NotBlank(message = "菜单编码不能为空")
     private String code;
     /**
      * 菜单父编号
      */
     @Column(name = "parent_id")
     private Long parentId;
-    /**
-     * 菜单父编号
-     */
-    @Column(name = "pcode")
-    private String pcode;
-    /**
-     * 当前菜单的所有父菜单编号
-     */
-    @Column(name = "pcodes")
-    private String pcodes;
+    @JSONField(name = "pId")
+    public Long getPId(){
+        if (null != parentId){
+            return parentId;
+        }
+        return 0L;
+    }
     /**
      * 菜单名称
      */
     @Column(name = "name")
+    @NotBlank(message = "菜单名称不能为空")
     private String name;
     /**
      * 菜单图标

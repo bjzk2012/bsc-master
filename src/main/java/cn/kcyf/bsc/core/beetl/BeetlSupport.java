@@ -1,6 +1,8 @@
 package cn.kcyf.bsc.core.beetl;
 
 import org.beetl.ext.spring.BeetlGroupUtilConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,12 @@ import java.util.Map;
  *
  * @author Tom
  */
+@Component
 public class BeetlSupport extends BeetlGroupUtilConfiguration {
+    @Autowired
+    private ShiroSupport shiroSupport;
+    @Autowired
+    private ToolsSupport toolsSupport;
 
     @Override
     public void initOther() {
@@ -22,7 +29,7 @@ public class BeetlSupport extends BeetlGroupUtilConfiguration {
         groupTemplate.setSharedVars(shared);
 
         //全局共享方法
-        groupTemplate.registerFunctionPackage("shiro", new ShiroSupport());
-        groupTemplate.registerFunctionPackage("tool", new ToolsSupport());
+        groupTemplate.registerFunctionPackage("shiro", shiroSupport);
+        groupTemplate.registerFunctionPackage("tool", toolsSupport);
     }
 }

@@ -105,25 +105,6 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
     };
 
     /**
-     * 点击删除用户按钮
-     *
-     * @param data 点击按钮时候的行数据
-     */
-    MgrUser.onDeleteUser = function (data) {
-        var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/mgr/delete", function () {
-                table.reload(MgrUser.tableId);
-                Feng.success("删除成功!");
-            }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
-            });
-            ajax.set("userId", data.id);
-            ajax.start();
-        };
-        Feng.confirm("是否删除用户" + data.account + "?", operation);
-    };
-
-    /**
      * 分配角色
      *
      * @param data 点击按钮时候的行数据
@@ -140,48 +121,20 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         });
     };
 
-    /**
-     * 重置密码
-     *
-     * @param data 点击按钮时候的行数据
-     */
-    MgrUser.resetPassword = function (data) {
-        Feng.confirm("是否重置密码为111111 ?", function () {
-            var ajax = new $ax(Feng.ctxPath + "/mgr/reset", function (data) {
-                Feng.success("重置密码成功!");
+    MgrUser.doAction = function (userId, action, title, confirm) {
+        var func = function (userId, action, title) {
+            var ajax = new $ax(Feng.ctxPath + "/mgr/" + action + "/" + userId, function (data) {
+                Feng.success(title + "成功!");
             }, function (data) {
-                Feng.error("重置密码失败!");
-            });
-            ajax.set("userId", data.id);
-            ajax.start();
-        });
-    };
-
-    /**
-     * 修改用户状态
-     *
-     * @param userId 用户id
-     * @param checked 是否选中（true,false），选中就是解锁用户，未选中就是锁定用户
-     */
-    MgrUser.changeUserStatus = function (userId, checked) {
-        if (checked) {
-            var ajax = new $ax(Feng.ctxPath + "/mgr/unfreeze", function (data) {
-                Feng.success("解除冻结成功!");
-            }, function (data) {
-                Feng.error("解除冻结失败!");
+                Feng.error(title + "失败!" + data.responseJSON.message + "!");
                 table.reload(MgrUser.tableId);
             });
-            ajax.set("userId", userId);
             ajax.start();
-        } else {
-            var ajax = new $ax(Feng.ctxPath + "/mgr/freeze", function (data) {
-                Feng.success("冻结成功!");
-            }, function (data) {
-                Feng.error("冻结失败!" + data.responseJSON.message + "!");
-                table.reload(MgrUser.tableId);
+        };
+        if (confirm) {
+            Feng.confirm("是否" + title + "?", function () {
+                func(userId, action, title)
             });
-            ajax.set("userId", userId);
-            ajax.start();
         }
     };
 
@@ -230,21 +183,17 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         if (layEvent === 'edit') {
             MgrUser.onEditUser(data);
         } else if (layEvent === 'delete') {
-            MgrUser.onDeleteUser(data);
+            MgrUser.doAction(data.id, "delete", "删除用户", true);
         } else if (layEvent === 'roleAssign') {
             MgrUser.roleAssign(data);
         } else if (layEvent === 'reset') {
-            MgrUser.resetPassword(data);
+            MgrUser.doAction(data.id, "reset", "重置用户密码", true);
         }
     });
 
     // 修改user状态
     form.on('switch(status)', function (obj) {
-
-        var userId = obj.elem.value;
-        var checked = obj.elem.checked ? true : false;
-
-        MgrUser.changeUserStatus(userId, checked);
+        MgrUser.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "解除冻结" : "冻结", true);
     });
 
 });

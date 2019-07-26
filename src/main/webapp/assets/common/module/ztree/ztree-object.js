@@ -71,7 +71,7 @@ layui.define(['jquery','ax'], function (exports) {
         loadNodes : function() {
             var zNodes = null;
             var ajax = new $ax(Feng.ctxPath + this.url, function(data) {
-                zNodes = data;
+                zNodes = data.data;
             }, function(data) {
                 Feng.error("加载ztree信息失败!");
             });
@@ -86,6 +86,10 @@ layui.define(['jquery','ax'], function (exports) {
             var zTree = $.fn.zTree.getZTreeObj(this.id);
             var nodes = zTree.getSelectedNodes();
             return nodes[0].name;
+        },
+        refresh: function(){
+            var zTree = $.fn.zTree.getZTreeObj(this.id);
+            zTree.refresh();
         }
     };
 

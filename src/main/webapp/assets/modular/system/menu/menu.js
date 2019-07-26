@@ -1,9 +1,6 @@
-layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetable'], function () {
-    var layer = layui.layer;
-    var form = layui.form;
+layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
     var $ZTree = layui.ztree;
     var $ax = layui.ax;
-    var laydate = layui.laydate;
     var admin = layui.admin;
     var table = layui.table;
     var treetable = layui.treetable;
@@ -26,7 +23,7 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
     Menu.initColumn = function () {
         return [[
             {type: 'numbers'},
-            {field: 'menuId', hide: true, sort: true, title: 'id'},
+            {field: 'id', hide: true, sort: true, title: 'id'},
             {field: 'name', sort: true, title: '菜单名称'},
             {field: 'code', sort: true, title: '菜单编号'},
             {field: 'pcode', sort: true, title: '菜单父编号'},
@@ -58,21 +55,6 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
     };
 
     /**
-     * 弹出添加菜单对话框
-     */
-    Menu.openAddMenu = function () {
-        admin.putTempData('formOk', false);
-        top.layui.admin.open({
-            type: 2,
-            title: '添加菜单',
-            content: Feng.ctxPath + '/menu/menu_add',
-            end: function () {
-                admin.getTempData('formOk') && Menu.initTable(Menu.tableId);
-            }
-        });
-    };
-
-    /**
      * 导出excel按钮
      */
     Menu.exportExcel = function () {
@@ -85,6 +67,22 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
     };
 
     /**
+     * 弹出添加菜单对话框
+     */
+    Menu.openAddMenu = function () {
+        admin.putTempData('formOk', false);
+        top.layui.admin.open({
+            type: 2,
+            area: ['600px', '800px'],
+            title: '添加菜单',
+            content: Feng.ctxPath + '/menu/menu_add',
+            end: function () {
+                admin.getTempData('formOk') && Menu.initTable(Menu.tableId);
+            }
+        });
+    };
+
+    /**
      * 点击编辑菜单按钮时
      *
      * @param data 点击按钮时候的行数据
@@ -93,6 +91,7 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
+            area: ['600px', '800px'],
             title: '编辑菜单',
             content: Feng.ctxPath + '/menu/menu_edit?menuId=' + data.menuId,
             end: function () {
@@ -108,14 +107,13 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
      */
     Menu.onDeleteMenu = function (data) {
         var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/menu/remove", function () {
+            var ajax = new $ax(Feng.ctxPath + "/menu/delete/" + data.id, function () {
                 Feng.success("删除成功!");
                 Menu.condition.menuId = "";
                 Menu.initTable(Menu.tableId);
             }, function (data) {
                 Feng.error("删除失败!" + data.responseJSON.message + "!");
             });
-            ajax.set("menuId", data.menuId);
             ajax.start();
         };
         Feng.confirm("是否删除菜单" + data.name + "?", operation);
@@ -151,13 +149,6 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
         treetable.foldAll('#' + Menu.tableId);
     });
 
-    //渲染时间选择框
-    laydate.render({
-        elem: '#timeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
-
     //初始化左侧部门树
     var ztree = new $ZTree("menuTree", "/menu/selectMenuTreeList");
     ztree.bindOnClick(Menu.onClickMenu);
@@ -182,20 +173,7 @@ layui.use(['layer', 'form', 'ztree', 'laydate', 'admin', 'ax', 'table', 'treetab
             Menu.onEditMenu(data);
         } else if (layEvent === 'delete') {
             Menu.onDeleteMenu(data);
-        } else if (layEvent === 'roleAssign') {
-            Menu.roleAssign(data);
-        } else if (layEvent === 'reset') {
-            Menu.resetPassword(data);
         }
-    });
-
-    // 修改user状态
-    form.on('switch(status)', function (obj) {
-
-        var userId = obj.elem.value;
-        var checked = obj.elem.checked ? true : false;
-
-        Menu.changeUserStatus(userId, checked);
     });
 
 });

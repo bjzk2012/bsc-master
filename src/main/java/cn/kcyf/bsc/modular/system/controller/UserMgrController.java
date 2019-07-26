@@ -6,6 +6,7 @@ import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.Role;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.modular.system.service.DeptService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
@@ -65,6 +66,8 @@ public class UserMgrController extends BasicController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private DeptService deptService;
 
     /**
      * 跳转到查看管理员列表的页面
@@ -83,6 +86,15 @@ public class UserMgrController extends BasicController {
     }
 
     /**
+     * 跳转到编辑管理员页面
+     */
+    @RequestMapping("/user_edit")
+    public String userEdit(Long userId, Model model) {
+        model.addAttribute("userId", userId);
+        return PREFIX + "user_edit.html";
+    }
+
+    /**
      * 跳转到角色分配页面
      */
     @RequestMapping("/role_assign")
@@ -92,28 +104,11 @@ public class UserMgrController extends BasicController {
     }
 
     /**
-     * 跳转到编辑管理员页面
-     */
-    @RequestMapping("/user_edit")
-    public String userEdit(Long userId) {
-        return PREFIX + "user_edit.html";
-    }
-
-    /**
-     * 获取用户详情
-     */
-    @RequestMapping("/getUserInfo")
-    @ResponseBody
-    public Object getUserInfo(Long userId) {
-        return ResponseData.success(userService.getOne(userId));
-    }
-
-    /**
      * 修改当前用户的密码
      */
     @RequestMapping("/changePwd")
     @ResponseBody
-    public Object changePwd(
+    public ResponseData changePwd(
             @NotBlank(message = "确认密码不能为空")
             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
             @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格") String oldPassword, 
@@ -132,7 +127,7 @@ public class UserMgrController extends BasicController {
      */
     @RequestMapping("/list")
     @ResponseBody
-    public Object list(String name, String timeLimit, int page, int limit) {
+    public ResponseData list(String name, String timeLimit, int page, int limit) {
         Criteria<User> criteria = new Criteria<User>();
         if (!StringUtils.isEmpty(timeLimit)) {
             String[] split = timeLimit.split(" - ");
@@ -155,7 +150,9 @@ public class UserMgrController extends BasicController {
                             @NotBlank(message = "确认密码不能为空")
                             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
                             @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格") String password,
-                            @NotBlank(message = "确认密码不能为空")String rePassword,
+                            @NotBlank(message = "确认密码不能为空") String rePassword,
+                            @NotBlank(message = "部门未选择") Long deptId,
+                            @NotBlank(message = "角色未选择") String roleId,
                             BindingResult bindingResult) {
         if (!password.equals(rePassword)){
             return ResponseData.error("两次密码输入不一致");
@@ -170,6 +167,7 @@ public class UserMgrController extends BasicController {
         user.setStatus(Status.ENABLE);
         user.setSalt(RandomStringUtils.randomAlphabetic(5));
         user.setPassword(md5(password, user.getSalt()));
+        user.setDept(deptService.getOne(deptId));
         try {
             userService.create(user);
         } catch (DataIntegrityViolationException e) {
@@ -183,7 +181,10 @@ public class UserMgrController extends BasicController {
      */
     @RequestMapping("/edit")
     @ResponseBody
-    public ResponseData edit(@Valid User user, Long deptId, String roleId) {
+    public ResponseData edit(@Valid User user, @NotBlank(message = "部门未选择") Long deptId, @NotBlank(message = "角色未选择") String roleId, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         User dbuser = userService.getOne(user.getId());
         if (!StringUtils.isEmpty(user.getPassword())){
             dbuser.setPassword(md5(user.getPassword(), dbuser.getSalt()));
@@ -191,7 +192,7 @@ public class UserMgrController extends BasicController {
         dbuser.setBirthday(user.getBirthday());
         dbuser.setEmail(user.getEmail());
         dbuser.setSex(user.getSex());
-        // TODO 设置部门
+        dbuser.setDept(deptService.getOne(deptId));
         if (!StringUtils.isEmpty(roleId)){
             dbuser.setRoles(new HashSet<Role>());
             dbuser.getRoles().addAll(roleService.findByIdIn(roleId.split(",")));
@@ -206,9 +207,9 @@ public class UserMgrController extends BasicController {
     /**
      * 删除管理员（逻辑删除）
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/delete/{userId}")
     @ResponseBody
-    public ResponseData delete(Long userId) {
+    public ResponseData delete(@PathVariable Long userId) {
         userService.delete(userId);
         return SUCCESS_TIP;
     }
@@ -216,18 +217,18 @@ public class UserMgrController extends BasicController {
     /**
      * 查看管理员详情
      */
-    @RequestMapping("/view/{userId}")
+    @RequestMapping("/detail/{userId}")
     @ResponseBody
-    public User view(@PathVariable Long userId) {
+    public User detail(@PathVariable Long userId) {
         return userService.getOne(userId);
     }
 
     /**
      * 重置管理员的密码
      */
-    @RequestMapping("/reset")
+    @RequestMapping("/reset/{userId}")
     @ResponseBody
-    public ResponseData reset(Long userId) {
+    public ResponseData reset(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setPassword(md5(DEFAULT_PWD, user.getSalt()));
         userService.update(user);
@@ -237,9 +238,9 @@ public class UserMgrController extends BasicController {
     /**
      * 冻结用户
      */
-    @RequestMapping("/freeze")
+    @RequestMapping("/freeze/{userId}")
     @ResponseBody
-    public ResponseData freeze(Long userId) {
+    public ResponseData freeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(Status.DISABLE);
         userService.update(user);
@@ -249,9 +250,9 @@ public class UserMgrController extends BasicController {
     /**
      * 解除冻结用户
      */
-    @RequestMapping("/unfreeze")
+    @RequestMapping("/unfreeze/{userId}")
     @ResponseBody
-    public ResponseData unfreeze(Long userId) {
+    public ResponseData unfreeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(Status.ENABLE);
         userService.update(user);

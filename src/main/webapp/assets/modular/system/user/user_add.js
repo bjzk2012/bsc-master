@@ -1,12 +1,9 @@
-// /**
-//  * 用户详情对话框
-//  */
-// var UserInfoDlg = {
-//     data: {
-//         deptId: "",
-//         deptName: ""
-//     }
-// };
+var UserInfoDlg = {
+    data: {
+        deptId: "",
+        deptName: ""
+    }
+};
 
 layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
     var $ = layui.jquery;
@@ -20,34 +17,33 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
     admin.iframeAuto();
 
     // 点击部门时
-    // $('#deptName').click(function () {
-    //     var formName = encodeURIComponent("parent.UserInfoDlg.data.deptName");
-    //     var formId = encodeURIComponent("parent.UserInfoDlg.data.deptId");
-    //     var treeUrl = encodeURIComponent(Feng.ctxPath + "/dept/tree");
-    //
-    //     layer.open({
-    //         type: 2,
-    //         title: '部门选择',
-    //         area: ['300px', '400px'],
-    //         content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
-    //         end: function () {
-    //             console.log(UserInfoDlg.data);
-    //             $("#deptId").val(UserInfoDlg.data.deptId);
-    //             $("#deptName").val(UserInfoDlg.data.deptName);
-    //         }
-    //     });
-    // });
+    $('#deptName').click(function () {
+        var formName = encodeURIComponent("parent.UserInfoDlg.data.deptName");
+        var formId = encodeURIComponent("parent.UserInfoDlg.data.deptId");
+        var treeUrl = encodeURIComponent(Feng.ctxPath + "/dept/tree");
+
+        layer.open({
+            type: 2,
+            title: '部门选择',
+            area: ['300px', '400px'],
+            content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
+            end: function () {
+                $("#deptId").val(UserInfoDlg.data.deptId);
+                $("#deptName").val(UserInfoDlg.data.deptName);
+            }
+        });
+    });
 
     // 添加表单验证方法
     form.verify({
-        act: [/^[\w]{6,36}$/, '用户账号必须6到36位，只能是单词字符（字母，数字，下划线，中横线）'],
+        act: [/^[\w]{5,36}$/, '用户账号必须5到36位，只能是单词字符（字母，数字，下划线，中横线）'],
         psw: [/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'],
         phone: [/ (^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)/, "电话必须是固定电话或手机号码"],
-        // repsw: function (value) {
-        //     if (value !== $('#userForm input[name=password]').val()) {
-        //         return '两次密码输入不一致';
-        //     }
-        // }
+        repsw: function (value) {
+            if (value !== $('#userForm input[name=password]').val()) {
+                return '两次密码输入不一致';
+            }
+        }
     });
 
     // 渲染时间选择框

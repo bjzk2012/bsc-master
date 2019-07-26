@@ -1,11 +1,14 @@
 package cn.kcyf.bsc.core.beetl;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Component
 public class ToolsSupport {
-    public static boolean isEmpty(Object o) {
+    public boolean isEmpty(Object o) {
         if (o == null) {
             return true;
         } else {
@@ -26,14 +29,14 @@ public class ToolsSupport {
                     return true;
                 }
             } else if (o instanceof Object[]) {
-                if (((Object[])((Object[])o)).length == 0) {
+                if (((Object[])o).length == 0) {
                     return true;
                 }
             } else if (o instanceof int[]) {
-                if (((int[])((int[])o)).length == 0) {
+                if (((int[])o).length == 0) {
                     return true;
                 }
-            } else if (o instanceof long[] && ((long[])((long[])o)).length == 0) {
+            } else if (o instanceof long[] && ((long[])o).length == 0) {
                 return true;
             }
 

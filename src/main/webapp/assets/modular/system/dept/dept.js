@@ -15,13 +15,26 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
         }
     };
 
+    Dept.initTree = function(){
+        Dept.condition.deptId = '';
+        $("#name").val('');
+        var ztree = new $ZTree("deptTree", "/dept/tree");
+        ztree.bindOnClick(function (e, treeId, treeNode) {
+            Dept.condition.deptId = treeNode.id;
+            Dept.search();
+        });
+        ztree.init();
+    };
+
+    Dept.initTree();
+
     /**
      * 初始化表格的列
      */
     Dept.initColumn = function () {
         return [[
             {type: 'checkbox'},
-            {field: 'deptId', hide: true, sort: true, title: 'id'},
+            {field: 'id', hide: true, sort: true, title: 'id'},
             {field: 'simpleName', sort: true, title: '部门简称'},
             {field: 'fullName', sort: true, title: '部门全称'},
             {field: 'sort', sort: true, title: '排序'},
@@ -41,29 +54,6 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
     };
 
     /**
-     * 选择部门时
-     */
-    Dept.onClickDept = function (e, treeId, treeNode) {
-        Dept.condition.deptId = treeNode.id;
-        Dept.search();
-    };
-
-    /**
-     * 弹出添加
-     */
-    Dept.openAddDept = function () {
-        admin.putTempData('formOk', false);
-        top.layui.admin.open({
-            type: 2,
-            title: '添加部门',
-            content: Feng.ctxPath + '/dept/dept_add',
-            end: function () {
-                admin.getTempData('formOk') && table.reload(Dept.tableId);
-            }
-        });
-    };
-
-    /**
      * 导出excel按钮
      */
     Dept.exportExcel = function () {
@@ -76,6 +66,23 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
     };
 
     /**
+     * 弹出添加
+     */
+    Dept.openAddDept = function () {
+        admin.putTempData('formOk', false);
+        top.layui.admin.open({
+            type: 2,
+            area: ['600px', '800px'],
+            title: '添加部门',
+            content: Feng.ctxPath + '/dept/dept_add?parentId=' + Dept.condition.deptId,
+            end: function () {
+                admin.getTempData('formOk') && Dept.initTree();
+                admin.getTempData('formOk') && Dept.search();
+            }
+        });
+    };
+
+    /**
      * 点击编辑部门
      *
      * @param data 点击按钮时候的行数据
@@ -84,10 +91,12 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
+            area: ['600px', '800px'],
             title: '修改部门',
-            content: Feng.ctxPath + '/dept/dept_update?deptId=' + data.deptId,
+            content: Feng.ctxPath + '/dept/dept_edit?deptId=' + data.id,
             end: function () {
-                admin.getTempData('formOk') && table.reload(Dept.tableId);
+                admin.getTempData('formOk') && Dept.initTree();
+                admin.getTempData('formOk') && Dept.search();
             }
         });
     };
@@ -99,13 +108,13 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
      */
     Dept.onDeleteDept = function (data) {
         var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/dept/delete", function () {
+            var ajax = new $ax(Feng.ctxPath + "/dept/delete/" + data.id, function () {
                 Feng.success("删除成功!");
-                table.reload(Dept.tableId);
+                Dept.initTree();
+                Dept.search();
             }, function (data) {
                 Feng.error("删除失败!" + data.responseJSON.message + "!");
             });
-            ajax.set("deptId", data.deptId);
             ajax.start();
         };
         Feng.confirm("是否删除部门 " + data.simpleName + "?", operation);
@@ -121,13 +130,14 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
         cols: Dept.initColumn()
     });
 
-    //初始化左侧部门树
-    var ztree = new $ZTree("deptTree", "/dept/tree");
-    ztree.bindOnClick(Dept.onClickDept);
-    ztree.init();
-
     // 搜索按钮点击事件
     $('#btnSearch').click(function () {
+        Dept.search();
+    });
+
+    // 刷新按钮点击事件
+    $('#refreshSearch').click(function () {
+        Dept.initTree();
         Dept.search();
     });
 

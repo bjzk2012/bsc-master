@@ -32,7 +32,7 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
         layer.open({
             type: 2,
             title: '父级部门',
-            area: ['300px', '200px'],
+            area: ['300px', '300px'],
             content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
             end: function () {
                 $("#pid").val(DeptInfoDlg.data.pid);
@@ -43,7 +43,7 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
-        var ajax = new $ax(Feng.ctxPath + "/dept/update", function (data) {
+        var ajax = new $ax(Feng.ctxPath + "/dept/edit", function (data) {
             Feng.success("修改成功！");
 
             //传给上个页面，刷新table用
@@ -56,5 +56,6 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });

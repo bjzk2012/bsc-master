@@ -20,10 +20,9 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
     admin.iframeAuto();
 
     //获取用户信息
-    var ajax = new $ax(Feng.ctxPath + "/mgr/getUserInfo?userId=" + Feng.getUrlParam("userId"));
+    var ajax = new $ax(Feng.ctxPath + "/mgr/detail/" + Feng.getUrlParam("userId"));
     var result = ajax.start();
-    console.log(result.data)
-    form.val('userForm', result.data);
+    form.val('userForm', result);
 
     // 点击部门时
     // $('#deptName').click(function () {

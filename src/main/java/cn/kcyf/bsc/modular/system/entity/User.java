@@ -46,7 +46,7 @@ public class User extends TableDomain {
      */
     @Column(name = "account", unique = true, nullable = false)
     @NotBlank(message = "用户账号不能为空")
-    @Size(min = 6, max = 36, message = "用户账号必须6到36位")
+    @Size(min = 5, max = 36, message = "用户账号必须5到36位")
     @Pattern(regexp = "\\w+", message = "用户账号只能是单词字符（字母，数字，下划线，中横线）")
     private String account;
     /**

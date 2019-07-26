@@ -1,18 +1,26 @@
 package cn.kcyf.bsc.core.beetl;
 
+import cn.kcyf.bsc.modular.system.entity.User;
+import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.security.domain.ShiroUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ShiroSupport {
     private static final String NAMES_DELIMETER = ",";
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 获取当前 Subject
      *
      * @return Subject
      */
-    public static Subject getSubject() {
+    public Subject getSubject() {
         return SecurityUtils.getSubject();
     }
 
@@ -27,6 +35,14 @@ public class ShiroSupport {
         } else {
             return (ShiroUser) getSubject().getPrincipals().getPrimaryPrincipal();
         }
+    }
+
+    public User getInfo(){
+        ShiroUser shiroUser = getUser();
+        if (shiroUser == null){
+            return null;
+        }
+        return userService.getOne(shiroUser.getId());
     }
 
     /**
