@@ -1,9 +1,10 @@
-layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], function () {
+layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'jquery'], function () {
     var layer = layui.layer;
     var form = layui.form;
     var table = layui.table;
     // var $ZTree = layui.ztree;
     var $ax = layui.ax;
+    var $ = layui.jquery;
     var laydate = layui.laydate;
     var admin = layui.admin;
 
@@ -25,16 +26,16 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
     MgrUser.initColumn = function () {
         return [[
             {type: 'checkbox'},
-            {field: 'id', hide: true, sort: true, title: '用户id'},
+            {field: 'id', hide: true, title: '用户id'},
             {field: 'account', sort: true, title: '账号'},
             {field: 'name', sort: true, title: '姓名'},
-            {field: 'sexName', sort: true, title: '性别'},
-            {field: 'roleName', sort: true, title: '角色'},
-            {field: 'deptName', sort: true, title: '部门'},
-            {field: 'email', sort: true, title: '邮箱'},
-            {field: 'phone', sort: true, title: '电话'},
+            {field: 'sexName', title: '性别'},
+            {field: 'roleName', title: '角色'},
+            {field: 'deptName', title: '部门'},
+            {field: 'email', title: '邮箱'},
+            {field: 'phone', title: '电话'},
             {field: 'createTime', sort: true, title: '创建时间'},
-            {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
+            {field: 'status', templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 280}
         ]];
     };
@@ -121,6 +122,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
         });
     };
 
+    // 冻结，解锁，删除等的动作执行
     MgrUser.doAction = function (userId, action, title, confirm) {
         var func = function (userId, action, title) {
             var ajax = new $ax(Feng.ctxPath + "/mgr/" + action + "/" + userId, function (data) {
@@ -135,6 +137,8 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
             Feng.confirm("是否" + title + "?", function () {
                 func(userId, action, title)
             });
+        } else {
+            func(menuId, action, title)
         }
     };
 
@@ -193,7 +197,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax'], f
 
     // 修改user状态
     form.on('switch(status)', function (obj) {
-        MgrUser.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "解除冻结" : "冻结", true);
+        MgrUser.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "解除冻结" : "冻结", false);
     });
 
 });

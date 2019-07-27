@@ -1,11 +1,30 @@
-layui.use(['layer', 'form', 'admin', 'ax'], function () {
-    var $ = layui.jquery;
-    var $ax = layui.ax;
+layui.use(['form', 'admin', 'ax', 'jquery'], function () {
     var form = layui.form;
     var admin = layui.admin;
-    var layer = layui.layer;
+    var $ax = layui.ax;
+    var $ = layui.jquery;
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
+
+    // 添加表单验证方法
+    form.verify({
+        simpleName: [/^.{2,20}$/, '简称长度必须为2到20位'],
+        fullName: [/^.{2,255}$/, '全称长度必须为2到255位']
+    });
+
+    // 排序选择框只能输入数字
+    $('#sort').keyup(function(){
+        var v = $(this).val();
+        if (/^\\d+$/.test(v)) {
+            v = '';
+        }
+        $(this).val('');
+        $(this).val(v);
+    }).change(function(){
+        var v = $(this).val();
+        $(this).val('');
+        $(this).val(v);
+    });
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {

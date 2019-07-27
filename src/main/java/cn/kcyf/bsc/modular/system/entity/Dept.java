@@ -22,7 +22,6 @@ import java.util.Set;
  */
 @Data
 @ToString
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_dept")
@@ -46,7 +45,7 @@ public class Dept extends TableDomain {
      */
     @Column(name = "simple_name")
     @NotBlank(message = "简称不能为空")
-    @Size(min = 2, max = 20, message = "简称长度必须为6到20位")
+    @Size(min = 2, max = 20, message = "简称长度必须为2到20位")
     private String simpleName;
     @JSONField(name = "name")
     public String getName() {
@@ -62,7 +61,7 @@ public class Dept extends TableDomain {
      */
     @Column(name = "full_name")
     @NotBlank(message = "全称不能为空")
-    @Size(min = 2, max = 255, message = "全称长度必须为6到20位")
+    @Size(min = 2, max = 255, message = "全称长度必须为2到255位")
     private String fullName;
     /**
      * 描述

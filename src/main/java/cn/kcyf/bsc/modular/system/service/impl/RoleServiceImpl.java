@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -20,7 +22,7 @@ public class RoleServiceImpl extends AbstractBasicService<Role, Long> implements
     }
 
     @Transactional(readOnly = true)
-    public Set<Role> findByIdIn(String[] ids) {
-        return roleDao.findByIdIn(ids);
+    public Set<Role> findByIdIn(List<Long> ids) {
+        return roleDao.findAllByIdIn(ids);
     }
 }

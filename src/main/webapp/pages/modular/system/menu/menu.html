@@ -19,7 +19,7 @@
                             </div>
                             <div class="layui-inline">
                                 <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
-                                @if(shiro.hasPermission("/menu/add")){
+                                @if(shiro.hasPermission("menu_add")){
                                 <button id="btnAdd" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
                                 @}
                                 <button id="expandAll" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>展开所有</button>
@@ -35,11 +35,23 @@
 </div>
 
 <script type="text/html" id="tableBar">
-    @if(shiro.hasPermission("/menu/edit")){
+    @if(shiro.hasPermission("menu_edit")){
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     @}
-    @if(shiro.hasPermission("/menu/remove")){
+    @if(shiro.hasPermission("menu_delete")){
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
     @}
+</script>
+
+<script type="text/html" id="statusTpl">
+    @if(shiro.hasPermission("menu_freeze")){
+    <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" {{d.status=='ENABLE'?'checked':''}} />
+    @} else {
+    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.status=='ENABLE'?'启用':'禁用'}}</button>
+    @}
+</script>
+
+<script type="text/html" id="iconTpl">
+    <div class="{{d.icon}}"></div>
 </script>
 @}

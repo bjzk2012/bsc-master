@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface UserService extends BasicService<User, Long> {
     List<MenuNode> getUserMenus(Long userId);
+    String md5(String credentials, String saltSource);
 }

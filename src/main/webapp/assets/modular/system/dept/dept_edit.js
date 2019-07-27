@@ -1,19 +1,13 @@
 /**
  * 角色详情对话框
  */
-var DeptInfoDlg = {
-    data: {
-        pid: "",
-        pName: ""
-    }
-};
 
-layui.use(['layer', 'form', 'admin', 'ax'], function () {
-    var $ = layui.jquery;
+layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax'], function () {
     var $ax = layui.ax;
+    var $ = layui.jquery;
     var form = layui.form;
     var admin = layui.admin;
-    var layer = layui.layer;
+    var treeSelect = layui.treeSelect;
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
@@ -23,22 +17,25 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
     var result = ajax.start();
     form.val('deptForm', result);
 
-    // 点击上级角色时
-    $('#pName').click(function () {
-        var formName = encodeURIComponent("parent.DeptInfoDlg.data.pName");
-        var formId = encodeURIComponent("parent.DeptInfoDlg.data.pid");
-        var treeUrl = encodeURIComponent(Feng.ctxPath + "/dept/tree");
+    // 渲染父级部门信息
+    treeSelect.render({
+        elem: '#pName',
+        data: Feng.ctxPath + "/dept/treeSelect",
+        type: 'get',
+        placeholder: '请选择上级部门',
+        search: true,
+        click: function(d){
+            $("#pid").val(d.current.id);
+        },
+        success: function (d) {
+            treeSelect.checkNode('tree', result.parentId);
+        }
+    });
 
-        layer.open({
-            type: 2,
-            title: '父级部门',
-            area: ['300px', '300px'],
-            content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
-            end: function () {
-                $("#pid").val(DeptInfoDlg.data.pid);
-                $("#pName").val(DeptInfoDlg.data.pName);
-            }
-        });
+    // 添加表单验证方法
+    form.verify({
+        simpleName: [/^.{2,20}$/, '简称长度必须为2到20位'],
+        fullName: [/^.{2,255}$/, '全称长度必须为2到255位']
     });
 
     // 表单提交事件

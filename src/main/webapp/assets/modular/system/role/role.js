@@ -1,6 +1,5 @@
 layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
     var $ = layui.$;
-    var layer = layui.layer;
     var form = layui.form;
     var table = layui.table;
     var $ax = layui.ax;
@@ -24,8 +23,8 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
             {type: 'checkbox'},
             {field: 'roleId', hide: true, sort: true, title: '角色id'},
             {field: 'name', sort: true, title: '名称'},
-            {field: 'pName', sort: true, title: '上级角色'},
             {field: 'description', sort: true, title: '别名'},
+            {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
     };
@@ -37,21 +36,6 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
         var queryData = {};
         queryData['roleName'] = $("#roleName").val();
         table.reload(Role.tableId, {where: queryData});
-    };
-
-    /**
-     * 弹出添加角色
-     */
-    Role.openAddRole = function () {
-        admin.putTempData('formOk', false);
-        top.layui.admin.open({
-            type: 2,
-            title: '添加角色',
-            content: Feng.ctxPath + '/role/role_add',
-            end: function () {
-                admin.getTempData('formOk') && table.reload(Role.tableId);
-            }
-        });
     };
 
     /**
@@ -67,6 +51,22 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
     };
 
     /**
+     * 弹出添加角色
+     */
+    Role.openAddRole = function () {
+        admin.putTempData('formOk', false);
+        top.layui.admin.open({
+            type: 2,
+            area: ['600px', '800px'],
+            title: '添加角色',
+            content: Feng.ctxPath + '/role/role_add',
+            end: function () {
+                admin.getTempData('formOk') && table.reload(Role.tableId);
+            }
+        });
+    };
+
+    /**
      * 点击编辑角色
      *
      * @param data 点击按钮时候的行数据
@@ -75,8 +75,9 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
+            area: ['600px', '800px'],
             title: '修改角色',
-            content: Feng.ctxPath + '/role/role_edit?roleId=' + data.roleId,
+            content: Feng.ctxPath + '/role/role_edit?roleId=' + data.id,
             end: function () {
                 admin.getTempData('formOk') && table.reload(Role.tableId);
             }
@@ -84,41 +85,29 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
     };
 
     /**
-     * 点击删除角色
-     *
-     * @param data 点击按钮时候的行数据
+     * 冻结，解锁，删除等的动作执行
+     * @param menuId 点击按钮时候的行数据
+     * @param action 执行动作
+     * @param title 动作描述
+     * @param confirm 是否再次确认
      */
-    Role.onDeleteRole = function (data) {
-        var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/role/remove", function () {
-                Feng.success("删除成功!");
-                table.reload(Role.tableId);
+    Role.doAction = function (roleId, action, title, confirm) {
+        var func = function (roleId, action, title) {
+            var ajax = new $ax(Feng.ctxPath + "/role/" + action + "/" + roleId, function (data) {
+                Feng.success(title + "成功!");
+                Role.initTable(Role.tableId);
             }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.responseJSON.message + "!");
             });
-            ajax.set("roleId", data.roleId);
             ajax.start();
         };
-        Feng.confirm("是否删除角色 " + data.name + "?", operation);
-    };
-
-    /**
-     * 分配菜单
-     *
-     * @param data 点击按钮时候的行数据
-     */
-    Role.roleAssign = function (data) {
-        layer.open({
-            type: 2,
-            title: '权限配置',
-            area: ['300px', '450px'], //宽高
-            fix: false,
-            maxmin: true,
-            content: Feng.ctxPath + '/role/role_assign/' + data.roleId,
-            end: function () {
-                table.reload(Role.tableId);
-            }
-        });
+        if (confirm) {
+            Feng.confirm("是否" + title + "?", function () {
+                func(roleId, action, title)
+            });
+        } else {
+            func(roleId, action, title)
+        }
     };
 
     // 渲染表格
@@ -155,8 +144,11 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
             Role.onEditRole(data);
         } else if (layEvent === 'delete') {
             Role.onDeleteRole(data);
-        } else if (layEvent === 'roleAssign') {
-            Role.roleAssign(data);
         }
+    });
+
+    // 修改状态
+    form.on('switch(status)', function (obj) {
+        Role.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
     });
 });

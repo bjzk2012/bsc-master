@@ -2,7 +2,9 @@ package cn.kcyf.bsc.core.model;
 
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.enumerate.YesOrNo;
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -20,6 +22,12 @@ public class MenuNode {
      * 菜单父编号
      */
     private Long parentId;
+    public Long getPId(){
+        if (parentId != null) {
+            return parentId;
+        }
+        return 0L;
+    }
     /**
      * 菜单父编号
      */
@@ -35,7 +43,14 @@ public class MenuNode {
     /**
      * 菜单图标
      */
+    @JSONField(serialize = false)
     private String icon;
+    public String iconSkin(){
+        if (!StringUtils.isEmpty(icon)){
+            return icon;
+        }
+        return "";
+    }
     /**
      * url地址
      */
@@ -68,6 +83,12 @@ public class MenuNode {
      * 是否打开
      */
     private YesOrNo openFlag;
+    public Boolean getOpen(){
+        if (openFlag != null){
+            return YesOrNo.YES.equals(openFlag);
+        }
+        return true;
+    }
     /**
      * 子节点
      */

@@ -1,9 +1,10 @@
-layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
-    var $ZTree = layui.ztree;
+layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
     var $ax = layui.ax;
+    var $ = layui.jquery;
     var admin = layui.admin;
     var table = layui.table;
     var treetable = layui.treetable;
+    var form = layui.form;
 
     /**
      * 系统管理--菜单管理
@@ -23,25 +24,17 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
     Menu.initColumn = function () {
         return [[
             {type: 'numbers'},
-            {field: 'id', hide: true, sort: true, title: 'id'},
-            {field: 'name', sort: true, title: '菜单名称'},
-            {field: 'code', sort: true, title: '菜单编号'},
-            {field: 'pcode', sort: true, title: '菜单父编号'},
-            {field: 'url', sort: true, title: '请求地址'},
+            {field: 'id', hide: true, title: 'id'},
+            {field: 'name', title: '菜单名称'},
+            {field: 'code', title: '菜单编码'},
+            {field: 'icon', title: '图标', templet: '#iconTpl', align : 'center'},
+            {field: 'url', title: '请求地址'},
             {field: 'sort', sort: true, title: '排序'},
             {field: 'levels', sort: true, title: '层级'},
-            {field: 'isMenuName', sort: true, title: '是否是菜单'},
-            {field: 'statusName', sort: true, title: '状态'},
+            {field: 'menuFlagRemark', title: '是否是菜单'},
+            {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
-    };
-
-    /**
-     * 点击菜单树时
-     */
-    Menu.onClickMenu = function (e, treeId, treeNode) {
-        Menu.condition.menuId = treeNode.id;
-        Menu.search();
     };
 
     /**
@@ -93,30 +86,37 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
             type: 2,
             area: ['600px', '800px'],
             title: '编辑菜单',
-            content: Feng.ctxPath + '/menu/menu_edit?menuId=' + data.menuId,
+            content: Feng.ctxPath + '/menu/menu_edit?menuId=' + data.id,
             end: function () {
-                admin.getTempData('formOk') && Menu.initTable(Menu.tableId);
+                admin.getTempData('formOk') && Menu.search();
             }
         });
     };
 
     /**
-     * 点击删除菜单按钮
-     *
-     * @param data 点击按钮时候的行数据
+     * 冻结，解锁，删除等的动作执行
+     * @param menuId 点击按钮时候的行数据
+     * @param action 执行动作
+     * @param title 动作描述
+     * @param confirm 是否再次确认
      */
-    Menu.onDeleteMenu = function (data) {
-        var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/menu/delete/" + data.id, function () {
-                Feng.success("删除成功!");
-                Menu.condition.menuId = "";
+    Menu.doAction = function (menuId, action, title, confirm) {
+        var func = function (menuId, action, title) {
+            var ajax = new $ax(Feng.ctxPath + "/menu/" + action + "/" + menuId, function (data) {
+                Feng.success(title + "成功!");
                 Menu.initTable(Menu.tableId);
             }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.responseJSON.message + "!");
             });
             ajax.start();
         };
-        Feng.confirm("是否删除菜单" + data.name + "?", operation);
+        if (confirm) {
+            Feng.confirm("是否" + title + "?", function () {
+                func(menuId, action, title)
+            });
+        } else {
+            func(menuId, action, title)
+        }
     };
 
     /**
@@ -125,7 +125,7 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
     Menu.initTable = function (menuId, data) {
         return treetable.render({
             elem: '#' + menuId,
-            url: Feng.ctxPath + '/menu/listTree',
+            url: Feng.ctxPath + '/menu/list',
             where: data,
             page: false,
             height: "full-125",
@@ -133,8 +133,8 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
             cols: Menu.initColumn(),
             treeColIndex: 2,
             treeSpid: "0",
-            treeIdName: 'code',
-            treePidName: 'pcode',
+            treeIdName: 'id',
+            treePidName: 'pId',
             treeDefaultClose: false,
             treeLinkage: true
         });
@@ -148,11 +148,6 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
     $('#foldAll').click(function () {
         treetable.foldAll('#' + Menu.tableId);
     });
-
-    //初始化左侧部门树
-    var ztree = new $ZTree("menuTree", "/menu/selectMenuTreeList");
-    ztree.bindOnClick(Menu.onClickMenu);
-    ztree.init();
 
     // 搜索按钮点击事件
     $('#btnSearch').click(function () {
@@ -172,8 +167,12 @@ layui.use(['ztree', 'admin', 'ax', 'table', 'treetable'], function () {
         if (layEvent === 'edit') {
             Menu.onEditMenu(data);
         } else if (layEvent === 'delete') {
-            Menu.onDeleteMenu(data);
+            Menu.doAction(data.id, "delete", "删除", true);
         }
     });
 
+    // 修改状态
+    form.on('switch(status)', function (obj) {
+        Menu.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
+    });
 });

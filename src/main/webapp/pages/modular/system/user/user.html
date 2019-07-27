@@ -41,21 +41,22 @@
 </div>
 
 <script type="text/html" id="tableBar">
-    @if(shiro.hasPermission("/mgr/edit")){
+    @if(shiro.hasPermission("mgr_edit")){
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     @}
-    @if(shiro.hasPermission("/mgr/delete")){
+    @if(shiro.hasPermission("mgr_delete")){
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
     @}
-    @if(shiro.hasPermission("/mgr/setRole")){
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="roleAssign">分配角色</a>
-    @}
-    @if(shiro.hasPermission("/mgr/reset")){
+    @if(shiro.hasPermission("mgr_reset")){
     <a class="layui-btn layui-btn-xs" lay-event="reset">重置密码</a>
     @}
 </script>
 
 <script type="text/html" id="statusTpl">
+    @if(shiro.hasPermission("mgr_freeze")){
     <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|冻结" {{d.status=='ENABLE'?'checked':''}} />
+    @} else {
+    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.status=='ENABLE'?'正常':'冻结'}}</button>
+    @}
 </script>
 @}

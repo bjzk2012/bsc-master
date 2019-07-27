@@ -1,6 +1,7 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.constant.Constant;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.Role;
@@ -9,17 +10,15 @@ import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.DeptService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import cn.kcyf.security.domain.ShiroUser;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
-import org.hibernate.QueryException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -29,13 +28,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 系统管理员控制器
@@ -47,20 +47,6 @@ import java.util.*;
 public class UserMgrController extends BasicController {
 
     private final static String PREFIX = "/modular/system/user/";
-    private final static String DEFAULT_PWD = "111111";
-    private final static String DEFAULT_HEAD= "/assets/common/images/head.png";
-
-    /**
-     * 加密方式
-     */
-    @Value("${shiro.password.algorithmName}")
-    public String algorithmName;
-
-    /**
-     * 循环次数
-     */
-    @Value("${shiro.password.hashIterations}")
-    public int hashIterations;
 
     @Autowired
     private UserService userService;
@@ -72,7 +58,7 @@ public class UserMgrController extends BasicController {
     /**
      * 跳转到查看管理员列表的页面
      */
-    @RequestMapping("")
+    @GetMapping("")
     public String index() {
         return PREFIX + "user.html";
     }
@@ -80,46 +66,29 @@ public class UserMgrController extends BasicController {
     /**
      * 跳转到查看管理员列表的页面
      */
-    @RequestMapping("/user_add")
-    public String addView() {
+    @GetMapping("/user_add")
+    public String add(Model model) {
+        model.addAttribute("roles", roleService.findAll());
         return PREFIX + "user_add.html";
     }
 
     /**
      * 跳转到编辑管理员页面
      */
-    @RequestMapping("/user_edit")
-    public String userEdit(Long userId, Model model) {
+    @GetMapping("/user_edit")
+    public String edit(Long userId, Model model) {
         model.addAttribute("userId", userId);
+        model.addAttribute("roles", roleService.findAll());
         return PREFIX + "user_edit.html";
     }
 
     /**
      * 跳转到角色分配页面
      */
-    @RequestMapping("/role_assign")
-    public String roleAssign(Long userId, Model model) {
+    @GetMapping("/role")
+    public String role(Long userId, Model model) {
         model.addAttribute("userId", userId);
         return PREFIX + "user_roleassign.html";
-    }
-
-    /**
-     * 修改当前用户的密码
-     */
-    @RequestMapping("/changePwd")
-    @ResponseBody
-    public ResponseData changePwd(
-            @NotBlank(message = "确认密码不能为空")
-            @Size(min = 6, max = 12, message = "确认密码必须6到12位")
-            @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格") String oldPassword, 
-            String newPassword) {
-        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword)) {
-            throw new RuntimeException("新旧密码都不能为空");
-        }
-        User user = userService.getOne(getUser().getId());
-        user.setPassword(md5(newPassword, user.getSalt()));
-        userService.update(user);
-        return SUCCESS_TIP;
     }
 
     /**
@@ -160,14 +129,19 @@ public class UserMgrController extends BasicController {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
-        user.setAvatar(DEFAULT_HEAD);
+        ShiroUser shiroUser = getUser();
+        user.setId(null);
         user.setCreateTime(new Date());
-        user.setCreateUserId(getUser().getId());
-        user.setCreateUserName(getUser().getUsername());
+        user.setCreateUserId(shiroUser.getId());
+        user.setCreateUserName(shiroUser.getUsername());
         user.setStatus(Status.ENABLE);
+        user.setAvatar(Constant.DEFAULT_HEAD);
         user.setSalt(RandomStringUtils.randomAlphabetic(5));
-        user.setPassword(md5(password, user.getSalt()));
+        user.setPassword(userService.md5(password, user.getSalt()));
         user.setDept(deptService.getOne(deptId));
+        if (!StringUtils.isEmpty(roleId)){
+            user.setRoles(roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleId.split(","))));
+        }
         try {
             userService.create(user);
         } catch (DataIntegrityViolationException e) {
@@ -186,16 +160,21 @@ public class UserMgrController extends BasicController {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         User dbuser = userService.getOne(user.getId());
+        ShiroUser shiroUser = getUser();
+        dbuser.setLastUpdateTime(new Date());
+        dbuser.setLastUpdateUserId(shiroUser.getId());
+        dbuser.setLastUpdateUserName(shiroUser.getUsername());
         if (!StringUtils.isEmpty(user.getPassword())){
-            dbuser.setPassword(md5(user.getPassword(), dbuser.getSalt()));
+            dbuser.setPassword(userService.md5(user.getPassword(), dbuser.getSalt()));
         }
         dbuser.setBirthday(user.getBirthday());
         dbuser.setEmail(user.getEmail());
         dbuser.setSex(user.getSex());
         dbuser.setDept(deptService.getOne(deptId));
         if (!StringUtils.isEmpty(roleId)){
-            dbuser.setRoles(new HashSet<Role>());
-            dbuser.getRoles().addAll(roleService.findByIdIn(roleId.split(",")));
+            dbuser.setRoles(roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleId.split(","))));
+        } else {
+            dbuser.setRoles(null);
         }
         dbuser.setPhone(user.getPhone());
         dbuser.setAddress(user.getAddress());
@@ -230,7 +209,7 @@ public class UserMgrController extends BasicController {
     @ResponseBody
     public ResponseData reset(@PathVariable Long userId) {
         User user = userService.getOne(userId);
-        user.setPassword(md5(DEFAULT_PWD, user.getSalt()));
+        user.setPassword(userService.md5(Constant.DEFAULT_PWD, user.getSalt()));
         userService.update(user);
         return SUCCESS_TIP;
     }
@@ -262,29 +241,13 @@ public class UserMgrController extends BasicController {
     /**
      * 分配角色
      */
-    @RequestMapping("/setRole")
+    @RequestMapping("/role")
     @ResponseBody
-    public ResponseData setRole(@RequestParam("userId") Long userId, @RequestParam("roleIds") String roleIds) {
-        String[] roleIdArray = roleIds.split(",");
-        Set<Role> roles = roleService.findByIdIn(roleIdArray);
+    public ResponseData role(Long userId, String roleIds) {
+        Set<Role> roles = roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleIds.split(",")));
         User user = userService.getOne(userId);
         user.setRoles(roles);
         userService.update(user);
         return SUCCESS_TIP;
-    }
-
-    /**
-     * 上传图片
-     */
-    @RequestMapping(method = RequestMethod.POST, path = "/upload")
-    @ResponseBody
-    public ResponseData upload(@RequestPart("file") MultipartFile picture) {
-        Map<String, String> result = new HashMap<String, String>();
-        result.put("src", DEFAULT_HEAD);
-        return new SuccessResponseData(result);
-    }
-
-    private String md5(String credentials, String saltSource) {
-        return new SimpleHash(algorithmName, credentials, ByteSource.Util.bytes(saltSource), hashIterations).toHex();
     }
 }

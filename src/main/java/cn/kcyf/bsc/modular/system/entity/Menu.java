@@ -24,7 +24,6 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @ToString
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_menu")
@@ -62,6 +61,7 @@ public class Menu extends TableDomain {
      * url地址
      */
     @Column(name = "url")
+    @NotBlank(message = "地址不能为空")
     private String url;
     /**
      * 菜单排序号
@@ -71,14 +71,20 @@ public class Menu extends TableDomain {
     /**
      * 菜单层级
      */
-    @Column(name = "levels")
+    @Column(name = "levels", nullable = false)
     private Integer levels;
     /**
      * 是否是菜单
      */
-    @Column(name = "menu_flag")
+    @Column(name = "menu_flag", nullable = false)
     @Enumerated
     private YesOrNo menuFlag;
+    public String getMenuFlagRemark(){
+        if (this.menuFlag != null){
+            return menuFlag.getDesc();
+        }
+        return "";
+    }
     /**
      * 备注
      */
@@ -87,20 +93,38 @@ public class Menu extends TableDomain {
     /**
      * 菜单状态
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Enumerated
     private Status status;
+    public String getStatusRemark(){
+        if (this.status != null){
+            return status.getMessage();
+        }
+        return "";
+    }
     /**
      * 是否打开新页面的标识
      */
     @Column(name = "new_page_flag")
     @Enumerated
     private YesOrNo newPageFlag;
+    public String getNewPageFlagRemark(){
+        if (this.newPageFlag != null){
+            return newPageFlag.getDesc();
+        }
+        return "";
+    }
     /**
      * 是否打开
      */
     @Column(name = "open_flag")
     @Enumerated
     private YesOrNo openFlag;
+    public String getOpenFlagRemark(){
+        if (this.openFlag != null){
+            return openFlag.getDesc();
+        }
+        return "";
+    }
 
 }

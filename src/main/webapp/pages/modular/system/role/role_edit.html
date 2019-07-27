@@ -1,17 +1,10 @@
-@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/role/role_edit.js"]}){
+@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/role/role_edit.js"], plugins:["ztree"]}){
 <form id="roleForm" lay-filter="roleForm" class="layui-form model-form">
-    <input name="roleId" type="hidden"/>
+    <input name="id" type="hidden"/>
     <div class="layui-form-item">
         <label class="layui-form-label">角色名称<span style="color: red;">*</span></label>
         <div class="layui-input-block">
             <input name="name" placeholder="请输入角色名称" type="text" class="layui-input" lay-verify="required" required/>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">上级名称<span style="color: red;">*</span></label>
-        <div class="layui-input-block">
-            <input id="pid" name="pid" type="hidden">
-            <input id="pName" name="pName" placeholder="请输入上级名称" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
         </div>
     </div>
     <div class="layui-form-item">
@@ -21,9 +14,16 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">权限菜单<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input id="menuId" name="menuId" type="hidden">
+            <input id="menuName" name="menuName" placeholder="请选择权限菜单" type="text" class="layui-input" lay-filter="tree" autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-block">
-            <input name="sort" placeholder="请输入排序" type="text" class="layui-input"/>
+            <input name="sort" placeholder="请输入排序" type="text" class="layui-input" lay-verify="number" value="1"/>
         </div>
     </div>
     <div class="layui-form-item text-right">

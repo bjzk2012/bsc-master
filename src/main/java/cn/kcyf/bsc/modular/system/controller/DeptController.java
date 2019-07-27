@@ -83,6 +83,15 @@ public class DeptController extends BasicController{
     }
 
     /**
+     * 获取部门的tree列表
+     */
+    @RequestMapping(value = "/treeSelect")
+    @ResponseBody
+    public List<DeptNode> treeSelect() {
+        return deptService.tree();
+    }
+
+    /**
      * 获取所有部门列表
      */
     @RequestMapping(value = "/list")
@@ -123,11 +132,15 @@ public class DeptController extends BasicController{
      */
     @RequestMapping(value = "/edit")
     @ResponseBody
-    public ResponseData update(@Valid Dept dept, BindingResult bindingResult) {
+    public ResponseData edit(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Dept dbdept = deptService.getOne(dept.getId());
+        ShiroUser shiroUser = getUser();
+        dbdept.setLastUpdateTime(new Date());
+        dbdept.setLastUpdateUserId(shiroUser.getId());
+        dbdept.setLastUpdateUserName(shiroUser.getUsername());
         dbdept.setFullName(dept.getFullName());
         dbdept.setSimpleName(dept.getSimpleName());
         dbdept.setDescription(dept.getDescription());

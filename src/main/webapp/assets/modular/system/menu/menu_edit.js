@@ -1,45 +1,31 @@
-/**
- * 详情对话框
- */
-var MenuInfoDlg = {
-    data: {
-        pid: "",
-        pcodeName: ""
-    }
-};
-
-layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
+layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
-    var laydate = layui.laydate;
-    var layer = layui.layer;
+    var treeSelect = layui.treeSelect;
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
     //获取菜单信息
-    var ajax = new $ax(Feng.ctxPath + "/menu/getMenuInfo?menuId=" + Feng.getUrlParam("menuId"));
+    var ajax = new $ax(Feng.ctxPath + "/menu/detail/" + Feng.getUrlParam("menuId"));
     var result = ajax.start();
     form.val('menuForm', result.data);
 
-    // 点击父级菜单
-    $('#pcodeName').click(function () {
-        var formName = encodeURIComponent("parent.MenuInfoDlg.data.pcodeName");
-        var formId = encodeURIComponent("parent.MenuInfoDlg.data.pid");
-        var treeUrl = encodeURIComponent(Feng.ctxPath + "/menu/selectMenuTreeList");
-
-        layer.open({
-            type: 2,
-            title: '父级菜单',
-            area: ['300px', '400px'],
-            content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
-            end: function () {
-                $("#pid").val(MenuInfoDlg.data.pid);
-                $("#pcodeName").val(MenuInfoDlg.data.pcodeName);
-            }
-        });
+    // 渲染父级菜单
+    treeSelect.render({
+        elem: '#parentName',
+        data: Feng.ctxPath + "/menu/treeSelect",
+        type: 'get',
+        placeholder: '请选择父级菜单',
+        search: true,
+        click: function(d,a,b){
+            $("#parentId").val(d.current.id);
+        },
+        success: function (d) {
+            treeSelect.checkNode('tree', result.data.parentId);
+        }
     });
 
     // 表单提交事件

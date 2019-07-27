@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Data
 @EqualsAndHashCode
 @ToString
@@ -38,6 +40,10 @@ public class ResponseData {
 
     public static ResponseData list(Page<?> page) {
         return new ResponseData(Boolean.TRUE, 0, DEFAULT_SUCCESS_MESSAGE, page.getContent(), page.getTotalElements());
+    }
+
+    public static ResponseData list(List<?> list) {
+        return new ResponseData(Boolean.TRUE, 0, DEFAULT_SUCCESS_MESSAGE, list, list.size());
     }
 
     public static ErrorResponseData error(String message) {

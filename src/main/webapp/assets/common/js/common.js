@@ -89,6 +89,7 @@ layui.config({
     base: Feng.ctxPath + '/assets/common/module/'
 }).extend({
     formSelects: 'formSelects/formSelects-v4',
+    treeSelect: 'treeSelect/treeSelect',
     treetable: 'treetable-lay/treetable',
     dropdown: 'dropdown/dropdown',
     notice: 'notice/notice',

@@ -31,7 +31,6 @@ import java.util.Set;
  */
 @Data
 @ToString
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_user")
@@ -53,7 +52,7 @@ public class User extends TableDomain {
      * 密码
      */
     @Column(name = "password")
-    @JSONField(deserialize = false)
+    @JSONField(serialize = false)
     private String password;
     /**
      * md5密码盐
@@ -94,7 +93,7 @@ public class User extends TableDomain {
      * 电话
      */
     @Column(name = "phone")
-    @Pattern(regexp = "(^\\s*$)|(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)", message = "电话必须是固定电话或手机号码")
+    @Pattern(regexp = "(^\\.{0}$)|(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)", message = "电话必须是固定电话或手机号码")
     private String phone;
     /**
      *
@@ -104,7 +103,11 @@ public class User extends TableDomain {
     /**
      * 角色
      */
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Role.class)
+    @JoinTable(name="sys_user_roles",
+            joinColumns={@JoinColumn(name="user_id",referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="roles_id",referencedColumnName="id")}
+    )
     @JSONField(serialize = false, deserialize = false)
     private Set<Role> roles;
     public String getRoleId(){

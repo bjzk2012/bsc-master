@@ -1,44 +1,37 @@
 /**
  * 详情对话框
  */
-var MenuInfoDlg = {
-    data: {
-        pid: "",
-        pcodeName: ""
-    }
-};
 
-layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
+layui.use(['form', 'admin', 'ax', 'treeSelect'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
-    var laydate = layui.laydate;
-    var layer = layui.layer;
+    var treeSelect = layui.treeSelect;
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
-    // 点击父级菜单
-    $('#pcodeName').click(function () {
-        var formName = encodeURIComponent("parent.MenuInfoDlg.data.pcodeName");
-        var formId = encodeURIComponent("parent.MenuInfoDlg.data.pid");
-        var treeUrl = encodeURIComponent(Feng.ctxPath + "/menu/selectMenuTreeList");
-
-        layer.open({
-            type: 2,
-            title: '父级菜单',
-            area: ['300px', '400px'],
-            content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
-            end: function () {
-                $("#pid").val(MenuInfoDlg.data.pid);
-                $("#pcodeName").val(MenuInfoDlg.data.pcodeName);
-            }
-        });
+    // 渲染父级菜单
+    treeSelect.render({
+        elem: '#parentName',
+        data: Feng.ctxPath + "/menu/treeSelect",
+        type: 'get',
+        placeholder: '请选择父级菜单',
+        search: true,
+        click: function(d,a,b){
+            $("#parentId").val(d.current.id);
+        },
+        success: function (d) {
+        }
     });
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
+        if (!data.field.parentId) {
+            layer.msg("父级菜单未选择", {icon: 5, anim: 6});
+            return false;
+        }
         var ajax = new $ax(Feng.ctxPath + "/menu/add", function (data) {
             Feng.success("添加成功！");
 
@@ -52,5 +45,6 @@ layui.use(['layer', 'form', 'admin', 'laydate', 'ax'], function () {
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });

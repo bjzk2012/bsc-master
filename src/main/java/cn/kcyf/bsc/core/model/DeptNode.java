@@ -21,6 +21,9 @@ public class DeptNode {
     public String getName(){
         return simpleName;
     }
+    public Boolean getOpen(){
+        return true;
+    }
     /**
      * 全称
      */

@@ -1,43 +1,38 @@
-/**
- * 角色详情对话框
- */
-var RoleInfoDlg = {
-    data: {
-        pid: "",
-        pName: ""
-    }
-};
-
-layui.use(['layer', 'form', 'admin', 'ax'], function () {
+layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
     var layer = layui.layer;
+    var treeSelect = layui.treeSelect;
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
-    // 点击上级角色时
-    $('#pName').click(function () {
-        var formName = encodeURIComponent("parent.RoleInfoDlg.data.pName");
-        var formId = encodeURIComponent("parent.RoleInfoDlg.data.pid");
-        var treeUrl = encodeURIComponent(Feng.ctxPath + "/role/roleTreeList");
-
-        layer.open({
-            type: 2,
-            title: '父级角色选择',
-            area: ['300px', '200px'],
-            content: Feng.ctxPath + '/system/commonTree?formName=' + formName + "&formId=" + formId + "&treeUrl=" + treeUrl,
-            end: function () {
-                $("#pid").val(RoleInfoDlg.data.pid);
-                $("#pName").val(RoleInfoDlg.data.pName);
-            }
-        });
+    // 渲染父级菜单
+    treeSelect.render({
+        elem: '#menuName',
+        data: Feng.ctxPath + "/menu/treeSelect",
+        type: 'get',
+        placeholder: '请选择权限菜单',
+        search: true,
+        checkbox: true,
+        click: function(d){
+            $("#parentId").val(d.current.id);
+        },
+        check: function(d, e){
+            $("#menuId").val($.map(d, function(n){return n.id}).join(","));
+        },
+        success: function (d) {
+        }
     });
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
+        if (!data.field.menuId) {
+            layer.msg("权限菜单未选择", {icon: 5, anim: 6});
+            return false;
+        }
         var ajax = new $ax(Feng.ctxPath + "/role/add", function (data) {
             Feng.success("添加成功！");
 
@@ -51,5 +46,6 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });

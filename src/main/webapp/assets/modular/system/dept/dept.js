@@ -34,11 +34,11 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
     Dept.initColumn = function () {
         return [[
             {type: 'checkbox'},
-            {field: 'id', hide: true, sort: true, title: 'id'},
+            {field: 'id', hide: true, title: 'id'},
             {field: 'simpleName', sort: true, title: '部门简称'},
             {field: 'fullName', sort: true, title: '部门全称'},
             {field: 'sort', sort: true, title: '排序'},
-            {field: 'description', sort: true, title: '备注'},
+            {field: 'description', title: '备注'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
     };

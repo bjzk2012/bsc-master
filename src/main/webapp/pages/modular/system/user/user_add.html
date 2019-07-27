@@ -1,4 +1,4 @@
-@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/user/user_add.js"]}){
+@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/user/user_add.js"], plugins:["ztree"], css:["/assets/common/module/formSelects/formSelects-v4.css"]}){
 <form id="userForm" lay-filter="userForm" class="layui-form model-form">
     <input name="userId" type="hidden"/>
     <div class="layui-form-item">
@@ -48,20 +48,24 @@
         <label class="layui-form-label">部门<span style="color: red;">*</span></label>
         <div class="layui-input-block">
             <input id="deptId" name="deptId" type="hidden">
-            <input id="deptName" name="deptName" placeholder="请输入部门" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
+            <input id="deptName" name="deptName" placeholder="请输入部门" type="text" class="layui-input" lay-filter="tree" autocomplete="off"/>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">角色<span style="color: red;">*</span></label>
         <div class="layui-input-block">
-            <input id="roleId" name="roleId" type="hidden">
-            <input id="roleName" name="roleName" placeholder="请输入角色" type="text" class="layui-input" lay-verify="required" required autocomplete="off"/>
+            <select name="roleId" id="roleId" lay-filter="roleId" xm-select="roleId" xm-select-type="1" autocomplete="off">
+                <option value=""></option>
+                @for(role in roles){
+                <option value="${role.id}">${role.name}</option>
+                @}
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">电话</label>
         <div class="layui-input-block">
-            <input name="phone" placeholder="请输入电话" type="text" class="layui-input"/>
+            <input name="phone" placeholder="请输入电话" type="text" class="layui-input" lay-verify="phone"/>
         </div>
     </div>
     <div class="layui-form-item">

@@ -62,7 +62,7 @@ public class ShiroServiceImpl implements ShiroService {
         List<Menu> menuAll = menuDao.findByRoleIds(Arrays.asList(new Integer[]{0, 1}), roleIds);
         if (menuAll != null && !menuAll.isEmpty()){
             for (Menu menu : menuAll){
-                menus.add(menu.getUrl());
+                menus.add(menu.getCode());
             }
         }
         return menus;
