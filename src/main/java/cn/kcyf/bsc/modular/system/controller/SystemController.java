@@ -1,7 +1,6 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
-import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import io.swagger.annotations.Api;
@@ -9,13 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 /**
  * 通用控制器
@@ -36,7 +30,7 @@ public class SystemController extends BasicController {
      *
      * @author Tom
      */
-    @RequestMapping("/welcome")
+    @GetMapping("/welcome")
     public String console() {
         return "/modular/frame/welcome.html";
     }
@@ -46,7 +40,7 @@ public class SystemController extends BasicController {
      *
      * @author Tom
      */
-    @RequestMapping("/theme")
+    @GetMapping("/theme")
     public String theme() {
         return "/modular/frame/theme.html";
     }
@@ -56,8 +50,8 @@ public class SystemController extends BasicController {
      *
      * @author Tom
      */
-    @RequestMapping("/user_chpwd")
-    public String chPwd() {
+    @GetMapping("/password")
+    public String password() {
         return "/modular/frame/password.html";
     }
 
@@ -66,7 +60,7 @@ public class SystemController extends BasicController {
      *
      * @author Tom
      */
-    @RequestMapping("/message")
+    @GetMapping("/message")
     public String message() {
         return "/modular/frame/message.html";
     }
@@ -76,68 +70,11 @@ public class SystemController extends BasicController {
      *
      * @author Tom
      */
-    @RequestMapping("/user_info")
+    @GetMapping("/user_info")
     public String userInfo(Model model) {
         User user = this.userService.getOne(getUser().getId());
         model.addAttribute("entity", user);
         return "/modular/frame/user_info.html";
-    }
-
-    /**
-     * 通用的树列表选择器
-     *
-     * @author Tom
-     */
-    @RequestMapping("/commonTree")
-    public String deptTreeList(@RequestParam("formName") String formName,
-                               @RequestParam("formId") String formId,
-                               @RequestParam("treeUrl") String treeUrl, Model model) {
-
-        if (StringUtils.isEmpty(formName) || StringUtils.isEmpty(formId) || StringUtils.isEmpty(treeUrl)) {
-            throw new RuntimeException("请求数据不完整！");
-        }
-
-        try {
-            model.addAttribute("formName", URLDecoder.decode(formName, "UTF-8"));
-            model.addAttribute("formId", URLDecoder.decode(formId, "UTF-8"));
-            model.addAttribute("treeUrl", URLDecoder.decode(treeUrl, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("请求数据不完整！");
-        }
-
-        return "/common/tree_dlg.html";
-    }
-
-    /**
-     * 上传头像
-     *
-     * @author Tom
-     */
-    @RequestMapping("/uploadAvatar")
-    @ResponseBody
-    public Object uploadAvatar(@RequestParam String avatar) {
-
-        if (StringUtils.isEmpty(avatar)) {
-            throw new RuntimeException("请求头像为空");
-        }
-
-        avatar = avatar.substring(avatar.indexOf(",") + 1);
-
-//        fileInfoService.uploadAvatar(avatar);
-
-        return SUCCESS_TIP;
-    }
-
-    /**
-     * 获取当前用户详情
-     *
-     * @author Tom
-     */
-    @RequestMapping("/currentUserInfo")
-    @ResponseBody
-    public ResponseData getUserInfo() {
-        User user = this.userService.getOne(getUser().getId());
-        return ResponseData.success(user);
     }
 
 //    /**

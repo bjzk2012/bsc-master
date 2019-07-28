@@ -8,7 +8,10 @@ import cn.kcyf.bsc.modular.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -23,29 +26,52 @@ public class CenterController extends BasicController{
 
     @Autowired
     private UserService userService;
+    @PostMapping("/user_info")
+    @ResponseBody
+    public ResponseData user_info(User user) {
+        User dbuser = userService.getOne(getUser().getId());
+        dbuser.setName(user.getName());
+        dbuser.setSex(user.getSex());
+        dbuser.setEmail(user.getEmail());
+        dbuser.setBirthday(user.getBirthday());
+        dbuser.setPhone(user.getPhone());
+        dbuser.setAddress(user.getAddress());
+        userService.update(dbuser);
+        return SUCCESS_TIP;
+    }
     /**
      * 修改当前用户的密码
      */
     @PostMapping("/password")
     @ResponseBody
     public ResponseData password(
+            @NotBlank(message = "旧密码不能为空")
+            @Size(min = 6, max = 12, message = "旧密码必须6到12位")
+            @Pattern(regexp = "[\\S]+", message = "旧密码不能出现空格") String oldPassword,
+            @NotBlank(message = "新密码不能为空")
+            @Size(min = 6, max = 12, message = "新密码必须6到12位")
+            @Pattern(regexp = "[\\S]+", message = "新密码不能出现空格")
+            String newPassword,
             @NotBlank(message = "确认密码不能为空")
             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
-            @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格") String oldPassword,
-            String newPassword) {
-        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword)) {
-            throw new RuntimeException("新旧密码都不能为空");
+            @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格")
+            String rePassword) {
+        User dbuser = userService.getOne(getUser().getId());
+        if (!userService.md5(oldPassword, dbuser.getSalt()).equals(dbuser.getPassword())){
+            return ResponseData.error("旧密码输入错误");
         }
-        User user = userService.getOne(getUser().getId());
-        user.setPassword(userService.md5(newPassword, user.getSalt()));
-        userService.update(user);
+        if (!newPassword.equals(rePassword)){
+            return ResponseData.error("新密码和确认密码不一致");
+        }
+        dbuser.setPassword(userService.md5(newPassword, dbuser.getSalt()));
+        userService.update(dbuser);
         return SUCCESS_TIP;
     }
 
     /**
      * 上传图片
      */
-    @RequestMapping(method = RequestMethod.POST, path = "/upload")
+    @PostMapping("/upload")
     @ResponseBody
     public ResponseData upload(@RequestPart("file") MultipartFile picture) {
         Map<String, String> result = new HashMap<String, String>();

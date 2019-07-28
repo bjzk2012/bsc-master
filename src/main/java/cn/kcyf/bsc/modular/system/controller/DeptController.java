@@ -14,10 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ public class DeptController extends BasicController{
     /**
      * 跳转到部门管理首页
      */
-    @RequestMapping("")
+    @GetMapping("")
     public String index() {
         return PREFIX + "dept.html";
     }
@@ -45,7 +42,7 @@ public class DeptController extends BasicController{
     /**
      * 跳转到添加部门
      */
-    @RequestMapping("/dept_add")
+    @GetMapping("/dept_add")
     public String deptAdd(Long parentId, Model model) {
         if (parentId != null && parentId.equals(0L)){
             parentId = null;
@@ -57,7 +54,7 @@ public class DeptController extends BasicController{
     /**
      * 跳转到修改部门
      */
-    @RequestMapping("/dept_edit")
+    @GetMapping("/dept_edit")
     public String deptUpdate(Long deptId, Model model) {
         model.addAttribute("deptId", deptId);
         String parentName = deptService.getParentName(deptId);
@@ -68,7 +65,7 @@ public class DeptController extends BasicController{
     /**
      * 获取部门的tree列表
      */
-    @RequestMapping(value = "/tree")
+    @GetMapping(value = "/tree")
     @ResponseBody
     public ResponseData tree() {
         List<Dept> list = deptService.findAll();
@@ -85,7 +82,7 @@ public class DeptController extends BasicController{
     /**
      * 获取部门的tree列表
      */
-    @RequestMapping(value = "/treeSelect")
+    @GetMapping(value = "/treeSelect")
     @ResponseBody
     public List<DeptNode> treeSelect() {
         return deptService.tree();
@@ -94,7 +91,7 @@ public class DeptController extends BasicController{
     /**
      * 获取所有部门列表
      */
-    @RequestMapping(value = "/list")
+    @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String condition, Long deptId, int page, int limit) {
         Criteria<Dept> criteria = new Criteria<Dept>();
@@ -112,7 +109,7 @@ public class DeptController extends BasicController{
     /**
      * 新增部门
      */
-    @RequestMapping(value = "/add")
+    @PostMapping(value = "/add")
     @ResponseBody
     public ResponseData add(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -130,7 +127,7 @@ public class DeptController extends BasicController{
     /**
      * 修改部门
      */
-    @RequestMapping(value = "/edit")
+    @PostMapping(value = "/edit")
     @ResponseBody
     public ResponseData edit(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -153,7 +150,7 @@ public class DeptController extends BasicController{
     /**
      * 删除部门
      */
-    @RequestMapping(value = "/delete/{deptId}")
+    @PostMapping(value = "/delete/{deptId}")
     @ResponseBody
     public ResponseData delete(@PathVariable("deptId") Long deptId) {
         deptService.delete(deptId);
@@ -163,7 +160,7 @@ public class DeptController extends BasicController{
     /**
      * 部门详情
      */
-    @RequestMapping(value = "/detail/{deptId}")
+    @GetMapping(value = "/detail/{deptId}")
     @ResponseBody
     public Dept detail(@PathVariable("deptId") Long deptId) {
         return deptService.getOne(deptId);

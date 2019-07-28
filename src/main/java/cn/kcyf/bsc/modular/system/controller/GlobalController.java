@@ -18,7 +18,7 @@ public class GlobalController extends BasicController{
      * 跳转到404页面
      */
     @RequestMapping(path = "/error")
-    public String errorPage() {
+    public String error() {
         return "/404.html";
     }
 
@@ -26,7 +26,7 @@ public class GlobalController extends BasicController{
      * 跳转到session超时页面
      */
     @RequestMapping(path = "/sessionError")
-    public String errorPageInfo(Model model) {
+    public String sessionError(Model model) {
         model.addAttribute("tips", "session超时");
         return "/login.html";
     }

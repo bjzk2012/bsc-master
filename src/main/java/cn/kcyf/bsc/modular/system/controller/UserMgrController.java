@@ -3,8 +3,6 @@ package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.constant.Constant;
 import cn.kcyf.bsc.core.model.ResponseData;
-import cn.kcyf.bsc.core.model.SuccessResponseData;
-import cn.kcyf.bsc.modular.system.entity.Role;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.DeptService;
@@ -15,10 +13,7 @@ import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import cn.kcyf.security.domain.ShiroUser;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -26,16 +21,12 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 系统管理员控制器
@@ -94,7 +85,7 @@ public class UserMgrController extends BasicController {
     /**
      * 查询管理员列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @ResponseBody
     public ResponseData list(String name, String timeLimit, int page, int limit) {
         Criteria<User> criteria = new Criteria<User>();
@@ -113,7 +104,7 @@ public class UserMgrController extends BasicController {
     /**
      * 添加管理员
      */
-    @RequestMapping("/add")
+    @PostMapping("/add")
     @ResponseBody
     public ResponseData add(@Valid User user,
                             @NotBlank(message = "确认密码不能为空")
@@ -153,7 +144,7 @@ public class UserMgrController extends BasicController {
     /**
      * 修改管理员
      */
-    @RequestMapping("/edit")
+    @PostMapping("/edit")
     @ResponseBody
     public ResponseData edit(@Valid User user, @NotBlank(message = "部门未选择") Long deptId, @NotBlank(message = "角色未选择") String roleId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -186,7 +177,7 @@ public class UserMgrController extends BasicController {
     /**
      * 删除管理员（逻辑删除）
      */
-    @RequestMapping("/delete/{userId}")
+    @PostMapping("/delete/{userId}")
     @ResponseBody
     public ResponseData delete(@PathVariable Long userId) {
         userService.delete(userId);
@@ -196,7 +187,7 @@ public class UserMgrController extends BasicController {
     /**
      * 查看管理员详情
      */
-    @RequestMapping("/detail/{userId}")
+    @GetMapping("/detail/{userId}")
     @ResponseBody
     public User detail(@PathVariable Long userId) {
         return userService.getOne(userId);
@@ -205,7 +196,7 @@ public class UserMgrController extends BasicController {
     /**
      * 重置管理员的密码
      */
-    @RequestMapping("/reset/{userId}")
+    @PostMapping("/reset/{userId}")
     @ResponseBody
     public ResponseData reset(@PathVariable Long userId) {
         User user = userService.getOne(userId);
@@ -217,7 +208,7 @@ public class UserMgrController extends BasicController {
     /**
      * 冻结用户
      */
-    @RequestMapping("/freeze/{userId}")
+    @PostMapping("/freeze/{userId}")
     @ResponseBody
     public ResponseData freeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
@@ -229,24 +220,11 @@ public class UserMgrController extends BasicController {
     /**
      * 解除冻结用户
      */
-    @RequestMapping("/unfreeze/{userId}")
+    @PostMapping("/unfreeze/{userId}")
     @ResponseBody
     public ResponseData unfreeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(Status.ENABLE);
-        userService.update(user);
-        return SUCCESS_TIP;
-    }
-
-    /**
-     * 分配角色
-     */
-    @RequestMapping("/role")
-    @ResponseBody
-    public ResponseData role(Long userId, String roleIds) {
-        Set<Role> roles = roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleIds.split(",")));
-        User user = userService.getOne(userId);
-        user.setRoles(roles);
         userService.update(user);
         return SUCCESS_TIP;
     }

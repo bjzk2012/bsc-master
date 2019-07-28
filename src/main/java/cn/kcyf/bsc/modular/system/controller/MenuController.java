@@ -3,24 +3,18 @@ package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.model.MenuNode;
 import cn.kcyf.bsc.core.model.ResponseData;
-import cn.kcyf.bsc.modular.system.entity.Dept;
 import cn.kcyf.bsc.modular.system.entity.Menu;
-import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
-import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import cn.kcyf.security.domain.ShiroUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -41,13 +35,10 @@ public class MenuController extends BasicController {
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private UserService userService;
-
     /**
      * 跳转到菜单列表列表页面
      */
-    @RequestMapping("")
+    @GetMapping("")
     public String index() {
         return PREFIX + "menu.html";
     }
@@ -55,7 +46,7 @@ public class MenuController extends BasicController {
     /**
      * 跳转到菜单列表列表页面
      */
-    @RequestMapping(value = "/menu_add")
+    @GetMapping(value = "/menu_add")
     public String menuAdd() {
         return PREFIX + "menu_add.html";
     }
@@ -63,7 +54,7 @@ public class MenuController extends BasicController {
     /**
      * 跳转到菜单详情列表页面
      */
-    @RequestMapping(value = "/menu_edit")
+    @GetMapping(value = "/menu_edit")
     public String menuEdit(Long menuId, Model model) {
         model.addAttribute("menuId", menuId);
         return PREFIX + "menu_edit.html";
@@ -72,12 +63,12 @@ public class MenuController extends BasicController {
     /**
      * 获取菜单列表（树形）
      */
-    @RequestMapping(value = "/list")
+    @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String menuName, String level) {
         Criteria<Menu> criteria = new Criteria<Menu>();
         if (!StringUtils.isEmpty(menuName)){
-            criteria.add(Restrictions.like("name", menuName));
+            criteria.add(Restrictions.or(Restrictions.like("name", menuName), Restrictions.like("code", menuName)));
         }
         if (!StringUtils.isEmpty(level)){
             criteria.add(Restrictions.eq("levels", level));
@@ -85,7 +76,7 @@ public class MenuController extends BasicController {
         return ResponseData.list(menuService.findList(criteria));
     }
 
-    @RequestMapping(value = "/treeSelect")
+    @GetMapping(value = "/treeSelect")
     @ResponseBody
     public List<MenuNode> treeSelect() {
         MenuNode root = new MenuNode();
@@ -101,7 +92,7 @@ public class MenuController extends BasicController {
     /**
      * 新增菜单
      */
-    @RequestMapping(value = "/add")
+    @PostMapping("/add")
     @ResponseBody
     public ResponseData add(@Valid Menu menu, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -126,7 +117,7 @@ public class MenuController extends BasicController {
     /**
      * 修该菜单
      */
-    @RequestMapping(value = "/edit")
+    @PostMapping("/edit")
     @ResponseBody
     public ResponseData edit(@Valid Menu menu, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -159,7 +150,7 @@ public class MenuController extends BasicController {
     /**
      * 删除菜单
      */
-    @RequestMapping(value = "/delete/{menuId}")
+    @PostMapping("/delete/{menuId}")
     @ResponseBody
     public ResponseData delete(@PathVariable Long menuId) {
         menuService.delete(menuId);
@@ -169,7 +160,7 @@ public class MenuController extends BasicController {
     /**
      * 查看菜单
      */
-    @RequestMapping(value = "/detail/{menuId}")
+    @GetMapping("/detail/{menuId}")
     @ResponseBody
     public ResponseData detail(@PathVariable Long menuId) {
         Menu menu = menuService.getOne(menuId);
@@ -179,7 +170,7 @@ public class MenuController extends BasicController {
     /**
      * 禁用菜单
      */
-    @RequestMapping("/freeze/{menuId}")
+    @PostMapping("/freeze/{menuId}")
     @ResponseBody
     public ResponseData freeze(@PathVariable Long menuId) {
         menuService.freeze(menuId);
@@ -189,7 +180,7 @@ public class MenuController extends BasicController {
     /**
      * 启用菜单
      */
-    @RequestMapping("/unfreeze/{menuId}")
+    @PostMapping("/unfreeze/{menuId}")
     @ResponseBody
     public ResponseData unfreeze(@PathVariable Long menuId) {
         menuService.unfreeze(menuId);

@@ -16,32 +16,32 @@
                 <div class="layui-card-body" style="padding: 25px;">
                     <div class="text-center layui-text">
                         <div class="user-info-head" id="imgHead">
-                            <img src="${avatar!}"/>
-                            <input id="avatar" name="avatar" type="hidden" value="${avatar!}">
+                            <img src="${entity.avatar!}"/>
+                            <input id="avatar" name="avatar" type="hidden" value="${entity.avatar!}">
                         </div>
-                        <h2 style="padding-top: 20px;">${name}</h2>
-                        <p style="padding-top: 8px;">${roleName!} ${deptName!}</p>
+                        <h2 style="padding-top: 20px;">${entity.name}</h2>
+                        <p style="padding-top: 8px;">${entity.roleName!} ${entity.deptName!}</p>
                     </div>
                     <div class="layui-text" style="padding-top: 30px;">
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-notice"></i>
-                            <p>${email!}</p>
+                            <p>${entity.email!}</p>
                         </div>
 
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-cellphone"></i>
-                            <p>${phone!}</p>
+                            <p>${entity.phone!}</p>
                         </div>
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-location"></i>
-                            <p id="p_address">${address!}</p>
+                            <p id="p_address">${entity.address!}</p>
                         </div>
                     </div>
                     <div class="dash"></div>
                     <h3>标签</h3>
                     <div class="layui-badge-list" style="padding-top: 6px;">
-                        <span class="layui-badge layui-bg-gray">${roleName!}</span>
-                        <span class="layui-badge layui-bg-gray">${deptName!}</span>
+                        <span class="layui-badge layui-bg-gray">${entity.roleName!}</span>
+                        <span class="layui-badge layui-bg-gray">${entity.deptName!}</span>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                     <div class="layui-tab layui-tab-brief" lay-filter="userInfoTab">
                         <ul class="layui-tab-title">
                             <li class="layui-this">基本信息</li>
-<!--                            <li>其他</li>-->
+                            <li>其他</li>
                         </ul>
                         <div class="layui-tab-content">
                             <div class="layui-form layui-tab-item layui-show" lay-filter="userInfoForm">
@@ -63,44 +63,44 @@
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">账号:</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="account" class="layui-input" lay-verify="required" disabled/>
+                                            <input type="text" name="account" class="layui-input" lay-verify="required" value="${entity.account!}" disabled/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">性别:</label>
                                         <div class="layui-input-block">
-                                            <input type="radio" name="sex" value="M" title="男">
-                                            <input type="radio" name="sex" value="F" title="女">
+                                            <input type="radio" name="sex" value="MAN" title="男" ${entity.sex == "MAN" ? "checked":""}>
+                                            <input type="radio" name="sex" value="WOMAN" title="女" ${entity.sex == "WOMAN" ? "checked":""}>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">邮箱:<span style="color: red;">*</span></label>
                                         <div class="layui-input-block">
-                                            <input type="email" name="email" class="layui-input" lay-verify="required|email" required/>
+                                            <input type="email" name="email" class="layui-input" lay-verify="required|email" value="${entity.email!}" required/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">姓名:<span style="color: red;">*</span></label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="name" class="layui-input" lay-verify="required" required/>
+                                            <input type="text" name="name" class="layui-input" lay-verify="required" value="${entity.name!}" required/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">出生日期:</label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="birthday" name="birthday" class="layui-input"/>
+                                            <input type="text" id="birthday" name="birthday" class="layui-input" value="${entity.birthday,dateFormat='yyyy-MM-dd'}"/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">联系电话:</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="phone" class="layui-input"/>
+                                            <input type="text" name="phone" class="layui-input" value="${entity.phone!}"/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">联系地址:</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="address" class="layui-input"/>
+                                            <input type="text" name="address" class="layui-input" value="${entity.address!}"/>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
@@ -119,14 +119,14 @@
                                     <div class="bd-list-item">
                                         <div class="bd-list-item-content">
                                             <div class="bd-list-item-lable">密保手机</div>
-                                            <div class="bd-list-item-text">已绑定手机：182****0000</div>
+                                            <div class="bd-list-item-text">已绑定手机：${entity.phone!}</div>
                                         </div>
                                         <a class="bd-list-item-oper">修改</a>
                                     </div>
                                     <div class="bd-list-item">
                                         <div class="bd-list-item-content">
                                             <div class="bd-list-item-lable">密保邮箱</div>
-                                            <div class="bd-list-item-text">已绑定邮箱：sn***qq.com</div>
+                                            <div class="bd-list-item-text">已绑定邮箱：${entity.email!}</div>
                                         </div>
                                         <a class="bd-list-item-oper">修改</a>
                                     </div>

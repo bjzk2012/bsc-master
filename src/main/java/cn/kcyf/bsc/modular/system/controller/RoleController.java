@@ -6,7 +6,6 @@ import cn.kcyf.bsc.modular.system.entity.Role;
 import cn.kcyf.bsc.modular.system.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
-import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
@@ -17,10 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -45,7 +41,7 @@ public class RoleController extends BasicController {
     /**
      * 跳转到角色列表页面
      */
-    @RequestMapping("")
+    @GetMapping("")
     public String index() {
         return PREFIX + "/role.html";
     }
@@ -53,7 +49,7 @@ public class RoleController extends BasicController {
     /**
      * 跳转到添加角色
      */
-    @RequestMapping(value = "/role_add")
+    @GetMapping(value = "/role_add")
     public String roleAdd() {
         return PREFIX + "/role_add.html";
     }
@@ -61,25 +57,16 @@ public class RoleController extends BasicController {
     /**
      * 跳转到修改角色
      */
-    @RequestMapping(value = "/role_edit")
+    @GetMapping(value = "/role_edit")
     public String roleEdit(Long roleId, Model model) {
         model.addAttribute("roleId", roleId);
         return PREFIX + "/role_edit.html";
     }
 
     /**
-     * 跳转到权限分配
-     */
-    @RequestMapping(value = "/role_assign/{roleId}")
-    public String roleAssign(@PathVariable("roleId") Long roleId, Model model) {
-        model.addAttribute("roleId", roleId);
-        return PREFIX + "/role_assign.html";
-    }
-
-    /**
      * 获取角色列表
      */
-    @RequestMapping(value = "/list")
+    @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String roleName, int page, int limit) {
         Criteria<Role> criteria = new Criteria<Role>();
@@ -92,7 +79,7 @@ public class RoleController extends BasicController {
     /**
      * 角色新增
      */
-    @RequestMapping(value = "/add")
+    @PostMapping(value = "/add")
     @ResponseBody
     public ResponseData add(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -112,7 +99,7 @@ public class RoleController extends BasicController {
     /**
      * 角色修改
      */
-    @RequestMapping(value = "/edit")
+    @PostMapping(value = "/edit")
     @ResponseBody
     public ResponseData edit(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -134,7 +121,7 @@ public class RoleController extends BasicController {
     /**
      * 删除角色
      */
-    @RequestMapping(value = "/delete/{roleId}")
+    @PostMapping(value = "/delete/{roleId}")
     @ResponseBody
     public ResponseData delete(@PathVariable Long roleId) {
         roleService.delete(roleId);
@@ -144,7 +131,7 @@ public class RoleController extends BasicController {
     /**
      * 禁用角色
      */
-    @RequestMapping("/freeze/{roleId}")
+    @PostMapping("/freeze/{roleId}")
     @ResponseBody
     public ResponseData freeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
@@ -156,7 +143,7 @@ public class RoleController extends BasicController {
     /**
      * 启用角色
      */
-    @RequestMapping("/unfreeze/{roleId}")
+    @PostMapping("/unfreeze/{roleId}")
     @ResponseBody
     public ResponseData unfreeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
@@ -168,20 +155,10 @@ public class RoleController extends BasicController {
     /**
      * 查看角色
      */
-    @RequestMapping(value = "/detail/{roleId}")
+    @GetMapping(value = "/detail/{roleId}")
     @ResponseBody
     public ResponseData detail(@PathVariable Long roleId) {
         return ResponseData.success(roleService.getOne(roleId));
-    }
-
-    /**
-     * 配置权限
-     */
-    @RequestMapping("/authority/{roleId}")
-    @ResponseBody
-    public ResponseData setAuthority(@PathVariable Long roleId, @RequestParam("ids") String ids) {
-//        roleService.setAuthority(roleId, ids);
-        return SUCCESS_TIP;
     }
 
 }

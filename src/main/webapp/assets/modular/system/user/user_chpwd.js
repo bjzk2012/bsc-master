@@ -42,7 +42,7 @@ UserPwdPage.validateForm = function () {
  * 修改密码
  */
 UserPwdPage.chPwd = function () {
-    var ajax = new $ax(Feng.ctxPath + "/mgr/changePwd", function (data) {
+    var ajax = new $ax(Feng.ctxPath + "/center/password", function (data) {
         Feng.success("修改成功!");
     }, function (data) {
         Feng.error("修改失败!" + data.responseJSON.message + "!");

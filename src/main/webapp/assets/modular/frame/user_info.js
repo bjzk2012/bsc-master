@@ -11,28 +11,22 @@ layui.use(['form', 'upload', 'element', 'ax', 'laydate'], function () {
         elem: '#birthday'
     });
 
-    //获取用户详情
-    var ajax = new $ax(Feng.ctxPath + "/system/currentUserInfo");
-    var result = ajax.start();
-
-    //用这个方法必须用在class有layui-form的元素上
-    form.val('userInfoForm', result.data);
-
     //表单提交事件
     form.on('submit(userInfoSubmit)', function (data) {
-        var ajax = new $ax(Feng.ctxPath + "/mgr/edit", function (data) {
-            Feng.success("修改成功!");
+        var ajax = new $ax(Feng.ctxPath + "/center/user_info", function (data) {
+            Feng.success("更新基本信息成功!");
             window.location.reload();
         }, function (data) {
-            Feng.error("修改失败!" + data.responseJSON.message + "!");
+            Feng.error("更新基本信息失败!" + data.responseJSON.message + "!");
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 
     upload.render({
         elem: '#imgHead',
-        url: Feng.ctxPath + '/mgr/upload', // 上传接口
+        url: Feng.ctxPath + '/center/upload', // 上传接口
         done: function (res) {
             $("#imgHead img").attr("src", res.data.src);
             $("#avatar").val(res.data.src);

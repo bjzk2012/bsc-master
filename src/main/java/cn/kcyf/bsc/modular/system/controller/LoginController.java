@@ -3,28 +3,22 @@ package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.model.MenuNode;
 import cn.kcyf.bsc.core.model.MenuNodeComparator;
-import cn.kcyf.bsc.modular.system.entity.Menu;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.security.util.KaptchaException;
-import com.google.code.kaptcha.servlet.KaptchaServlet;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +39,7 @@ public class LoginController extends BasicController{
      *
      * @author Tom
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping("/")
     @ApiOperation("跳转到主页")
     public String index(Model model) {
         List<MenuNode> menus = userService.getUserMenus(getUser().getId());
@@ -60,10 +54,10 @@ public class LoginController extends BasicController{
      * @author Tom
      */
     @ApiOperation("跳转到登录页面")
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @GetMapping("/login")
     public String login() {
         if (SecurityUtils.getSubject().isAuthenticated() || SecurityUtils.getSubject().getPrincipals() != null) {
-            return "redirect:/";
+            return REDIRECT + "/";
         } else {
             return "/login.html";
         }
@@ -73,7 +67,7 @@ public class LoginController extends BasicController{
     public String login(HttpServletRequest request, Model modelMap) {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null && subject.isAuthenticated()){
-            return "redirect:/";
+            return REDIRECT + "/";
         }
         String exceptionClassName = (String) request.getAttribute("shiroLoginFailure");
         String error = null;
