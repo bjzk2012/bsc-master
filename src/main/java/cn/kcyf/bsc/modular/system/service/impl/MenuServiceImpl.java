@@ -1,10 +1,9 @@
 package cn.kcyf.bsc.modular.system.service.impl;
 
 import cn.kcyf.bsc.core.model.MenuNode;
-import cn.kcyf.bsc.core.model.MenuNodeComparator;
 import cn.kcyf.bsc.modular.system.dao.MenuDao;
 import cn.kcyf.bsc.modular.system.entity.Menu;
-import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
 import cn.kcyf.orm.jpa.dao.BasicDao;
 import cn.kcyf.orm.jpa.service.AbstractBasicService;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

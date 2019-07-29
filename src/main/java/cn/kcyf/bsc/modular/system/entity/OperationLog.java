@@ -1,14 +1,15 @@
 package cn.kcyf.bsc.modular.system.entity;
 
+import cn.kcyf.bsc.core.enumerate.LogType;
+import cn.kcyf.bsc.core.enumerate.Succeed;
+import cn.kcyf.orm.jpa.entity.IdDomain;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -17,49 +18,70 @@ import java.util.Date;
  * </p>
  *
  * @author Tom
- * @since 2018-12-07
  */
-//@Data
-//@ToString
-//@EqualsAndHashCode(of = "id")
-//@NoArgsConstructor
-//@Entity
-//@Table(name = "sys_operation_log")
-public class OperationLog extends TableDomain {
+@Data
+@ToString
+@NoArgsConstructor
+@Entity
+@Table(name = "sys_operation_log")
+public class OperationLog extends IdDomain {
     /**
      * 日志类型(字典)
      */
-    @Column(name = "LOG_TYPE")
-    private String logType;
+    @Column(name = "log_type")
+    @Enumerated
+    private LogType logType;
+    public String getLogTypeRemark(){
+        if (logType != null){
+            return logType.getMessage();
+        }
+        return "";
+    }
     /**
      * 日志名称
      */
-    @Column(name = "LOG_NAME")
+    @Column(name = "log_name")
     private String logName;
     /**
      * 用户id
      */
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private Long userId;
+    /**
+     * 用户id
+     */
+    @Column(name = "user_name")
+    private String userName;
     /**
      * 类名称
      */
-    @Column(name = "CLASS_NAME")
+    @Column(name = "class_name")
     private String className;
     /**
      * 方法名称
      */
-    @Column(name = "METHOD")
+    @Column(name = "method")
     private String method;
     /**
      * 是否成功(字典)
      */
-    @Column(name = "SUCCEED")
-    private String succeed;
+    @Column(name = "succeed")
+    @Enumerated
+    private Succeed succeed;
+    public String getSucceedRemark(){
+        if (succeed != null){
+            return succeed.getMessage();
+        }
+        return "";
+    }
     /**
      * 备注
      */
-    @Column(name = "MESSAGE")
+    @Column(name = "message")
     private String message;
+
+    @Column(name = "create_time")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date createTime;
 
 }

@@ -1,11 +1,10 @@
 package cn.kcyf.bsc.modular.system.entity;
 
-import cn.kcyf.bsc.modular.system.enumerate.Status;
-import cn.kcyf.bsc.modular.system.enumerate.YesOrNo;
+import cn.kcyf.bsc.core.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.YesOrNo;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 

@@ -1,14 +1,14 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.MenuNode;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.Menu;
-import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
-import cn.kcyf.security.domain.ShiroUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -94,15 +93,12 @@ public class MenuController extends BasicController {
      */
     @PostMapping("/add")
     @ResponseBody
+    @BussinessLog(value = "新增菜单")
     public ResponseData add(@Valid Menu menu, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
-        ShiroUser shiroUser = getUser();
-        menu.setId(null);
-        menu.setCreateTime(new Date());
-        menu.setCreateUserId(shiroUser.getId());
-        menu.setCreateUserName(shiroUser.getUsername());
+        create(menu);
         menu.setStatus(Status.ENABLE);
         if (menu.getParentId() != null && !menu.getParentId().equals(0L)){
             menu.setLevels(menuService.getOne(menu.getParentId()).getLevels() + 1);
@@ -119,15 +115,13 @@ public class MenuController extends BasicController {
      */
     @PostMapping("/edit")
     @ResponseBody
+    @BussinessLog(value = "修改菜单")
     public ResponseData edit(@Valid Menu menu, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Menu dbmenu = menuService.getOne(menu.getId());
-        ShiroUser shiroUser = getUser();
-        menu.setLastUpdateTime(new Date());
-        menu.setLastUpdateUserId(shiroUser.getId());
-        menu.setLastUpdateUserName(shiroUser.getUsername());
+        update(dbmenu);
         menu.setStatus(Status.ENABLE);
         dbmenu.setCode(menu.getCode());
         dbmenu.setName(menu.getName());
@@ -152,6 +146,7 @@ public class MenuController extends BasicController {
      */
     @PostMapping("/delete/{menuId}")
     @ResponseBody
+    @BussinessLog(value = "删除菜单")
     public ResponseData delete(@PathVariable Long menuId) {
         menuService.delete(menuId);
         return SUCCESS_TIP;
@@ -172,6 +167,7 @@ public class MenuController extends BasicController {
      */
     @PostMapping("/freeze/{menuId}")
     @ResponseBody
+    @BussinessLog(value = "禁用菜单")
     public ResponseData freeze(@PathVariable Long menuId) {
         menuService.freeze(menuId);
         return SUCCESS_TIP;
@@ -182,6 +178,7 @@ public class MenuController extends BasicController {
      */
     @PostMapping("/unfreeze/{menuId}")
     @ResponseBody
+    @BussinessLog(value = "启用菜单")
     public ResponseData unfreeze(@PathVariable Long menuId) {
         menuService.unfreeze(menuId);
         return SUCCESS_TIP;

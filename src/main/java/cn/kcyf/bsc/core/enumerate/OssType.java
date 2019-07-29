@@ -1,4 +1,4 @@
-package cn.kcyf.bsc.modular.system.enumerate;
+package cn.kcyf.bsc.core.enumerate;
 
 public enum OssType {
     ALIYUN("阿里云" ), TENCENT("腾讯云" ), QINIU("七牛云" );

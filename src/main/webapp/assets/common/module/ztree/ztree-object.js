@@ -8,7 +8,7 @@ layui.define(['jquery','ax'], function (exports) {
         this.url = url;
         this.onClick = null;
         this.settings = null;
-        this.ondblclick=null;
+        this.ondblclick = null;
     };
 
     $ZTree.prototype = {
@@ -75,6 +75,7 @@ layui.define(['jquery','ax'], function (exports) {
             }, function(data) {
                 Feng.error("加载ztree信息失败!");
             });
+            ajax.type = "get";
             ajax.start();
             return zNodes;
         },

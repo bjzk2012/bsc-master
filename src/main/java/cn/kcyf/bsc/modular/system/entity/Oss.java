@@ -1,6 +1,6 @@
 package cn.kcyf.bsc.modular.system.entity;
 
-import cn.kcyf.bsc.modular.system.enumerate.OssType;
+import cn.kcyf.bsc.core.enumerate.OssType;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 import io.swagger.annotations.ApiModelProperty;
 

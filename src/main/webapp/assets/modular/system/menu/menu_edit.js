@@ -10,6 +10,7 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
 
     //获取菜单信息
     var ajax = new $ax(Feng.ctxPath + "/menu/detail/" + Feng.getUrlParam("menuId"));
+    ajax.type = "get";
     var result = ajax.start();
     form.val('menuForm', result.data);
 

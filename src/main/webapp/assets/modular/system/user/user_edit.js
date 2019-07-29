@@ -12,6 +12,7 @@ layui.use(['form', 'admin', 'laydate', 'ax', 'treeSelect', 'jquery', 'formSelect
 
     // 获取用户信息
     var ajax = new $ax(Feng.ctxPath + "/mgr/detail/" + Feng.getUrlParam("userId"));
+    ajax.type = "get";
     var result = ajax.start();
     form.val('userForm', result);
     if(result.roleId){
@@ -29,7 +30,7 @@ layui.use(['form', 'admin', 'laydate', 'ax', 'treeSelect', 'jquery', 'formSelect
             $("#deptId").val(d.current.id);
         },
         success: function (d) {
-            treeSelect.checkNode('tree', result.deptId);
+            treeSelect.checkNode('tree', result.data.deptId);
         }
     });
 

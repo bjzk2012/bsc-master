@@ -21,6 +21,7 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
 
     //初始化角色的详情数据
     var ajax = new $ax(Feng.ctxPath + "/role/detail/" + Feng.getUrlParam("roleId"));
+    ajax.type = "get";
     var result = ajax.start();
     form.val('roleForm',result.data);
 

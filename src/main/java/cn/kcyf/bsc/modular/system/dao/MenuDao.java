@@ -1,8 +1,7 @@
 package cn.kcyf.bsc.modular.system.dao;
 
 import cn.kcyf.bsc.modular.system.entity.Menu;
-import cn.kcyf.bsc.modular.system.entity.Role;
-import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.orm.jpa.dao.BasicDao;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

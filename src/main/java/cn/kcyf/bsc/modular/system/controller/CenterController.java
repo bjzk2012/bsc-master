@@ -1,6 +1,7 @@
 package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.constant.Constant;
+import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
@@ -22,10 +23,11 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/center")
-public class CenterController extends BasicController{
+public class CenterController extends BasicController {
 
     @Autowired
     private UserService userService;
+
     @PostMapping("/user_info")
     @ResponseBody
     public ResponseData user_info(User user) {
@@ -39,11 +41,13 @@ public class CenterController extends BasicController{
         userService.update(dbuser);
         return SUCCESS_TIP;
     }
+
     /**
      * 修改当前用户的密码
      */
     @PostMapping("/password")
     @ResponseBody
+    @BussinessLog(value = "设置新密码")
     public ResponseData password(
             @NotBlank(message = "旧密码不能为空")
             @Size(min = 6, max = 12, message = "旧密码必须6到12位")
@@ -51,16 +55,16 @@ public class CenterController extends BasicController{
             @NotBlank(message = "新密码不能为空")
             @Size(min = 6, max = 12, message = "新密码必须6到12位")
             @Pattern(regexp = "[\\S]+", message = "新密码不能出现空格")
-            String newPassword,
+                    String newPassword,
             @NotBlank(message = "确认密码不能为空")
             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
             @Pattern(regexp = "[\\S]+", message = "确认密码不能出现空格")
-            String rePassword) {
+                    String rePassword) {
         User dbuser = userService.getOne(getUser().getId());
-        if (!userService.md5(oldPassword, dbuser.getSalt()).equals(dbuser.getPassword())){
+        if (!userService.md5(oldPassword, dbuser.getSalt()).equals(dbuser.getPassword())) {
             return ResponseData.error("旧密码输入错误");
         }
-        if (!newPassword.equals(rePassword)){
+        if (!newPassword.equals(rePassword)) {
             return ResponseData.error("新密码和确认密码不一致");
         }
         dbuser.setPassword(userService.md5(newPassword, dbuser.getSalt()));

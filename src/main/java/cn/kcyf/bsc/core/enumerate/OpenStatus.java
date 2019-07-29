@@ -1,4 +1,4 @@
-package cn.kcyf.bsc.modular.system.enumerate;
+package cn.kcyf.bsc.core.enumerate;
 
 /**
  * 菜单是否打开的状态
@@ -38,7 +38,7 @@ public enum OpenStatus {
         if (status == null) {
             return "";
         } else {
-            for (OpenStatus s : OpenStatus.values()) {
+            for (OpenStatus s : values()) {
                 if (s.getCode() == status) {
                     return s.getMessage();
                 }

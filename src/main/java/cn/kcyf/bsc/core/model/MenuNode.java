@@ -1,7 +1,7 @@
 package cn.kcyf.bsc.core.model;
 
-import cn.kcyf.bsc.modular.system.enumerate.Status;
-import cn.kcyf.bsc.modular.system.enumerate.YesOrNo;
+import cn.kcyf.bsc.core.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.YesOrNo;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import org.springframework.util.StringUtils;

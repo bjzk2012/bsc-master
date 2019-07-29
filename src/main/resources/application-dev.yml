@@ -6,7 +6,8 @@ spring:
       ddl-auto: update
     show-sql: true
   datasource:
-    driverClassName: org.mariadb.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://mysql-server:3306/bsc?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
     username: root
     password: root

@@ -1,15 +1,15 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.Role;
-import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
-import cn.kcyf.security.domain.ShiroUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 /**
  * 角色控制器
@@ -81,16 +80,13 @@ public class RoleController extends BasicController {
      */
     @PostMapping(value = "/add")
     @ResponseBody
+    @BussinessLog(value = "新增角色")
     public ResponseData add(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
-        ShiroUser shiroUser = getUser();
-        role.setId(null);
+        create(role);
         role.setStatus(Status.ENABLE);
-        role.setCreateTime(new Date());
-        role.setCreateUserId(shiroUser.getId());
-        role.setCreateUserName(shiroUser.getUsername());
         role.setMenus(menuService.findByIdIn(ArrayUtils.convertStrArrayToLong(menuId.split(","))));
         roleService.create(role);
         return SUCCESS_TIP;
@@ -101,15 +97,13 @@ public class RoleController extends BasicController {
      */
     @PostMapping(value = "/edit")
     @ResponseBody
+    @BussinessLog(value = "修改角色")
     public ResponseData edit(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Role dbrole = roleService.getOne(role.getId());
-        ShiroUser shiroUser = getUser();
-        dbrole.setLastUpdateTime(new Date());
-        dbrole.setLastUpdateUserId(shiroUser.getId());
-        dbrole.setLastUpdateUserName(shiroUser.getUsername());
+        update(dbrole);
         dbrole.setName(role.getName());
         dbrole.setDescription(role.getDescription());
         dbrole.setSort(role.getSort());
@@ -123,6 +117,7 @@ public class RoleController extends BasicController {
      */
     @PostMapping(value = "/delete/{roleId}")
     @ResponseBody
+    @BussinessLog(value = "删除角色")
     public ResponseData delete(@PathVariable Long roleId) {
         roleService.delete(roleId);
         return SUCCESS_TIP;
@@ -133,6 +128,7 @@ public class RoleController extends BasicController {
      */
     @PostMapping("/freeze/{roleId}")
     @ResponseBody
+    @BussinessLog(value = "禁用角色")
     public ResponseData freeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
         role.setStatus(Status.DISABLE);
@@ -145,6 +141,7 @@ public class RoleController extends BasicController {
      */
     @PostMapping("/unfreeze/{roleId}")
     @ResponseBody
+    @BussinessLog(value = "启用角色")
     public ResponseData unfreeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
         role.setStatus(Status.ENABLE);

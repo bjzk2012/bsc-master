@@ -25,16 +25,16 @@
                     <div class="layui-text" style="padding-top: 30px;">
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-notice"></i>
-                            <p>${entity.email!}</p>
+                            <p>${entity.email!}&nbsp;</p>
                         </div>
 
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-cellphone"></i>
-                            <p>${entity.phone!}</p>
+                            <p>${entity.phone!}&nbsp;</p>
                         </div>
                         <div class="info-list-item">
                             <i class="layui-icon layui-icon-location"></i>
-                            <p id="p_address">${entity.address!}</p>
+                            <p id="p_address">${entity.address!}&nbsp;</p>
                         </div>
                     </div>
                     <div class="dash"></div>
@@ -54,7 +54,7 @@
                     <div class="layui-tab layui-tab-brief" lay-filter="userInfoTab">
                         <ul class="layui-tab-title">
                             <li class="layui-this">基本信息</li>
-                            <li>其他</li>
+<!--                            <li>安全隐私</li>-->
                         </ul>
                         <div class="layui-tab-content">
                             <div class="layui-form layui-tab-item layui-show" lay-filter="userInfoForm">
@@ -113,9 +113,59 @@
                                 </div>
                             </div>
 
-                            <!--另一个标签-->
+                            <!-- 安全隐私 -->
                             <div class="layui-tab-item" style="padding: 6px 25px 30px 25px;">
                                 <div class="bd-list">
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-img">
+                                            <i class="layui-icon layui-icon-cellphone" style="color: #3492ED;font-size: 48px;"></i>
+                                        </div>
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">密保手机</div>
+                                            <div class="bd-list-item-text">当前未绑定密保手机</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">绑定</a>
+                                    </div>
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-img">
+                                            <i class="layui-icon layui-icon-notice" style="color: #3492ED;font-size: 48px;"></i>
+                                        </div>
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">密保邮箱</div>
+                                            <div class="bd-list-item-text">当前未绑定密保邮箱</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">绑定</a>
+                                    </div>
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-img">
+                                            <i class="layui-icon layui-icon-login-qq" style="color: #3492ED;font-size: 48px;"></i>
+                                        </div>
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">绑定QQ</div>
+                                            <div class="bd-list-item-text">当前未绑定QQ账号</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">绑定</a>
+                                    </div>
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-img">
+                                            <i class="layui-icon layui-icon-login-wechat" style="color: #4DAF29;font-size: 48px;"></i>
+                                        </div>
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">绑定微信</div>
+                                            <div class="bd-list-item-text">当前未绑定微信账号</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">绑定</a>
+                                    </div>
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-img">
+                                            <i class="layui-icon layui-icon-login-weibo" style="color: #CF1900;font-size: 48px;"></i>
+                                        </div>
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">绑定微博</div>
+                                            <div class="bd-list-item-text">当前未绑定微博账号</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">绑定</a>
+                                    </div>
                                     <div class="bd-list-item">
                                         <div class="bd-list-item-content">
                                             <div class="bd-list-item-lable">密保手机</div>
@@ -131,26 +181,25 @@
                                         <a class="bd-list-item-oper">修改</a>
                                     </div>
                                     <div class="bd-list-item">
-                                        <div class="bd-list-item-img">
-                                            <i class="layui-icon layui-icon-login-qq"
-                                               style="color: #3492ED;font-size: 48px;"></i>
-                                        </div>
                                         <div class="bd-list-item-content">
                                             <div class="bd-list-item-lable">绑定QQ</div>
-                                            <div class="bd-list-item-text">当前未绑定QQ账号</div>
+                                            <div class="bd-list-item-text">已绑定QQ：</div>
                                         </div>
-                                        <a class="bd-list-item-oper">绑定</a>
+                                        <a class="bd-list-item-oper">修改</a>
                                     </div>
                                     <div class="bd-list-item">
-                                        <div class="bd-list-item-img">
-                                            <i class="layui-icon layui-icon-login-wechat"
-                                               style="color: #4DAF29;font-size: 48px;"></i>
-                                        </div>
                                         <div class="bd-list-item-content">
                                             <div class="bd-list-item-lable">绑定微信</div>
-                                            <div class="bd-list-item-text">当前未绑定绑定微信账号</div>
+                                            <div class="bd-list-item-text">已绑定微信：</div>
                                         </div>
-                                        <a class="bd-list-item-oper">绑定</a>
+                                        <a class="bd-list-item-oper">修改</a>
+                                    </div>
+                                    <div class="bd-list-item">
+                                        <div class="bd-list-item-content">
+                                            <div class="bd-list-item-lable">绑定微博</div>
+                                            <div class="bd-list-item-text">已绑定微博：</div>
+                                        </div>
+                                        <a class="bd-list-item-oper">修改</a>
                                     </div>
                                 </div>
                             </div>

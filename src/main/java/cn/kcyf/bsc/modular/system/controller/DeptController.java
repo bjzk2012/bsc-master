@@ -1,5 +1,6 @@
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.DeptNode;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.core.model.SuccessResponseData;
@@ -111,15 +112,12 @@ public class DeptController extends BasicController{
      */
     @PostMapping(value = "/add")
     @ResponseBody
+    @BussinessLog(value = "新增部门")
     public ResponseData add(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
-        ShiroUser shiroUser = getUser();
-        dept.setId(null);
-        dept.setCreateTime(new Date());
-        dept.setCreateUserId(shiroUser.getId());
-        dept.setCreateUserName(shiroUser.getUsername());
+        create(dept);
         deptService.create(dept);
         return SUCCESS_TIP;
     }
@@ -129,15 +127,13 @@ public class DeptController extends BasicController{
      */
     @PostMapping(value = "/edit")
     @ResponseBody
+    @BussinessLog(value = "修改部门")
     public ResponseData edit(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Dept dbdept = deptService.getOne(dept.getId());
-        ShiroUser shiroUser = getUser();
-        dbdept.setLastUpdateTime(new Date());
-        dbdept.setLastUpdateUserId(shiroUser.getId());
-        dbdept.setLastUpdateUserName(shiroUser.getUsername());
+        update(dbdept);
         dbdept.setFullName(dept.getFullName());
         dbdept.setSimpleName(dept.getSimpleName());
         dbdept.setDescription(dept.getDescription());
@@ -152,6 +148,7 @@ public class DeptController extends BasicController{
      */
     @PostMapping(value = "/delete/{deptId}")
     @ResponseBody
+    @BussinessLog(value = "删除部门")
     public ResponseData delete(@PathVariable("deptId") Long deptId) {
         deptService.delete(deptId);
         return SUCCESS_TIP;

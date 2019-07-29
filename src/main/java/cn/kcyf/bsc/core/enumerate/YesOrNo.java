@@ -1,4 +1,4 @@
-package cn.kcyf.bsc.modular.system.enumerate;
+package cn.kcyf.bsc.core.enumerate;
 
 public enum YesOrNo {
     YES(true, "是", 1),

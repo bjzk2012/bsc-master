@@ -14,6 +14,7 @@ layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax'], function () 
 
     //获取部门信息
     var ajax = new $ax(Feng.ctxPath + "/dept/detail/" + Feng.getUrlParam("deptId"));
+    ajax.type = "get";
     var result = ajax.start();
     form.val('deptForm', result);
 

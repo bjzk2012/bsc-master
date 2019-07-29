@@ -2,16 +2,17 @@
 package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.constant.Constant;
+import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
-import cn.kcyf.bsc.modular.system.enumerate.Status;
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.DeptService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.commons.utils.ArrayUtils;
+import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
-import cn.kcyf.security.domain.ShiroUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,7 +27,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 /**
  * 系统管理员控制器
@@ -74,15 +74,6 @@ public class UserMgrController extends BasicController {
     }
 
     /**
-     * 跳转到角色分配页面
-     */
-    @GetMapping("/role")
-    public String role(Long userId, Model model) {
-        model.addAttribute("userId", userId);
-        return PREFIX + "user_roleassign.html";
-    }
-
-    /**
      * 查询管理员列表
      */
     @GetMapping("/list")
@@ -91,8 +82,8 @@ public class UserMgrController extends BasicController {
         Criteria<User> criteria = new Criteria<User>();
         if (!StringUtils.isEmpty(timeLimit)) {
             String[] split = timeLimit.split(" - ");
-            criteria.add(Restrictions.gte("createTime", split[0] + " 00:00:00"));
-            criteria.add(Restrictions.lte("createTime", split[0] + " 23:59:59"));
+            criteria.add(Restrictions.gte("createTime", DateUtils.parse(split[0] + " 00:00:00", "yyyy-MM-dd HH:mm:ss")));
+            criteria.add(Restrictions.lte("createTime", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
         }
         if (!StringUtils.isEmpty(name)) {
             criteria.add(Restrictions.or(Restrictions.like("name", name), Restrictions.like("email", name), Restrictions.like("phone", name)));
@@ -106,6 +97,7 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/add")
     @ResponseBody
+    @BussinessLog(value = "新增用户")
     public ResponseData add(@Valid User user,
                             @NotBlank(message = "确认密码不能为空")
                             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
@@ -114,23 +106,19 @@ public class UserMgrController extends BasicController {
                             @NotBlank(message = "部门未选择") Long deptId,
                             @NotBlank(message = "角色未选择") String roleId,
                             BindingResult bindingResult) {
-        if (!password.equals(rePassword)){
+        if (!password.equals(rePassword)) {
             return ResponseData.error("两次密码输入不一致");
         }
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
-        ShiroUser shiroUser = getUser();
-        user.setId(null);
-        user.setCreateTime(new Date());
-        user.setCreateUserId(shiroUser.getId());
-        user.setCreateUserName(shiroUser.getUsername());
+        create(user);
         user.setStatus(Status.ENABLE);
         user.setAvatar(Constant.DEFAULT_HEAD);
         user.setSalt(RandomStringUtils.randomAlphabetic(5));
         user.setPassword(userService.md5(password, user.getSalt()));
         user.setDept(deptService.getOne(deptId));
-        if (!StringUtils.isEmpty(roleId)){
+        if (!StringUtils.isEmpty(roleId)) {
             user.setRoles(roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleId.split(","))));
         }
         try {
@@ -146,23 +134,21 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/edit")
     @ResponseBody
+    @BussinessLog(value = "修改用户")
     public ResponseData edit(@Valid User user, @NotBlank(message = "部门未选择") Long deptId, @NotBlank(message = "角色未选择") String roleId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         User dbuser = userService.getOne(user.getId());
-        ShiroUser shiroUser = getUser();
-        dbuser.setLastUpdateTime(new Date());
-        dbuser.setLastUpdateUserId(shiroUser.getId());
-        dbuser.setLastUpdateUserName(shiroUser.getUsername());
-        if (!StringUtils.isEmpty(user.getPassword())){
+        update(dbuser);
+        if (!StringUtils.isEmpty(user.getPassword())) {
             dbuser.setPassword(userService.md5(user.getPassword(), dbuser.getSalt()));
         }
         dbuser.setBirthday(user.getBirthday());
         dbuser.setEmail(user.getEmail());
         dbuser.setSex(user.getSex());
         dbuser.setDept(deptService.getOne(deptId));
-        if (!StringUtils.isEmpty(roleId)){
+        if (!StringUtils.isEmpty(roleId)) {
             dbuser.setRoles(roleService.findByIdIn(ArrayUtils.convertStrArrayToLong(roleId.split(","))));
         } else {
             dbuser.setRoles(null);
@@ -179,6 +165,7 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/delete/{userId}")
     @ResponseBody
+    @BussinessLog(value = "删除用户")
     public ResponseData delete(@PathVariable Long userId) {
         userService.delete(userId);
         return SUCCESS_TIP;
@@ -198,6 +185,7 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/reset/{userId}")
     @ResponseBody
+    @BussinessLog(value = "重置密码")
     public ResponseData reset(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setPassword(userService.md5(Constant.DEFAULT_PWD, user.getSalt()));
@@ -210,6 +198,7 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/freeze/{userId}")
     @ResponseBody
+    @BussinessLog(value = "冻结用户")
     public ResponseData freeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(Status.DISABLE);
@@ -222,6 +211,7 @@ public class UserMgrController extends BasicController {
      */
     @PostMapping("/unfreeze/{userId}")
     @ResponseBody
+    @BussinessLog(value = "解冻用户")
     public ResponseData unfreeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(Status.ENABLE);
