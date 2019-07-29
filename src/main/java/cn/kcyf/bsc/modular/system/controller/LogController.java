@@ -35,9 +35,6 @@ public class LogController extends BasicController {
     @Autowired
     private OperationLogService operationLogService;
 
-    /**
-     * 跳转到日志管理的首页
-     */
     @GetMapping("")
     public String index(Model model) {
         Map<String, String> types = new HashMap<String, String>();
@@ -48,9 +45,6 @@ public class LogController extends BasicController {
         return PREFIX + "log.html";
     }
 
-    /**
-     * 查询操作日志列表
-     */
     @GetMapping("/list")
     @ResponseBody
     public ResponseData list(String timeLimit, String logName, LogType logType, int page, int limit) {
@@ -69,18 +63,12 @@ public class LogController extends BasicController {
         return ResponseData.list(operationLogService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
-    /**
-     * 查询操作日志详情
-     */
     @GetMapping("/detail/{id}")
     @ResponseBody
     public ResponseData detail(@PathVariable Long id) {
         return ResponseData.success(operationLogService.getOne(id));
     }
 
-    /**
-     * 清空日志
-     */
     @PostMapping("/delete")
     @ResponseBody
     @BussinessLog(value = "清空业务日志")

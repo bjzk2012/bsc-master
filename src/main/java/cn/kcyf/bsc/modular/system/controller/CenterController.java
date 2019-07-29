@@ -30,6 +30,7 @@ public class CenterController extends BasicController {
 
     @PostMapping("/user_info")
     @ResponseBody
+    @BussinessLog(value = "修改当前用户信息")
     public ResponseData user_info(User user) {
         User dbuser = userService.getOne(getUser().getId());
         dbuser.setName(user.getName());
@@ -42,12 +43,9 @@ public class CenterController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 修改当前用户的密码
-     */
     @PostMapping("/password")
     @ResponseBody
-    @BussinessLog(value = "设置新密码")
+    @BussinessLog(value = "设置当前用户新密码")
     public ResponseData password(
             @NotBlank(message = "旧密码不能为空")
             @Size(min = 6, max = 12, message = "旧密码必须6到12位")
@@ -72,9 +70,6 @@ public class CenterController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 上传图片
-     */
     @PostMapping("/upload")
     @ResponseBody
     public ResponseData upload(@RequestPart("file") MultipartFile picture) {

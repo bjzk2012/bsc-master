@@ -37,34 +37,22 @@ public class RoleController extends BasicController {
     @Autowired
     private MenuService menuService;
 
-    /**
-     * 跳转到角色列表页面
-     */
     @GetMapping("")
     public String index() {
         return PREFIX + "/role.html";
     }
 
-    /**
-     * 跳转到添加角色
-     */
     @GetMapping(value = "/role_add")
     public String roleAdd() {
         return PREFIX + "/role_add.html";
     }
 
-    /**
-     * 跳转到修改角色
-     */
     @GetMapping(value = "/role_edit")
     public String roleEdit(Long roleId, Model model) {
         model.addAttribute("roleId", roleId);
         return PREFIX + "/role_edit.html";
     }
 
-    /**
-     * 获取角色列表
-     */
     @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String roleName, int page, int limit) {
@@ -75,9 +63,6 @@ public class RoleController extends BasicController {
         return ResponseData.list(roleService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
-    /**
-     * 角色新增
-     */
     @PostMapping(value = "/add")
     @ResponseBody
     @BussinessLog(value = "新增角色")
@@ -92,9 +77,6 @@ public class RoleController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 角色修改
-     */
     @PostMapping(value = "/edit")
     @ResponseBody
     @BussinessLog(value = "修改角色")
@@ -112,9 +94,6 @@ public class RoleController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 删除角色
-     */
     @PostMapping(value = "/delete/{roleId}")
     @ResponseBody
     @BussinessLog(value = "删除角色")
@@ -123,9 +102,6 @@ public class RoleController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 禁用角色
-     */
     @PostMapping("/freeze/{roleId}")
     @ResponseBody
     @BussinessLog(value = "禁用角色")
@@ -136,9 +112,6 @@ public class RoleController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 启用角色
-     */
     @PostMapping("/unfreeze/{roleId}")
     @ResponseBody
     @BussinessLog(value = "启用角色")
@@ -149,9 +122,6 @@ public class RoleController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 查看角色
-     */
     @GetMapping(value = "/detail/{roleId}")
     @ResponseBody
     public ResponseData detail(@PathVariable Long roleId) {

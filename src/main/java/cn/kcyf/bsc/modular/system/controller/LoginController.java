@@ -34,11 +34,6 @@ public class LoginController extends BasicController{
     @Autowired
     private UserService userService;
 
-    /**
-     * 跳转到主页
-     *
-     * @author Tom
-     */
     @GetMapping("/")
     @ApiOperation("跳转到主页")
     public String index(Model model) {
@@ -48,11 +43,6 @@ public class LoginController extends BasicController{
         return "/index.html";
     }
 
-    /**
-     * 跳转到登录页面
-     *
-     * @author Tom
-     */
     @ApiOperation("跳转到登录页面")
     @GetMapping("/login")
     public String login() {

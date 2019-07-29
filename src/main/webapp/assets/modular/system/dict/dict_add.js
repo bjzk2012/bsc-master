@@ -1,15 +1,33 @@
-layui.use(['layer', 'form', 'admin', 'ax'], function () {
+layui.use(['form', 'admin', 'ax', 'treeSelect'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
-    var layer = layui.layer;
+    var treeSelect = layui.treeSelect;
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
+    // 渲染父级字典
+    treeSelect.render({
+        elem: '#parentName',
+        data: Feng.ctxPath + "/dict/treeSelect",
+        type: 'get',
+        placeholder: '请选择父级字典',
+        search: true,
+        click: function(d,a,b){
+            $("#parentId").val(d.current.id);
+        },
+        success: function (d) {
+        }
+    });
+
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
+        if (!data.field.parentId) {
+            layer.msg("父级字典未选择", {icon: 5, anim: 6});
+            return false;
+        }
         var ajax = new $ax(Feng.ctxPath + "/dict/add", function (data) {
             Feng.success("添加成功！");
 
@@ -23,5 +41,6 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });

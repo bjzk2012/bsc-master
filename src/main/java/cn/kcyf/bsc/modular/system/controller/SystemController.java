@@ -25,51 +25,26 @@ public class SystemController extends BasicController {
     @Autowired
     private UserService userService;
 
-    /**
-     * 主页面
-     *
-     * @author Tom
-     */
     @GetMapping("/welcome")
     public String console() {
         return "/modular/frame/welcome.html";
     }
 
-    /**
-     * 主题页面
-     *
-     * @author Tom
-     */
     @GetMapping("/theme")
     public String theme() {
         return "/modular/frame/theme.html";
     }
 
-    /**
-     * 跳转到修改密码界面
-     *
-     * @author Tom
-     */
     @GetMapping("/password")
     public String password() {
         return "/modular/frame/password.html";
     }
 
-    /**
-     * 个人消息列表
-     *
-     * @author Tom
-     */
     @GetMapping("/message")
     public String message() {
         return "/modular/frame/message.html";
     }
 
-    /**
-     * 跳转到查看用户详情页面
-     *
-     * @author Tom
-     */
     @GetMapping("/user_info")
     public String userInfo(Model model) {
         User user = this.userService.getOne(getUser().getId());

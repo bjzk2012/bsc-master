@@ -13,17 +13,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
  * 文件信息表
-
- * </p>
  *
  * @author Tom
  * @since 2019-06-27
  */
 //@Data
 //@ToString
-//@EqualsAndHashCode(of = "id")
 //@NoArgsConstructor
 //@Entity
 //@Table(name = "sys_file_info")

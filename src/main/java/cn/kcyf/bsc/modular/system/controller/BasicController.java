@@ -8,12 +8,14 @@ import org.apache.shiro.SecurityUtils;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/8/5 0005.
+ * 所有Controller的父类
+ *
+ * @author Tom
  */
 public abstract class BasicController {
     protected final String REDIRECT = "redirect:";
     protected final String FORWARD = "forward:";
-    protected static SuccessResponseData SUCCESS_TIP = new SuccessResponseData();
+    protected final static SuccessResponseData SUCCESS_TIP = new SuccessResponseData();
 
     protected ShiroUser getUser() {
         return (ShiroUser) SecurityUtils.getSubject().getPrincipal();

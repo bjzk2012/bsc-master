@@ -1,4 +1,4 @@
-@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/menu/menu_add.js"], plugins:["ztree"]}){
+@layout("/common/_container.html",{bg:"bg-white", plugins:["ztree"], js:["/assets/modular/system/menu/menu_add.js"]}){
 <form id="menuForm" lay-filter="menuForm" class="layui-form model-form">
 	<div class="layui-form-item">
 		<label class="layui-form-label">名称<span style="color: red;">*</span></label>
@@ -35,7 +35,7 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">排序</label>
 		<div class="layui-input-block">
-			<input name="sort" placeholder="请输入排序" type="text" class="layui-input" lay-verify="number" value="1"/>
+			<input id="sort" name="sort" placeholder="请输入排序" type="text" lay-verify="required|number" class="layui-input" required value="1"/>
 		</div>
 	</div>
 	<div class="layui-form-item">

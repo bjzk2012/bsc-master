@@ -21,12 +21,9 @@ import java.util.Set;
 
 
 /**
- * <p>
  * 管理员表
- * </p>
  *
  * @author Tom
- * @since 2018-12-07
  */
 @Data
 @ToString

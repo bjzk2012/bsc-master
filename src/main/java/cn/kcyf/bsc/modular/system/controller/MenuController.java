@@ -34,34 +34,22 @@ public class MenuController extends BasicController {
     @Autowired
     private MenuService menuService;
 
-    /**
-     * 跳转到菜单列表列表页面
-     */
     @GetMapping("")
     public String index() {
         return PREFIX + "menu.html";
     }
 
-    /**
-     * 跳转到菜单列表列表页面
-     */
     @GetMapping(value = "/menu_add")
     public String menuAdd() {
         return PREFIX + "menu_add.html";
     }
 
-    /**
-     * 跳转到菜单详情列表页面
-     */
     @GetMapping(value = "/menu_edit")
     public String menuEdit(Long menuId, Model model) {
         model.addAttribute("menuId", menuId);
         return PREFIX + "menu_edit.html";
     }
 
-    /**
-     * 获取菜单列表（树形）
-     */
     @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String menuName, String level) {
@@ -88,9 +76,6 @@ public class MenuController extends BasicController {
         return result;
     }
 
-    /**
-     * 新增菜单
-     */
     @PostMapping("/add")
     @ResponseBody
     @BussinessLog(value = "新增菜单")
@@ -110,9 +95,6 @@ public class MenuController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 修该菜单
-     */
     @PostMapping("/edit")
     @ResponseBody
     @BussinessLog(value = "修改菜单")
@@ -141,9 +123,6 @@ public class MenuController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 删除菜单
-     */
     @PostMapping("/delete/{menuId}")
     @ResponseBody
     @BussinessLog(value = "删除菜单")
@@ -152,9 +131,6 @@ public class MenuController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 查看菜单
-     */
     @GetMapping("/detail/{menuId}")
     @ResponseBody
     public ResponseData detail(@PathVariable Long menuId) {
@@ -162,9 +138,6 @@ public class MenuController extends BasicController {
         return ResponseData.success(menu);
     }
 
-    /**
-     * 禁用菜单
-     */
     @PostMapping("/freeze/{menuId}")
     @ResponseBody
     @BussinessLog(value = "禁用菜单")
@@ -173,9 +146,6 @@ public class MenuController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 启用菜单
-     */
     @PostMapping("/unfreeze/{menuId}")
     @ResponseBody
     @BussinessLog(value = "启用菜单")

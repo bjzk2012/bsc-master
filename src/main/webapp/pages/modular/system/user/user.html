@@ -1,4 +1,4 @@
-@layout("/common/_container.html",{plugins:["ztree"],js:["/assets/modular/system/user/user.js"]}){
+@layout("/common/_container.html",{bg:"bg-white", plugins:["ztree"],js:["/assets/modular/system/user/user.js"]}){
 
 <div class="layui-body-header">
     <span class="layui-body-header-title">用户管理</span>
@@ -19,7 +19,7 @@
                             </div>
                             <div class="layui-inline">
                                 <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
-                                @if(shiro.hasPermission("/mgr/add")){
+                                @if(shiro.hasPermission("mgr_add")){
                                 <button id="btnAdd" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
                                 @}
                                 <button id="btnExp" class="layui-btn icon-btn"><i class="layui-icon">&#xe67d;</i>导出</button>

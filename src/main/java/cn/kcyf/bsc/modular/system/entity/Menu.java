@@ -15,9 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 /**
- * <p>
  * 菜单表
- * </p>
  *
  * @author Tom
  */

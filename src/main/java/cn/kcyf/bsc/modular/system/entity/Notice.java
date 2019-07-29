@@ -12,9 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
  * 通知表
- * </p>
  *
  * @author Tom
  * @since 2018-12-07

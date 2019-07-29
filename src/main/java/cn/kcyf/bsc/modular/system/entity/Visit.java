@@ -14,16 +14,12 @@ import java.util.Date;
 
 
 /**
- * <p>
  * 访问记录表
- * </p>
  *
  * @author Tom
- * @since 2018-12-07
  */
 //@Data
 //@ToString
-//@EqualsAndHashCode(of = "id")
 //@NoArgsConstructor
 //@Entity
 //@Table(name = "sys_visit")

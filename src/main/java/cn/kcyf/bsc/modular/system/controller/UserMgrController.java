@@ -46,26 +46,17 @@ public class UserMgrController extends BasicController {
     @Autowired
     private DeptService deptService;
 
-    /**
-     * 跳转到查看管理员列表的页面
-     */
     @GetMapping("")
     public String index() {
         return PREFIX + "user.html";
     }
 
-    /**
-     * 跳转到查看管理员列表的页面
-     */
     @GetMapping("/user_add")
     public String add(Model model) {
         model.addAttribute("roles", roleService.findAll());
         return PREFIX + "user_add.html";
     }
 
-    /**
-     * 跳转到编辑管理员页面
-     */
     @GetMapping("/user_edit")
     public String edit(Long userId, Model model) {
         model.addAttribute("userId", userId);
@@ -73,9 +64,6 @@ public class UserMgrController extends BasicController {
         return PREFIX + "user_edit.html";
     }
 
-    /**
-     * 查询管理员列表
-     */
     @GetMapping("/list")
     @ResponseBody
     public ResponseData list(String name, String timeLimit, int page, int limit) {
@@ -92,9 +80,6 @@ public class UserMgrController extends BasicController {
         return ResponseData.list(userService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
-    /**
-     * 添加管理员
-     */
     @PostMapping("/add")
     @ResponseBody
     @BussinessLog(value = "新增用户")
@@ -129,9 +114,6 @@ public class UserMgrController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 修改管理员
-     */
     @PostMapping("/edit")
     @ResponseBody
     @BussinessLog(value = "修改用户")
@@ -160,9 +142,6 @@ public class UserMgrController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 删除管理员（逻辑删除）
-     */
     @PostMapping("/delete/{userId}")
     @ResponseBody
     @BussinessLog(value = "删除用户")
@@ -171,18 +150,12 @@ public class UserMgrController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 查看管理员详情
-     */
     @GetMapping("/detail/{userId}")
     @ResponseBody
     public User detail(@PathVariable Long userId) {
         return userService.getOne(userId);
     }
 
-    /**
-     * 重置管理员的密码
-     */
     @PostMapping("/reset/{userId}")
     @ResponseBody
     @BussinessLog(value = "重置密码")
@@ -193,9 +166,6 @@ public class UserMgrController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 冻结用户
-     */
     @PostMapping("/freeze/{userId}")
     @ResponseBody
     @BussinessLog(value = "冻结用户")
@@ -206,9 +176,6 @@ public class UserMgrController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 解除冻结用户
-     */
     @PostMapping("/unfreeze/{userId}")
     @ResponseBody
     @BussinessLog(value = "解冻用户")

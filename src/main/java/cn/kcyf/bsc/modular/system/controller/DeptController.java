@@ -32,17 +32,11 @@ public class DeptController extends BasicController{
     private String PREFIX = "/modular/system/dept/";
 
 
-    /**
-     * 跳转到部门管理首页
-     */
     @GetMapping("")
     public String index() {
         return PREFIX + "dept.html";
     }
 
-    /**
-     * 跳转到添加部门
-     */
     @GetMapping("/dept_add")
     public String deptAdd(Long parentId, Model model) {
         if (parentId != null && parentId.equals(0L)){
@@ -52,9 +46,6 @@ public class DeptController extends BasicController{
         return PREFIX + "dept_add.html";
     }
 
-    /**
-     * 跳转到修改部门
-     */
     @GetMapping("/dept_edit")
     public String deptUpdate(Long deptId, Model model) {
         model.addAttribute("deptId", deptId);
@@ -63,9 +54,6 @@ public class DeptController extends BasicController{
         return PREFIX + "dept_edit.html";
     }
 
-    /**
-     * 获取部门的tree列表
-     */
     @GetMapping(value = "/tree")
     @ResponseBody
     public ResponseData tree() {
@@ -80,18 +68,12 @@ public class DeptController extends BasicController{
         return ResponseData.success(list);
     }
 
-    /**
-     * 获取部门的tree列表
-     */
     @GetMapping(value = "/treeSelect")
     @ResponseBody
     public List<DeptNode> treeSelect() {
         return deptService.tree();
     }
 
-    /**
-     * 获取所有部门列表
-     */
     @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String condition, Long deptId, int page, int limit) {
@@ -107,9 +89,6 @@ public class DeptController extends BasicController{
         return ResponseData.list(deptService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
-    /**
-     * 新增部门
-     */
     @PostMapping(value = "/add")
     @ResponseBody
     @BussinessLog(value = "新增部门")
@@ -122,9 +101,6 @@ public class DeptController extends BasicController{
         return SUCCESS_TIP;
     }
 
-    /**
-     * 修改部门
-     */
     @PostMapping(value = "/edit")
     @ResponseBody
     @BussinessLog(value = "修改部门")
@@ -143,9 +119,6 @@ public class DeptController extends BasicController{
         return SUCCESS_TIP;
     }
 
-    /**
-     * 删除部门
-     */
     @PostMapping(value = "/delete/{deptId}")
     @ResponseBody
     @BussinessLog(value = "删除部门")
@@ -154,9 +127,6 @@ public class DeptController extends BasicController{
         return SUCCESS_TIP;
     }
 
-    /**
-     * 部门详情
-     */
     @GetMapping(value = "/detail/{deptId}")
     @ResponseBody
     public Dept detail(@PathVariable("deptId") Long deptId) {

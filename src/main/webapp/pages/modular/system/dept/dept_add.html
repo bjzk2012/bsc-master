@@ -1,4 +1,4 @@
-@layout("/common/_container.html",{bg:"bg-white",js:["/assets/modular/system/dept/dept_add.js"]}){
+@layout("/common/_container.html",{bg:"bg-white", js:["/assets/modular/system/dept/dept_add.js"]}){
 <form id="deptForm" lay-filter="deptForm" class="layui-form model-form">
     <input name="deptId" type="hidden"/>
     <div class="layui-form-item">
@@ -17,13 +17,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
-            <input name="description" placeholder="请输入备注" type="text" class="layui-input"/>
+            <textarea id="description" name="description" placeholder="请输入描述" type="text/plain" class="layui-textarea"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-block">
-            <input id="sort" name="sort" placeholder="请输入排序" type="text" lay-verify="number" class="layui-input" required value="1"/>
+            <input id="sort" name="sort" placeholder="请输入排序" type="text" lay-verify="required|number" class="layui-input" required value="1"/>
         </div>
     </div>
     <div class="layui-form-item text-right">

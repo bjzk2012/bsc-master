@@ -48,18 +48,6 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
     };
 
     /**
-     * 导出excel按钮
-     */
-    Menu.exportExcel = function () {
-        var checkRows = table.checkStatus(Menu.tableId);
-        if (checkRows.data.length === 0) {
-            Feng.error("请选择要导出的数据");
-        } else {
-            table.exportFile(tableResult.config.id, checkRows.data, 'xls');
-        }
-    };
-
-    /**
      * 弹出添加菜单对话框
      */
     Menu.openAddMenu = function () {
@@ -122,9 +110,9 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
     /**
      * 初始化表格
      */
-    Menu.initTable = function (menuId, data) {
+    Menu.initTable = function (tableId, data) {
         return treetable.render({
-            elem: '#' + menuId,
+            elem: '#' + tableId,
             url: Feng.ctxPath + '/menu/list',
             where: data,
             page: false,

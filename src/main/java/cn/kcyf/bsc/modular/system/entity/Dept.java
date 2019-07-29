@@ -14,9 +14,7 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 /**
- * <p>
  * 部门表
- * </p>
  *
  * @author Tom
  */

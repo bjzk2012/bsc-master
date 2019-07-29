@@ -13,9 +13,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * <p>
  * 操作日志
- * </p>
  *
  * @author Tom
  */

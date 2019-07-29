@@ -17,9 +17,7 @@ import java.util.Set;
 
 
 /**
- * <p>
  * 角色表
- * </p>
  *
  * @author Tom
  */

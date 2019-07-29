@@ -7,16 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Column;
 
 /**
- * <p>
  * oss云存储配置
- * </p>
  *
  * @author Tom
- * @since 2019-06-26
  */
 //@Data
 //@ToString
-//@EqualsAndHashCode(of = "id")
 //@NoArgsConstructor
 //@Entity
 //@Table(name = "sys_oss")
