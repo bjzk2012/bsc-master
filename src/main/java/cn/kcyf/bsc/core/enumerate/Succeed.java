@@ -10,7 +10,7 @@ public enum Succeed {
     SUCCESS("成功"),
     FAIL("失败");
 
-    String message;
+    private String message;
 
     Succeed(String message) {
         this.message = message;

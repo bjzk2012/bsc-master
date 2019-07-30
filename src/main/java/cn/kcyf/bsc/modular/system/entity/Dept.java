@@ -3,6 +3,7 @@ package cn.kcyf.bsc.modular.system.entity;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_dept")
+@ApiModel("部门")
 public class Dept extends TableDomain {
     /**
      * 父部门

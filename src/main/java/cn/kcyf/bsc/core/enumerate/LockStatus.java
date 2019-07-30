@@ -1,21 +1,14 @@
 package cn.kcyf.bsc.core.enumerate;
 
-/**
- * 菜单是否打开的状态
- *
- * @author Tom
- */
-public enum OpenStatus {
-
-    OPEN("打开"),
-    CLOSE("关闭");
+public enum LockStatus {
+    UNLOCK("解锁"),
+    LOCK("冻结");
 
     private String message;
 
-    OpenStatus(String message) {
+    LockStatus(String message) {
         this.message = message;
     }
-
 
     public String getMessage() {
         return message;

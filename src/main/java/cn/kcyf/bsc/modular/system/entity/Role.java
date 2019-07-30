@@ -4,6 +4,7 @@ import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -26,6 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_role")
+@ApiModel("角色")
 public class Role extends TableDomain {
     /**
      * 角色名称

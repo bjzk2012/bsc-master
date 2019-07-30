@@ -45,9 +45,9 @@
 
 <script type="text/html" id="statusTpl">
     @if(shiro.hasPermission("menu_freeze")){
-    <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" {{d.status=='ENABLE'?'checked':''}} />
+    <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" {{d.statusMessage}} />
     @} else {
-    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.status=='ENABLE'?'启用':'禁用'}}</button>
+    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.statusMessage}}</button>
     @}
 </script>
 

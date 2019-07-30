@@ -1,8 +1,7 @@
-layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'jquery'], function () {
+layui.use(['layer', 'form', 'table', 'laydate', 'admin', 'ax', 'jquery'], function () {
     var layer = layui.layer;
     var form = layui.form;
     var table = layui.table;
-    // var $ZTree = layui.ztree;
     var $ax = layui.ax;
     var $ = layui.jquery;
     var laydate = layui.laydate;
@@ -29,7 +28,7 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'j
             {field: 'id', hide: true, title: '用户id'},
             {field: 'account', sort: true, title: '账号'},
             {field: 'name', sort: true, title: '姓名'},
-            {field: 'sexName', title: '性别'},
+            {field: 'sexMessage', title: '性别'},
             {field: 'roleName', title: '角色'},
             {field: 'deptName', title: '部门'},
             {field: 'email', title: '邮箱'},
@@ -39,14 +38,6 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'j
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 280}
         ]];
     };
-
-    /**
-     * 选择部门时
-     */
-    // MgrUser.onClickDept = function (e, treeId, treeNode) {
-    //     MgrUser.condition.deptId = treeNode.id;
-    //     MgrUser.search();
-    // };
 
     /**
      * 点击查询按钮
@@ -105,23 +96,6 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'j
         });
     };
 
-    /**
-     * 分配角色
-     *
-     * @param data 点击按钮时候的行数据
-     */
-    MgrUser.roleAssign = function (data) {
-        layer.open({
-            type: 2,
-            title: '角色分配',
-            area: ['300px', '400px'],
-            content: Feng.ctxPath + '/mgr/role_assign?userId=' + data.id,
-            end: function () {
-                table.reload(MgrUser.tableId);
-            }
-        });
-    };
-
     // 冻结，解锁，删除等的动作执行
     MgrUser.doAction = function (userId, action, title, confirm) {
         var func = function (userId, action, title) {
@@ -152,17 +126,12 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'j
         cols: MgrUser.initColumn()
     });
 
-    //渲染时间选择框
+    // 渲染时间选择框
     laydate.render({
         elem: '#timeLimit',
         range: true,
         max: Feng.currentDate()
     });
-
-    //初始化左侧部门树
-    // var ztree = new $ZTree("deptTree", "/dept/tree");
-    // ztree.bindOnClick(MgrUser.onClickDept);
-    // ztree.init();
 
     // 搜索按钮点击事件
     $('#btnSearch').click(function () {
@@ -188,14 +157,12 @@ layui.use(['layer', 'form', 'table', /**'ztree',**/ 'laydate', 'admin', 'ax', 'j
             MgrUser.onEditUser(data);
         } else if (layEvent === 'delete') {
             MgrUser.doAction(data.id, "delete", "删除用户", true);
-        } else if (layEvent === 'roleAssign') {
-            MgrUser.roleAssign(data);
         } else if (layEvent === 'reset') {
             MgrUser.doAction(data.id, "reset", "重置用户密码", true);
         }
     });
 
-    // 修改user状态
+    // 修改状态
     form.on('switch(status)', function (obj) {
         MgrUser.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "解除冻结" : "冻结", false);
     });

@@ -1,6 +1,7 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/global")
+@Api(hidden = true)
 public class GlobalController extends BasicController{
 
     @RequestMapping(path = "/error")

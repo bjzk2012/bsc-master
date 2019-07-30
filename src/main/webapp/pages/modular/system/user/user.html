@@ -49,7 +49,7 @@
     @if(shiro.hasPermission("mgr_freeze")){
     <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|冻结" {{d.status=='ENABLE'?'checked':''}} />
     @} else {
-    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.status=='ENABLE'?'正常':'冻结'}}</button>
+    <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.statusMessage}}</button>
     @}
 </script>
 @}

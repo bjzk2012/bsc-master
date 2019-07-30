@@ -1,10 +1,9 @@
-layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
+layui.use(['admin', 'ax', 'table', 'treetable', 'jquery'], function () {
     var $ax = layui.ax;
     var $ = layui.jquery;
     var admin = layui.admin;
     var table = layui.table;
     var treetable = layui.treetable;
-    var form = layui.form;
 
     /**
      * 系统管理--菜单管理
@@ -12,9 +11,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
     var Dict = {
         tableId: "dictTable",    //表格id
         condition: {
-            dictId: "",
-            DictName: "",
-            level: ""
+            condition: ""
         }
     };
 
@@ -50,7 +47,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
-            title: '添加菜单',
+            title: '添加字典',
             content: Feng.ctxPath + '/dict/dict_add',
             end: function () {
                 admin.getTempData('formOk') && Dict.initTable(Dict.tableId);
@@ -68,7 +65,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
-            title: '编辑菜单',
+            title: '编辑字典',
             content: Feng.ctxPath + '/dict/dict_edit?dictId=' + data.id,
             end: function () {
                 admin.getTempData('formOk') && Dict.search();
@@ -152,10 +149,5 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
         } else if (layEvent === 'delete') {
             Dict.doAction(data.id, "delete", "删除", true);
         }
-    });
-
-    // 修改状态
-    form.on('switch(status)', function (obj) {
-        Dict.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
     });
 });

@@ -1,9 +1,11 @@
 package cn.kcyf.bsc.modular.system.entity;
 
+import cn.kcyf.bsc.core.enumerate.LockStatus;
 import cn.kcyf.bsc.core.enumerate.Sex;
-import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -30,11 +32,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_user")
+@ApiModel("管理员")
 public class User extends TableDomain {
     /**
      * 头像
      */
     @Column(name = "avatar")
+    @ApiModelProperty(name = "avatar", value = "头像")
     private String avatar;
     /**
      * 账号
@@ -149,8 +153,8 @@ public class User extends TableDomain {
      * 状态
      */
     @Column(name = "status")
-    private Status status;
-    public String getStatusName(){
+    private LockStatus status;
+    public String getStatusMessage(){
         if (this.status != null){
             return this.status.getMessage();
         }

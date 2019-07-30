@@ -2,10 +2,10 @@
 package cn.kcyf.bsc.modular.system.controller;
 
 import cn.kcyf.bsc.core.constant.Constant;
+import cn.kcyf.bsc.core.enumerate.LockStatus;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
-import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.DeptService;
 import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.bsc.modular.system.service.UserService;
@@ -13,6 +13,7 @@ import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,6 +36,7 @@ import javax.validation.constraints.Size;
  */
 @Controller
 @RequestMapping("/mgr")
+@Api(tags = "管理员管理", description = "管理员管理")
 public class UserMgrController extends BasicController {
 
     private final static String PREFIX = "/modular/system/user/";
@@ -98,7 +100,7 @@ public class UserMgrController extends BasicController {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         create(user);
-        user.setStatus(Status.ENABLE);
+        user.setStatus(LockStatus.UNLOCK);
         user.setAvatar(Constant.DEFAULT_HEAD);
         user.setSalt(RandomStringUtils.randomAlphabetic(5));
         user.setPassword(userService.md5(password, user.getSalt()));
@@ -171,7 +173,7 @@ public class UserMgrController extends BasicController {
     @BussinessLog(value = "冻结用户")
     public ResponseData freeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
-        user.setStatus(Status.DISABLE);
+        user.setStatus(LockStatus.LOCK);
         userService.update(user);
         return SUCCESS_TIP;
     }
@@ -181,7 +183,7 @@ public class UserMgrController extends BasicController {
     @BussinessLog(value = "解冻用户")
     public ResponseData unfreeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
-        user.setStatus(Status.ENABLE);
+        user.setStatus(LockStatus.UNLOCK);
         userService.update(user);
         return SUCCESS_TIP;
     }

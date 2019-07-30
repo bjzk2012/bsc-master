@@ -9,6 +9,7 @@ import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.modular.system.service.MenuService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/menu")
+@Api(tags = "菜单管理", description = "菜单管理")
 public class MenuController extends BasicController {
 
     private static String PREFIX = "/modular/system/menu/";

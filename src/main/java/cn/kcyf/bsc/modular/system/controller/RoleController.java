@@ -10,6 +10,7 @@ import cn.kcyf.bsc.modular.system.service.RoleService;
 import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Controller
 @RequestMapping("/role")
+@Api(tags = "角色管理", description = "角色管理")
 public class RoleController extends BasicController {
 
     private static String PREFIX = "/modular/system/role";

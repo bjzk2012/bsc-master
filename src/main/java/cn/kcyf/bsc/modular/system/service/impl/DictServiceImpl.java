@@ -7,6 +7,11 @@ import cn.kcyf.orm.jpa.dao.BasicDao;
 import cn.kcyf.orm.jpa.service.AbstractBasicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DictServiceImpl extends AbstractBasicService<Dict, Long> implements DictService {
@@ -14,5 +19,23 @@ public class DictServiceImpl extends AbstractBasicService<Dict, Long> implements
     private DictDao dictDao;
     public BasicDao<Dict, Long> getRepository() {
         return dictDao;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        List<Long> childIds = new ArrayList<Long>();
+        getChildId(id, childIds);
+        deletes(childIds);
+    }
+
+    private void getChildId(Long id, List<Long> childIds){
+        childIds.add(id);
+        List<BigInteger> temp = dictDao.getChildIdById(id);
+        if (temp != null) {
+            for (BigInteger childId : temp){
+                getChildId(Long.valueOf(childId.toString()), childIds);
+            }
+        }
     }
 }

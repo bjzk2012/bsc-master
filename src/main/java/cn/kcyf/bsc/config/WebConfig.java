@@ -1,6 +1,7 @@
 package cn.kcyf.bsc.config;
 
 import cn.kcyf.bsc.core.converter.StringToDateConverter;
+import cn.kcyf.bsc.core.filter.VisitInterceptor;
 import cn.kcyf.bsc.core.view.ErrorView;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
@@ -11,15 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+    private List<String> NONE_PERMISSION_RES = Arrays.asList(new String[]{"/assets/**", "/gunsApi/**", "/login", "/global/sessionError", "/kaptcha", "/error", "/global/error"});
 
     @Bean
     public ServletRegistrationBean kaptcha(){
@@ -37,6 +39,13 @@ public class WebConfig {
         params.put("kaptcha.session.key", "KAPTCHA_SESSION_KEY");
         registrationBean.setInitParameters(params);
         return registrationBean;
+    }
+
+    @Autowired
+    private VisitInterceptor visitInterceptor;
+
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(visitInterceptor).excludePathPatterns(NONE_PERMISSION_RES).addPathPatterns("/**");
     }
 
     /**

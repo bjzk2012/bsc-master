@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_dict")
+@ApiModel("字典")
 public class Dict extends TableDomain {
     /**
      * 字典名称
@@ -52,24 +54,21 @@ public class Dict extends TableDomain {
     private Integer sort;
 
     /**
-     * 父ID
+     * 父节点
      */
+    @Column(name = "parent_id")
+    private Long parentId;
     public Long getPId() {
-        if (null != parent) {
-            return parent.getId();
+        if (null != parentId) {
+            return parentId;
         }
-        return null;
+        return 0L;
     }
+    @Column(name = "parent_name")
+    private String parentName;
 
-    /**
-     * 子集
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    @JSONField(serialize = false, deserialize = false)
-    private Dict parent;
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     @JSONField(serialize = false, deserialize = false)
     private Set<Dict> dicts;
 

@@ -9,6 +9,7 @@ import cn.kcyf.bsc.modular.system.entity.Menu;
 import cn.kcyf.bsc.modular.system.service.DictService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/dict")
+@Api(tags = "字典管理", description = "字典管理")
 public class DictController extends BasicController {
 
     private String PREFIX = "/modular/system/dict/";
@@ -78,17 +80,39 @@ public class DictController extends BasicController {
 
     @PostMapping(value = "/add")
     @ResponseBody
-    public ResponseData add(@Valid Dict dict, Long parentId, BindingResult bindingResult) {
+    public ResponseData add(@Valid Dict dict, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         create(dict);
-        if (parentId != null && parentId.equals(0L)){
-            dict.setParent(null);
-        } else {
-            dict.setParent(dictService.getOne(parentId));
+        if (dict.getParentId() != null && dict.getParentId().equals(0L)){
+            dict.setParentId(null);
+            dict.setParentName(null);
         }
         dictService.create(dict);
+        return SUCCESS_TIP;
+    }
+
+    @PostMapping(value = "/edit")
+    @ResponseBody
+    public ResponseData edit(@Valid Dict dict, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        Dict dbdict = dictService.getOne(dict.getId());
+        update(dbdict);
+        if (dict.getParentId() != null && dict.getParentId().equals(0L)){
+            dbdict.setParentId(null);
+            dbdict.setParentName(null);
+        } else {
+            dbdict.setParentId(dict.getParentId());
+            dbdict.setParentName(dict.getParentName());
+        }
+        dbdict.setCode(dict.getCode());
+        dbdict.setName(dict.getName());
+        dbdict.setDescription(dict.getDescription());
+        dbdict.setSort(dict.getSort());
+        dictService.update(dbdict);
         return SUCCESS_TIP;
     }
 
@@ -104,7 +128,8 @@ public class DictController extends BasicController {
     @ResponseBody
     @BussinessLog(value = "删除字典记录")
     public ResponseData delete(@PathVariable Long dictId) {
-        return ResponseData.success(dictService.getOne(dictId));
+        dictService.delete(dictId);
+        return SUCCESS_TIP;
     }
 
 }

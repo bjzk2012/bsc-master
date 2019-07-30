@@ -22,8 +22,8 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
         return [[
             {type: 'checkbox'},
             {field: 'roleId', hide: true, sort: true, title: '角色id'},
-            {field: 'name', sort: true, title: '名称'},
-            {field: 'description', sort: true, title: '别名'},
+            {field: 'name', title: '名称'},
+            {field: 'description', title: '别名'},
             {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];

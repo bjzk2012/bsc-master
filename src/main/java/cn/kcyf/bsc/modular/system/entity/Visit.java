@@ -2,6 +2,7 @@ package cn.kcyf.bsc.modular.system.entity;
 
 import cn.kcyf.orm.jpa.entity.TableDomain;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,55 +19,56 @@ import java.util.Date;
  *
  * @author Tom
  */
-//@Data
-//@ToString
-//@NoArgsConstructor
-//@Entity
-//@Table(name = "sys_visit")
+@Data
+@ToString
+@NoArgsConstructor
+@Entity
+@Table(name = "sys_visit")
+@ApiModel("访问记录")
 public class Visit extends TableDomain {
     /**
      * ip地址
      */
-    @Column(name = "IP")
+    @Column(name = "ip")
     private String ip;
     /**
      * 访问的资源
      */
-    @Column(name = "URI")
+    @Column(name = "uri")
     private String uri;
     /**
      * 国家
      */
-    @Column(name = "COUNTRY")
+    @Column(name = "country")
     private String country;
     /**
      * 省
      */
-    @Column(name = "REGION")
+    @Column(name = "region")
     private String region;
     /**
      * 市
      */
-    @Column(name = "CITY")
+    @Column(name = "city")
     private String city;
     /**
      * 运营商
      */
-    @Column(name = "ISP")
+    @Column(name = "isp")
     private String isp;
     /**
      * 访问时间
      */
-    @Column(name = "SEND_TIME")
+    @Column(name = "send_time")
     private Date sendTime;
     /**
      * 当前用户
      */
-    @Column(name = "LOGIN_ID")
+    @Column(name = "login_id")
     private Long loginId;
     /**
      * 当前用户名
      */
-    @Column(name = "LOGIN_NAME")
+    @Column(name = "login_name")
     private String loginName;
 }

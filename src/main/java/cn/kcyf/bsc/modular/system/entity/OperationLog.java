@@ -4,6 +4,7 @@ import cn.kcyf.bsc.core.enumerate.LogType;
 import cn.kcyf.bsc.core.enumerate.Succeed;
 import cn.kcyf.orm.jpa.entity.IdDomain;
 import cn.kcyf.orm.jpa.entity.TableDomain;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_operation_log")
+@ApiModel("操作日志")
 public class OperationLog extends IdDomain {
     /**
      * 日志类型(字典)

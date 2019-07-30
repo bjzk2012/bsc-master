@@ -6,9 +6,10 @@ import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -46,6 +47,11 @@ public class CenterController extends BasicController {
     @PostMapping("/password")
     @ResponseBody
     @BussinessLog(value = "设置当前用户新密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "旧密码", name = "oldPassword", required = true, format = "\\S{6-12}"),
+            @ApiImplicitParam(value = "新密码", name = "newPassword", required = true, format = "\\S{6-12}"),
+            @ApiImplicitParam(value = "确认密码", name = "rePassword", required = true, format = "\\S{6-12}")
+    })
     public ResponseData password(
             @NotBlank(message = "旧密码不能为空")
             @Size(min = 6, max = 12, message = "旧密码必须6到12位")

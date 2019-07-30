@@ -4,6 +4,7 @@ import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.core.enumerate.YesOrNo;
 import cn.kcyf.orm.jpa.entity.TableDomain;
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Entity
 @Table(name = "sys_menu")
+@ApiModel("菜单")
 public class Menu extends TableDomain {
     /**
      * 菜单编号
@@ -78,7 +80,7 @@ public class Menu extends TableDomain {
     private YesOrNo menuFlag;
     public String getMenuFlagRemark(){
         if (this.menuFlag != null){
-            return menuFlag.getDesc();
+            return menuFlag.getMessage();
         }
         return "";
     }
@@ -105,9 +107,9 @@ public class Menu extends TableDomain {
     @Column(name = "new_page_flag")
     @Enumerated
     private YesOrNo newPageFlag;
-    public String getNewPageFlagRemark(){
+    public String getNewPageFlagMessage(){
         if (this.newPageFlag != null){
-            return newPageFlag.getDesc();
+            return newPageFlag.getMessage();
         }
         return "";
     }
@@ -117,9 +119,9 @@ public class Menu extends TableDomain {
     @Column(name = "open_flag")
     @Enumerated
     private YesOrNo openFlag;
-    public String getOpenFlagRemark(){
+    public String getOpenFlagMessage(){
         if (this.openFlag != null){
-            return openFlag.getDesc();
+            return openFlag.getMessage();
         }
         return "";
     }

@@ -23,5 +23,11 @@ shiro:
   password:
     algorithmName: md5
     hashIterations: 2
+swagger:
+  production: false
+  basic:
+    enable: true
+    username: bsc
+    password: bsc
 server:
   port: 80

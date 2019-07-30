@@ -9,6 +9,7 @@ import cn.kcyf.bsc.modular.system.service.OperationLogService;
 import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/log")
+@Api(tags = "日志管理", description = "日志管理")
 public class LogController extends BasicController {
 
     private static String PREFIX = "/modular/system/log/";
