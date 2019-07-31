@@ -25,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,28 +52,23 @@ public class WorkController extends BasicController {
 
     @GetMapping("")
     public String index(Model model) {
-        List<Project> list = projectService.findAll();
-        Map<Long, String> projects = new HashMap<Long, String>();
-        if (list != null && !list.isEmpty()) {
-            for (Project project : list) {
-                projects.put(project.getId(), project.getName());
-            }
-        }
-        model.addAttribute("projects", projects);
+        model.addAttribute("projects", projectService.findAll());
         return PREFIX + "/work.html";
     }
 
-//    @GetMapping(value = "/work_record_add")
-//    public String workRecordAdd() {
-//        return PREFIX + "/work_record_add.html";
-//    }
-//
-//    @GetMapping(value = "/work_record_edit")
-//    public String projectEdit(Long workId, Model model) {
-//        model.addAttribute("workId", workId);
-//        return PREFIX + "/project_edit.html";
-//    }
-//
+    @GetMapping(value = "/workRecord_add")
+    public String workRecordAdd(Model model) {
+        model.addAttribute("projects", projectService.findAll());
+        return PREFIX + "/workRecord_add.html";
+    }
+
+    @GetMapping(value = "/workRecord_edit")
+    public String projectEdit(Long workId, Model model) {
+        model.addAttribute("projects", projectService.findAll());
+        model.addAttribute("workId", workId);
+        return PREFIX + "/workRecord_edit.html";
+    }
+
     @GetMapping(value = "/list")
     @ResponseBody
     public ResponseData list(String timeLimit, WorkStatus status, int page, int limit) {
@@ -97,19 +93,20 @@ public class WorkController extends BasicController {
         }
         return ResponseData.list(workRecordService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
-//
-//    @PostMapping(value = "/add")
-//    @ResponseBody
-//    @BussinessLog(value = "新增工作日志")
-//    public ResponseData add(@Valid WorkRecord workRecord, Long projectId, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
-//        }
-//        create(workRecord);
-//        workRecord.setStatus(WorkStatus.DRAFT);
-//        workRecordService.create(workRecord);
-//        return SUCCESS_TIP;
-//    }
+
+    @PostMapping(value = "/workRecord/add")
+    @ResponseBody
+    @BussinessLog(value = "新增工作日志")
+    public ResponseData add(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        create(workRecord);
+        workRecord.setProject(projectService.getOne(projectId));
+        workRecord.setStatus(WorkStatus.DRAFT);
+        workRecordService.create(workRecord);
+        return SUCCESS_TIP;
+    }
 //
 //    @PostMapping(value = "/edit")
 //    @ResponseBody
