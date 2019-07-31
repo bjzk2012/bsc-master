@@ -31,7 +31,7 @@ public class OperationLog extends IdDomain {
     @Column(name = "log_type")
     @Enumerated
     private LogType logType;
-    public String getLogTypeRemark(){
+    public String getLogTypeMessage(){
         if (logType != null){
             return logType.getMessage();
         }
@@ -68,7 +68,7 @@ public class OperationLog extends IdDomain {
     @Column(name = "succeed")
     @Enumerated
     private Succeed succeed;
-    public String getSucceedRemark(){
+    public String getSucceedMessage(){
         if (succeed != null){
             return succeed.getMessage();
         }

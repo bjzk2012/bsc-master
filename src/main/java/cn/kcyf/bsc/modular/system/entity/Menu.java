@@ -78,7 +78,7 @@ public class Menu extends TableDomain {
     @Column(name = "menu_flag", nullable = false)
     @Enumerated
     private YesOrNo menuFlag;
-    public String getMenuFlagRemark(){
+    public String getMenuFlagMessage(){
         if (this.menuFlag != null){
             return menuFlag.getMessage();
         }
@@ -95,7 +95,7 @@ public class Menu extends TableDomain {
     @Column(name = "status", nullable = false)
     @Enumerated
     private Status status;
-    public String getStatusRemark(){
+    public String getStatusMessage(){
         if (this.status != null){
             return status.getMessage();
         }

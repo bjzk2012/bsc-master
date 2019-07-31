@@ -1,13 +1,3 @@
-/**
- * 角色详情对话框
- */
-var RoleInfoDlg = {
-    data: {
-        pid: "",
-        pName: ""
-    }
-};
-
 layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;

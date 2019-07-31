@@ -19,12 +19,12 @@ layui.use(['layer', 'table', 'ax', 'laydate'], function () {
         return [[
             {type: 'checkbox'},
             {field: 'id', hide: true, sort: true, title: 'id'},
-            {field: 'logTypeRemark', sort: true, title: '日志类型'},
+            {field: 'logTypeMessage', sort: true, title: '日志类型'},
             {field: 'logName', sort: true, title: '日志名称'},
             {field: 'userName', title: '用户名称'},
             {field: 'className', title: '类名'},
             {field: 'method', title: '方法名'},
-            {field: 'succeedRemark', title: '状态'},
+            {field: 'succeedMessage', title: '状态'},
             {field: 'createTime', sort: true, title: '时间'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 100}
         ]];

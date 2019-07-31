@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +51,12 @@ public class Role extends TableDomain {
      */
     @Column(name = "status")
     private Status status;
+    public String getStatusMessage(){
+        if (this.status != null){
+            return this.status.getMessage();
+        }
+        return "";
+    }
     /**
      * 角色权限关联表
      */

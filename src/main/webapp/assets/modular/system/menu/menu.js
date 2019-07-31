@@ -31,7 +31,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
             {field: 'url', title: '请求地址'},
             {field: 'sort', sort: true, title: '排序'},
             {field: 'levels', sort: true, title: '层级'},
-            {field: 'menuFlagRemark', title: '是否是菜单'},
+            {field: 'menuFlagMessage', title: '是否是菜单'},
             {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];

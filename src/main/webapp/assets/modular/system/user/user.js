@@ -101,6 +101,7 @@ layui.use(['layer', 'form', 'table', 'laydate', 'admin', 'ax', 'jquery'], functi
         var func = function (userId, action, title) {
             var ajax = new $ax(Feng.ctxPath + "/mgr/" + action + "/" + userId, function (data) {
                 Feng.success(title + "成功!");
+                MgrUser.search();
             }, function (data) {
                 Feng.error(title + "失败!" + data.responseJSON.message + "!");
                 table.reload(MgrUser.tableId);

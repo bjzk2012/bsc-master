@@ -1,7 +1,3 @@
-/**
- * 角色详情对话框
- */
-
 layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax'], function () {
     var $ax = layui.ax;
     var $ = layui.jquery;

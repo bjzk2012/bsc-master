@@ -1,30 +1,34 @@
-layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
+layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element'], function () {
     var $ = layui.$;
     var form = layui.form;
     var table = layui.table;
     var $ax = layui.ax;
     var admin = layui.admin;
+    var element = layui.element;
 
     /**
-     * 系统管理--角色管理
+     * 系统管理--项目管理
      */
-    var Role = {
-        tableId: "roleTable",    //表格id
+    var Project = {
+        tableId: "projectTable",    //表格id
         condition: {
-            roleName: ""
+            ProjectName: ""
         }
     };
 
     /**
      * 初始化表格的列
      */
-    Role.initColumn = function () {
+    Project.initColumn = function () {
         return [[
             {type: 'checkbox'},
-            {field: 'roleId', hide: true, sort: true, title: '角色id'},
+            {field: 'id', hide: true, title: 'id'},
+            {field: 'code', title: '编码'},
             {field: 'name', title: '名称'},
-            {field: 'description', title: '别名'},
-            {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
+            {field: 'used', title: '已用工时'},
+            {field: 'time', title: '总工时'},
+            {field: 'rate', title: '总进度', templet: '#rateTpl'},
+            {field: 'status', title: '状态', templet: '#statusTpl'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
     };
@@ -32,17 +36,17 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
     /**
      * 点击查询按钮
      */
-    Role.search = function () {
+    Project.search = function () {
         var queryData = {};
-        queryData['roleName'] = $("#roleName").val();
-        table.reload(Role.tableId, {where: queryData});
+        queryData['condition'] = $("#condition").val();
+        table.reload(Project.tableId, {where: queryData});
     };
 
     /**
      * 导出excel按钮
      */
-    Role.exportExcel = function () {
-        var checkRows = table.checkStatus(Role.tableId);
+    Project.exportExcel = function () {
+        var checkRows = table.checkStatus(Project.tableId);
         if (checkRows.data.length === 0) {
             Feng.error("请选择要导出的数据");
         } else {
@@ -51,35 +55,35 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
     };
 
     /**
-     * 弹出添加角色
+     * 弹出添加项目
      */
-    Role.openAddRole = function () {
+    Project.openAddProject = function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
-            title: '添加角色',
-            content: Feng.ctxPath + '/role/role_add',
+            title: '添加项目',
+            content: Feng.ctxPath + '/project/project_add',
             end: function () {
-                admin.getTempData('formOk') && table.reload(Role.tableId);
+                admin.getTempData('formOk') && table.reload(Project.tableId);
             }
         });
     };
 
     /**
-     * 点击编辑角色
+     * 点击编辑项目
      *
      * @param data 点击按钮时候的行数据
      */
-    Role.onEditRole = function (data) {
+    Project.onEditProject = function (data) {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
-            title: '修改角色',
-            content: Feng.ctxPath + '/role/role_edit?roleId=' + data.id,
+            title: '修改项目',
+            content: Feng.ctxPath + '/project/project_edit?projectId=' + data.id,
             end: function () {
-                admin.getTempData('formOk') && table.reload(Role.tableId);
+                admin.getTempData('formOk') && table.reload(Project.tableId);
             }
         });
     };
@@ -91,11 +95,11 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
      * @param title 动作描述
      * @param confirm 是否再次确认
      */
-    Role.doAction = function (roleId, action, title, confirm) {
-        var func = function (roleId, action, title) {
-            var ajax = new $ax(Feng.ctxPath + "/role/" + action + "/" + roleId, function (data) {
+    Project.doAction = function (projectId, action, title, confirm) {
+        var func = function (projectId, action, title) {
+            var ajax = new $ax(Feng.ctxPath + "/project/" + action + "/" + projectId, function (data) {
                 Feng.success(title + "成功!");
-                Role.search();
+                Project.search();
             }, function (data) {
                 Feng.error(title + "失败!" + data.responseJSON.message + "!");
             });
@@ -103,52 +107,55 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax'], function () {
         };
         if (confirm) {
             Feng.confirm("是否" + title + "?", function () {
-                func(roleId, action, title)
+                func(projectId, action, title)
             });
         } else {
-            func(roleId, action, title)
+            func(projectId, action, title)
         }
     };
 
     // 渲染表格
     var tableResult = table.render({
-        elem: '#' + Role.tableId,
-        url: Feng.ctxPath + '/role/list',
+        elem: '#' + Project.tableId,
+        url: Feng.ctxPath + '/project/list',
         page: true,
         height: "full-125",
         cellMinWidth: 100,
-        cols: Role.initColumn()
+        cols: Project.initColumn(),
+        done: function(){
+            element.render();
+        }
     });
 
     // 搜索按钮点击事件
     $('#btnSearch').click(function () {
-        Role.search();
+        Project.search();
     });
 
     // 添加按钮点击事件
     $('#btnAdd').click(function () {
-        Role.openAddRole();
+        Project.openAddProject();
     });
 
     // 导出excel
     $('#btnExp').click(function () {
-        Role.exportExcel();
+        Project.exportExcel();
     });
 
     // 工具条点击事件
-    table.on('tool(' + Role.tableId + ')', function (obj) {
+    table.on('tool(' + Project.tableId + ')', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
 
         if (layEvent === 'edit') {
-            Role.onEditRole(data);
+            Project.onEditProject(data);
         } else if (layEvent === 'delete') {
-            Role.doAction(data.id, "delete", "删除", true);
+            Project.doAction(data.id, "delete", "删除", true);
         }
     });
 
     // 修改状态
     form.on('switch(status)', function (obj) {
-        Role.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
+        Project.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
     });
 });

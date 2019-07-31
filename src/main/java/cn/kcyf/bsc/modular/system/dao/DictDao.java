@@ -13,4 +13,6 @@ import java.util.List;
 public interface DictDao extends BasicDao<Dict, Long> {
     @Query(value = "select id from sys_dict where parent_id = :id", nativeQuery = true)
     List<BigInteger> getChildIdById(@Param(value = "id") Long id);
+
+    Dict findFirstByParentIdIsNullAndCodeEquals(@Param(value = "code") String code);
 }

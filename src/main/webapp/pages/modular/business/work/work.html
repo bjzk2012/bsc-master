@@ -1,30 +1,32 @@
-@layout("/common/_container.html",{bg:"bg-white", plugins:["ztree"], js:["/assets/modular/system/dict/dict.js"]}){
-
+@layout("/common/_container.html",{plugins:[],js:["/assets/modular/business/work/work.js"]}){
 <div class="layui-body-header">
-    <span class="layui-body-header-title">字典管理</span>
+    <span class="layui-body-header-title">工作录入</span>
 </div>
 
 <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+        <div class="layui-col-sm4 layui-col-md4 layui-col-lg4">
             <div class="layui-card">
                 <div class="layui-card-body">
                     <div class="layui-form toolbar">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <input id="condition" class="layui-input" type="text" placeholder="字典名称"/>
+                                <input id="timeLimit" class="layui-input" type="text" placeholder="操作时间"/>
                             </div>
                             <div class="layui-inline">
                                 <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
-                                @if(shiro.hasPermission("dict_add")){
                                 <button id="btnAdd" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
-                                @}
-                                <button id="expandAll" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>展开所有</button>
-                                <button id="foldAll" class="layui-btn icon-btn"><i class="layui-icon">&#xe656;</i>折叠所有</button>
                             </div>
                         </div>
                     </div>
-                    <table class="layui-table" id="dictTable" lay-filter="dictTable"></table>
+                    <table class="layui-table" id="workTable" lay-filter="workTable"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm8 layui-col-md8 layui-col-lg8">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table class="layui-table" id="workRecordTable" lay-filter="workRecordTable"></table>
                 </div>
             </div>
         </div>
@@ -32,11 +34,7 @@
 </div>
 
 <script type="text/html" id="tableBar">
-    @if(shiro.hasPermission("dict_update")){
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
-    @}
-    @if(shiro.hasPermission("dict_delete")){
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
-    @}
 </script>
 @}
