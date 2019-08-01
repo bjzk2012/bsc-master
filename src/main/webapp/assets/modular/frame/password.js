@@ -15,7 +15,7 @@ layui.use(['layer', 'form', 'admin', 'ax'], function () {
             Feng.success("修改成功!");
             admin.closeThisDialog();
         }, function (data) {
-            Feng.error("修改失败!" + data.responseJSON.message + "!");
+            Feng.error("修改失败!" + data.message + "!");
         });
         ajax.set(data.field);
         ajax.start();

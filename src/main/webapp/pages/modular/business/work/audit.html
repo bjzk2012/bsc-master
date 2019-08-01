@@ -1,0 +1,52 @@
+@layout("/common/_container.html",{plugins:[],js:["/assets/modular/business/work/audit.js"]}){
+<div class="layui-body-header">
+    <span class="layui-body-header-title">工作审核</span>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-form toolbar">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <input id="timeLimit" class="layui-input" type="text" placeholder="工作时间" style="width:182px"/>
+                            </div>
+                            <div class="layui-inline">
+                                <input id="submitTimeLimit" class="layui-input" type="text" placeholder="提交时间" style="width:182px"/>
+                            </div>
+                            <div class="layui-inline">
+                                <input id="auditTimeLimit" class="layui-input" type="text" placeholder="审核时间" style="width:182px"/>
+                            </div>
+                            <div class="layui-inline">
+                                <select id="status">
+                                    <option value="">审核状态</option>
+                                    @for(status in statuses) {
+                                    <option value="${status.key}">${status.value}</option>
+                                    @}
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-table" id="workAuditTable" lay-filter="workAuditTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="statusTpl">
+    <button class="layui-btn layui-btn-xs {{d.status=='REFUSE'?'layui-btn-danger':(d.status=='SUBMIT'?'layui-btn-primary':'')}}">{{d.statusMessage}}</button>
+</script>
+<script type="text/html" id="workAuditTableBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    {{d.status=='SUBMIT'?'
+    <a class="layui-btn layui-btn-xs" lay-event="adopt">通过</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="refuse">拒绝</a>
+    ':''}}
+</script>
+@}

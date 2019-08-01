@@ -17,7 +17,7 @@ layui.use(['form', 'upload', 'element', 'ax', 'laydate'], function () {
             Feng.success("更新基本信息成功!");
             window.location.reload();
         }, function (data) {
-            Feng.error("更新基本信息失败!" + data.responseJSON.message + "!");
+            Feng.error("更新基本信息失败!" + data.message + "!");
         });
         ajax.set(data.field);
         ajax.start();

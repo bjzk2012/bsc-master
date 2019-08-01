@@ -78,6 +78,7 @@ public class OperationLog extends IdDomain {
      * 备注
      */
     @Column(name = "message")
+    @Lob
     private String message;
 
     @Column(name = "create_time")

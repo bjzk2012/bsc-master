@@ -113,7 +113,7 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
                 Dept.initTree();
                 Dept.search();
             }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
+                Feng.error("删除失败!" + data.message + "!");
             });
             ajax.start();
         };

@@ -72,7 +72,7 @@ layui.use(['form', 'admin', 'laydate', 'ax', 'treeSelect', 'jquery', 'formSelect
                     //关掉对话框
                     admin.closeThisDialog();
                 }, function (data) {
-                    Feng.error("修改成功！" + data.responseJSON.message)
+                    Feng.error("修改成功！" + data.message)
                 });
                 ajax.set(data.field);
                 ajax.start();

@@ -86,7 +86,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery'], function () {
                 Feng.success(title + "成功!");
                 Dict.search();
             }, function (data) {
-                Feng.error(title + "失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.message + "!");
             });
             ajax.start();
         };

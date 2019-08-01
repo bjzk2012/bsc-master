@@ -9,7 +9,7 @@ layui.use(['form', 'admin', 'ax'], function () {
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
-        var ajax = new $ax(Feng.ctxPath + "/project/add", function (data) {
+        var ajax = new $ax(Feng.ctxPath + "/work/workRecord/add", function (data) {
             Feng.success("添加成功！");
 
             //传给上个页面，刷新table用
@@ -18,7 +18,7 @@ layui.use(['form', 'admin', 'ax'], function () {
             //关掉对话框
             admin.closeThisDialog();
         }, function (data) {
-            Feng.error("添加失败！" + data.responseJSON.message)
+            Feng.error("添加失败！" + data.message)
         });
         ajax.set(data.field);
         ajax.start();

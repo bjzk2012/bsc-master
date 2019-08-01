@@ -94,7 +94,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
                 Feng.success(title + "成功!");
                 Menu.initTable(Menu.tableId);
             }, function (data) {
-                Feng.error(title + "失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.message + "!");
             });
             ajax.start();
         };

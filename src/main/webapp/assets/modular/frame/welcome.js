@@ -9,7 +9,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
             })
         }
     }, function (data) {
-        Feng.error("获取PV信息错误!" + data.responseJSON.message + "!");
+        Feng.error("获取PV信息错误!" + data.message + "!");
     });
     allPvAjax.type = "get";
     allPvAjax.start();
@@ -54,7 +54,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
             myCharts1.setOption(option1, true);
         }
     }, function (data) {
-        Feng.error("获取PV信息错误!" + data.responseJSON.message + "!");
+        Feng.error("获取PV信息错误!" + data.message + "!");
     });
     hourPvAjax.type = "get";
     hourPvAjax.start();
@@ -186,7 +186,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
                 myCharts3.setOption(option3);
             }
         }, function (data) {
-            Feng.error("获取PV信息错误!" + data.responseJSON.message + "!");
+            Feng.error("获取PV信息错误!" + data.message + "!");
         });
         regionPvAjax.type = "get";
         regionPvAjax.start();
@@ -222,7 +222,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
             myCharts4.setOption(option4);
         }
     }, function (data) {
-        Feng.error("获取PV信息错误!" + data.responseJSON.message + "!");
+        Feng.error("获取PV信息错误!" + data.message + "!");
     });
     monthPvAjax.type = "get";
     monthPvAjax.start();
@@ -244,7 +244,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
             })
         }
     }, function (data) {
-        Feng.error("获取PV信息错误!" + data.responseJSON.message + "!");
+        Feng.error("获取PV信息错误!" + data.message + "!");
     });
     userPvAjax.type = "get";
     userPvAjax.start();

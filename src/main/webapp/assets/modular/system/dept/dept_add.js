@@ -37,7 +37,7 @@ layui.use(['form', 'admin', 'ax', 'jquery'], function () {
             //关掉对话框
             admin.closeThisDialog();
         }, function (data) {
-            Feng.error("添加失败！" + data.responseJSON.message)
+            Feng.error("添加失败！" + data.message)
         });
         ajax.set(data.field);
         ajax.start();

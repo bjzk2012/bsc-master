@@ -1,11 +1,9 @@
 
 package cn.kcyf.bsc.modular.business.controller;
 
-import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.core.enumerate.WorkStatus;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
-import cn.kcyf.bsc.modular.business.entity.Project;
 import cn.kcyf.bsc.modular.business.entity.Work;
 import cn.kcyf.bsc.modular.business.entity.WorkRecord;
 import cn.kcyf.bsc.modular.business.service.ProjectService;
@@ -26,9 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,37 +46,56 @@ public class WorkController extends BasicController {
     @Autowired
     private WorkRecordService workRecordService;
 
-    @GetMapping("")
+    @GetMapping("/apply")
     public String index(Model model) {
         model.addAttribute("projects", projectService.findAll());
-        return PREFIX + "/work.html";
+        return PREFIX + "/apply.html";
+    }
+
+    @GetMapping("/audit")
+    public String audit(Model model) {
+        Map<String, String> statuses = new HashMap<String, String>();
+        for (WorkStatus status : WorkStatus.values()){
+            if (!status.equals(WorkStatus.DRAFT)) {
+                statuses.put(status.name(), status.getMessage());
+            }
+        }
+        model.addAttribute("statuses", statuses);
+        return PREFIX + "/audit.html";
     }
 
     @GetMapping(value = "/workRecord_add")
-    public String workRecordAdd(Model model) {
+    public String workRecordAdd(Long workId, Model model) {
+        model.addAttribute("workId", workId);
         model.addAttribute("projects", projectService.findAll());
         return PREFIX + "/workRecord_add.html";
     }
 
     @GetMapping(value = "/workRecord_edit")
-    public String projectEdit(Long workId, Model model) {
+    public String projectEdit(Long workRecordId, Model model) {
         model.addAttribute("projects", projectService.findAll());
-        model.addAttribute("workId", workId);
+        model.addAttribute("workRecordId", workRecordId);
         return PREFIX + "/workRecord_edit.html";
+    }
+
+    @GetMapping(value = "/workRecord_detail/{workRecordId}")
+    public String workRecordDetail(@PathVariable Long workRecordId, Model model) {
+        model.addAttribute("workRecordId", workRecordId);
+        model.addAttribute("entity", workRecordService.getOne(workRecordId));
+        model.addAttribute("projects", projectService.findAll());
+        return PREFIX + "/workRecord_detail.html";
     }
 
     @GetMapping(value = "/list")
     @ResponseBody
-    public ResponseData list(String timeLimit, WorkStatus status, int page, int limit) {
+    public ResponseData list(String timeLimit, int page, int limit) {
         Criteria<Work> criteria = new Criteria<Work>();
         if (!StringUtils.isEmpty(timeLimit)) {
             String[] split = timeLimit.split(" - ");
             criteria.add(Restrictions.gte("today", DateUtils.parse(split[0] + " 00:00:00", "yyyy-MM-dd HH:mm:ss")));
             criteria.add(Restrictions.lte("today", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
         }
-        if (status != null) {
-            criteria.add(Restrictions.eq("records.status", status));
-        }
+        criteria.add(Restrictions.eq("createUserId", getUser().getId()));
         return ResponseData.list(workService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
@@ -88,8 +103,38 @@ public class WorkController extends BasicController {
     @ResponseBody
     public ResponseData records(Long workId, int page, int limit) {
         Criteria<WorkRecord> criteria = new Criteria<WorkRecord>();
-        if (workId != null) {
+        if (workId == null || workId.equals(0L)) {
             criteria.add(Restrictions.isNull("workId"));
+        } else {
+            criteria.add(Restrictions.eq("workId", workId));
+        }
+        criteria.add(Restrictions.eq("createUserId", getUser().getId()));
+        return ResponseData.list(workRecordService.findList(criteria, PageRequest.of(page - 1, limit)));
+    }
+
+    @GetMapping(value = "/audits")
+    @ResponseBody
+    public ResponseData audits(String timeLimit, String submitTimeLimit, String auditTimeLimit, WorkStatus status, int page, int limit) {
+        Criteria<WorkRecord> criteria = new Criteria<WorkRecord>();
+        if (status != null) {
+            criteria.add(Restrictions.eq("status", status));
+        } else {
+            criteria.add(Restrictions.ne("status", WorkStatus.DRAFT));
+        }
+        if (!StringUtils.isEmpty(timeLimit)) {
+            String[] split = timeLimit.split(" - ");
+            criteria.add(Restrictions.gte("today", DateUtils.parse(split[0] + " 00:00:00", "yyyy-MM-dd HH:mm:ss")));
+            criteria.add(Restrictions.lte("today", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
+        }
+        if (!StringUtils.isEmpty(submitTimeLimit)) {
+            String[] split = timeLimit.split(" - ");
+            criteria.add(Restrictions.gte("submitTime", DateUtils.parse(split[0] + " 00:00:00", "yyyy-MM-dd HH:mm:ss")));
+            criteria.add(Restrictions.lte("submitTime", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
+        }
+        if (!StringUtils.isEmpty(auditTimeLimit)) {
+            String[] split = timeLimit.split(" - ");
+            criteria.add(Restrictions.gte("lastAuditTime", DateUtils.parse(split[0] + " 00:00:00", "yyyy-MM-dd HH:mm:ss")));
+            criteria.add(Restrictions.lte("lastAuditTime", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
         }
         return ResponseData.list(workRecordService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
@@ -107,55 +152,70 @@ public class WorkController extends BasicController {
         workRecordService.create(workRecord);
         return SUCCESS_TIP;
     }
-//
-//    @PostMapping(value = "/edit")
-//    @ResponseBody
-//    @BussinessLog(value = "修改工作日志")
-//    public ResponseData edit(@Valid Project project, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
-//        }
-//        Project dbproject = projectService.getOne(project.getId());
-//        update(dbproject);
-//        dbproject.setName(project.getName());
-//        dbproject.setTime(project.getTime());
-//        dbproject.setDescription(project.getDescription());
-//        projectService.update(dbproject);
-//        return SUCCESS_TIP;
-//    }
-//
-//    @PostMapping(value = "/delete/{projectId}")
-//    @ResponseBody
-//    @BussinessLog(value = "删除工作日志")
-//    public ResponseData delete(@PathVariable Long projectId) {
-//        projectService.delete(projectId);
-//        return SUCCESS_TIP;
-//    }
-//
-//    @PostMapping("/freeze/{projectId}")
-//    @ResponseBody
-//    @BussinessLog(value = "禁用工作日志")
-//    public ResponseData freeze(@PathVariable Long projectId) {
-//        Project project = projectService.getOne(projectId);
-//        project.setStatus(Status.DISABLE);
-//        projectService.update(project);
-//        return SUCCESS_TIP;
-//    }
-//
-//    @PostMapping("/unfreeze/{projectId}")
-//    @ResponseBody
-//    @BussinessLog(value = "启用工作日志")
-//    public ResponseData unfreeze(@PathVariable Long projectId) {
-//        Project project = projectService.getOne(projectId);
-//        project.setStatus(Status.ENABLE);
-//        projectService.update(project);
-//        return SUCCESS_TIP;
-//    }
-//
-//    @GetMapping(value = "/detail/{projectId}")
-//    @ResponseBody
-//    public ResponseData detail(@PathVariable Long projectId) {
-//        return ResponseData.success(projectService.getOne(projectId));
-//    }
+
+    @PostMapping(value = "/workRecord/edit")
+    @ResponseBody
+    @BussinessLog(value = "修改工作日志")
+    public ResponseData edit(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        WorkRecord dbWorkRecord = workRecordService.getOne(workRecord.getId());
+        if (dbWorkRecord.getStatus().equals(WorkStatus.FINISH)) {
+            return ResponseData.error("工作日志已审核通过，无法修改！");
+        }
+        update(dbWorkRecord);
+        dbWorkRecord.setStatus(WorkStatus.DRAFT);
+        dbWorkRecord.setTime(workRecord.getTime());
+        dbWorkRecord.setContent(workRecord.getContent());
+        dbWorkRecord.setProject(projectService.getOne(projectId));
+        workRecordService.update(dbWorkRecord);
+        return SUCCESS_TIP;
+    }
+
+    @GetMapping(value = "/workRecord/audits/{workRecordId}")
+    @ResponseBody
+    public ResponseData edit(@PathVariable Long workRecordId) {
+        WorkRecord record = workRecordService.getOne(workRecordId);
+        return ResponseData.list(record.getAudits());
+    }
+
+    @PostMapping(value = "/workRecord/delete/{workRecordId}")
+    @ResponseBody
+    @BussinessLog(value = "删除工作日志")
+    public ResponseData delete(@PathVariable Long workRecordId) {
+        WorkRecord dbWorkRecord = workRecordService.getOne(workRecordId);
+        if (dbWorkRecord.getStatus().equals(WorkStatus.FINISH)) {
+            return ResponseData.error("工作日志已审核通过，无法删除！");
+        }
+        workRecordService.delete(workRecordId);
+        return SUCCESS_TIP;
+    }
+
+    @PostMapping(value = "/workRecord/submit/{workId}")
+    @ResponseBody
+    @BussinessLog(value = "提交工作日志")
+    public ResponseData submit(@PathVariable Long workId) {
+        try {
+            workService.submit(workId);
+        } catch (RuntimeException e){
+            ResponseData.error(e.getMessage());
+        }
+        return SUCCESS_TIP;
+    }
+
+    @PostMapping(value = "/workRecord/audit/{workRecordId}")
+    @ResponseBody
+    @BussinessLog(value = "审核工作日志")
+    public ResponseData audit(@PathVariable Long workRecordId, boolean flag, String suggestions) {
+        workRecordService.audit(workRecordId, flag, suggestions);
+        return SUCCESS_TIP;
+    }
+
+    @GetMapping(value = "/workRecord/detail/{workRecordId}")
+    @ResponseBody
+    public ResponseData detail(@PathVariable Long workRecordId) {
+        return ResponseData.success(workRecordService.getOne(workRecordId));
+    }
 
 }

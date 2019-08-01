@@ -103,7 +103,7 @@ layui.use(['layer', 'form', 'table', 'laydate', 'admin', 'ax', 'jquery'], functi
                 Feng.success(title + "成功!");
                 MgrUser.search();
             }, function (data) {
-                Feng.error(title + "失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.message + "!");
                 table.reload(MgrUser.tableId);
             });
             ajax.start();

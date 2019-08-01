@@ -101,7 +101,7 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element'], function () {
                 Feng.success(title + "成功!");
                 Project.search();
             }, function (data) {
-                Feng.error(title + "失败!" + data.responseJSON.message + "!");
+                Feng.error(title + "失败!" + data.message + "!");
             });
             ajax.start();
         };
