@@ -5,33 +5,27 @@
 </div>
 
 <div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
-            <div class="layui-card">
-                <div class="layui-card-body">
-                    <div class="layui-form toolbar">
-                        <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <input id="name" class="layui-input" type="text" placeholder="账号/姓名/手机号"/>
-                            </div>
-                            <div class="layui-inline">
-                                <input id="timeLimit" class="layui-input" type="text" placeholder="注册时间" style="width:182px"/>
-                            </div>
-                            <div class="layui-inline">
-                                <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
-                                @if(shiro.hasPermission("mgr_add")){
-                                <button id="btnAdd" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
-                                @}
-                                <button id="btnExp" class="layui-btn icon-btn"><i class="layui-icon">&#xe67d;</i>导出</button>
-                            </div>
-                        </div>
-                    </div>
-                    <table class="layui-table" id="userTable" lay-filter="userTable"></table>
-                </div>
+    <table class="layui-table" id="userTable" lay-filter="userTable"></table>
+</div>
+<script type="text/html" id="toolBar">
+    <div class="layui-form toolbar">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <input id="name" class="layui-input" type="text" placeholder="账号/姓名/手机号"/>
+            </div>
+            <div class="layui-inline">
+                <input id="timeLimit" class="layui-input" type="text" placeholder="注册时间" style="width:182px"/>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn icon-btn" lay-click="search"><i class="layui-icon">&#xe615;</i>搜索</button>
+                 @if(shiro.hasPermission("mgr_add")){
+                <button class="layui-btn icon-btn" lay-click="onAdd"><i class="layui-icon">&#xe654;</i>添加</button>
+                 @}
+                <button class="layui-btn icon-btn" lay-click="exportExcel"><i class="layui-icon">&#xe67d;</i>导出</button>
             </div>
         </div>
     </div>
-</div>
+</script>
 
 <script type="text/html" id="tableBar">
     @if(shiro.hasPermission("mgr_edit")){
@@ -47,7 +41,7 @@
 
 <script type="text/html" id="statusTpl">
     @if(shiro.hasPermission("mgr_freeze")){
-    <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|冻结" {{d.status=='ENABLE'?'checked':''}} />
+    <input type="checkbox" lay-filter="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|冻结" {{d.status=='UNLOCK'?'checked':''}} />
     @} else {
     <button class="layui-btn layui-btn-xs {{d.status=='DISABLE'?'layui-btn-primary':''}}">{{d.statusMessage}}</button>
     @}

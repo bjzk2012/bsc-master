@@ -33,7 +33,7 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
         return [[
             {title: '序号', type: 'numbers'},
             {field: 'todayRemark', title: '时间'},
-            {field: 'status', title: '状态'}
+            {field: 'statusMessage', title: '状态', templet: '#workStatusTpl'}
         ]];
     };
 
@@ -46,7 +46,7 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
             {field: 'projectName', title: '项目'},
             {field: 'content', title: '工作内容'},
             {field: 'time', title: '工时'},
-            {field: 'statusMessage', title: '状态'},
+            {field: 'statusMessage', title: '状态', templet: '#workRecordstatusTpl'},
             {align: 'center', toolbar: '#workRecordTableBar', title: '操作', minWidth: 200}
         ]];
     };

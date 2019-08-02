@@ -25,8 +25,8 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element'], function () {
             {field: 'id', hide: true, title: 'id'},
             {field: 'code', title: '编码'},
             {field: 'name', title: '名称'},
-            {field: 'used', title: '已用工时'},
             {field: 'time', title: '总工时'},
+            {field: 'used', title: '已用工时'},
             {field: 'rate', title: '总进度', templet: '#rateTpl'},
             {field: 'status', title: '状态', templet: '#statusTpl'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}

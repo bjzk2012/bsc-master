@@ -15,6 +15,29 @@ Feng.confirm = function (tip, ensure) {
         ensure();
     });
 };
+Feng.doAction = function (options) {
+    var func = function (id, module, action, title, finish) {
+        var ajax = new layui.ax(Feng.ctxPath + "/" + module + "/" + action + "/" + id, function (data) {
+            Feng.success(title + "成功!");
+            if (finish != undefined){
+                finish(data)
+            }
+        }, function (data) {
+            Feng.error(title + "失败!" + data.message + "!");
+            if (finish != undefined){
+                finish(data)
+            }
+        });
+        ajax.start();
+    };
+    if (options.confirm) {
+        Feng.confirm("是否" + options.title + "?", function () {
+            func(options.id, options.module, options.action, options.title, options.finish)
+        });
+    } else {
+        func(options.id, options.module, options.action, options.title, options.finish)
+    }
+};
 Feng.currentDate = function () {
     // 获取当前日期
     var date = new Date();

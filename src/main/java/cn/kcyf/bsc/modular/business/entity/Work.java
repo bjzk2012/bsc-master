@@ -36,7 +36,7 @@ public class Work extends TableDomain {
     @JoinColumn(name = "work_id")
     @JSONField(serialize = false, deserialize = false)
     private Set<WorkRecord> records;
-    public String getStatus(){
+    public String getStatusMessage(){
         if (records == null || records.isEmpty()){
             return WorkStatus.DRAFT.getMessage();
         }

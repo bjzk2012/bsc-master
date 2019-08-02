@@ -39,7 +39,7 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
     public void audit(Long workRecordId, boolean flag, String suggestions) {
         WorkStatus status = flag ? WorkStatus.FINISH : WorkStatus.REFUSE;
         WorkRecord dbWorkRecord = workRecordDao.getOne(workRecordId);
-        ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject();
+        ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
         dbWorkRecord.setLastUpdateTime(new Date());
         dbWorkRecord.setLastUpdateUserId(shiroUser.getId());
         dbWorkRecord.setLastUpdateUserName(shiroUser.getUsername());
@@ -59,12 +59,14 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
         audit.setRemark(String.format("用户【%s】%s用户【%s】的【%s】日工作日志【%s】审核", shiroUser.getUsername(), status.getAction(), dbwork.getCreateUserName(), dbwork.getTodayRemark(), dbWorkRecord.getContent()));
         audit.setSuggestions(suggestions);
         workAuditDao.save(audit);
-        Project dbproject = projectDao.getOne(dbWorkRecord.getProjectId());
-        dbproject.setTime(dbproject.getTime() + dbWorkRecord.getTime());
-        dbproject.setLastUpdateTime(new Date());
-        dbproject.setLastUpdateUserId(shiroUser.getId());
-        dbproject.setLastUpdateUserName(shiroUser.getUsername());
-        projectDao.save(dbproject);
+        if (flag) {
+            Project dbproject = projectDao.getOne(dbWorkRecord.getProjectId());
+            dbproject.setUsed(dbproject.getUsed() + dbWorkRecord.getTime());
+            dbproject.setLastUpdateTime(new Date());
+            dbproject.setLastUpdateUserId(shiroUser.getId());
+            dbproject.setLastUpdateUserName(shiroUser.getUsername());
+            projectDao.save(dbproject);
+        }
 
     }
 }

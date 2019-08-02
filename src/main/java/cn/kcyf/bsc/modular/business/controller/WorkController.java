@@ -147,6 +147,7 @@ public class WorkController extends BasicController {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         create(workRecord);
+        workRecord.setToday(workService.getOne(workRecord.getWorkId()).getToday());
         workRecord.setProject(projectService.getOne(projectId));
         workRecord.setStatus(WorkStatus.DRAFT);
         workRecordService.create(workRecord);
