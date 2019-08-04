@@ -62,4 +62,9 @@ public class UserServiceImpl extends AbstractBasicService<User, Long> implements
     public String md5(String credentials, String saltSource) {
         return new SimpleHash(algorithmName, credentials, ByteSource.Util.bytes(saltSource), hashIterations).toHex();
     }
+
+    @Transactional(readOnly = true)
+    public List<User> findAllByDeptId(Long deptId) {
+        return userDao.findAllByDeptId(deptId);
+    }
 }

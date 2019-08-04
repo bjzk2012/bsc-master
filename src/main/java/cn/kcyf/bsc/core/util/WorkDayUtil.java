@@ -23,7 +23,6 @@ public class WorkDayUtil {
         String date = DateUtils.format(time, "yyyyMMdd");
         params.put("date", date);
         JSONObject result = JSON.parseObject(client.send(tApi, params));
-        System.out.println(result);
         return DayType.valueOfOrdinal(result.getInteger("data"));
     }
 

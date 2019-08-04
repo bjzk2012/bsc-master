@@ -4,12 +4,10 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
     var $ = layui.jquery;
     var laydate = layui.laydate;
     var admin = layui.admin;
-
     /**
      * 创建对象
      */
     var MgrUser = {};
-
     /**
      * 初始化表格的列
      */
@@ -29,7 +27,6 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 280}
         ]];
     };
-
     /**
      * 检索
      */
@@ -37,9 +34,8 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
         var queryData = {};
         queryData['name'] = $("#name").val();
         queryData['timeLimit'] = $("#timeLimit").val();
-        table.reload('#userTable', {where: queryData});
+        MgrUser.table.reload({where: queryData});
     };
-
     /**
      * 弹出添加对话框
      */
@@ -55,12 +51,11 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
             }
         });
     };
-
     /**
      * 弹出编辑对话框
      *
      */
-    MgrUser.onEdit = function (data) {
+    MgrUser.openEdit = function (data) {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -72,84 +67,67 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
             }
         });
     };
-
     /**
-     * 导出excel按钮
+     * 渲染表格
      */
-    MgrUser.exportExcel = function () {
-        var checkRows = table.checkStatus('#userTable');
-        if (checkRows.data.length === 0) {
-            Feng.error("请选择要导出的数据");
-        } else {
-            table.exportFile(MgrUser.tableResult.config.id, checkRows.data, 'xls');
-        }
-    };
-
-    // 渲染表格
-    MgrUser.tableResult = table.render({
+    MgrUser.table = table.render({
         elem: '#userTable',
         url: Feng.ctxPath + '/mgr/list',
         page: true,
-        toolbar: "#toolBar",
+        toolbar: "#toolbar",
         height: "full-125",
         cellMinWidth: 100,
         cols: MgrUser.initColumn()
     });
-
-    // 渲染时间选择框
+    /**
+     * 渲染时间选择框
+     */
     laydate.render({
         elem: '#timeLimit',
         range: true,
         max: Feng.currentDate()
     });
-
-    $("[lay-click]").click(function(){
-        MgrUser[$(this).attr("lay-click")].call(this);
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(userTable)', function (obj) {
+        var layEvent = obj.event;
+        MgrUser[layEvent]()
     });
-
-    // 工具条点击事件
+    /**
+     * 行工具栏事件
+     */
     table.on('tool(userTable)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
 
         if (layEvent === 'edit') {
-            MgrUser.onEditUser(data);
-        } else if (layEvent === 'delete') {
+            MgrUser.openEdit(data);
+        } else {
             Feng.doAction({
-                id : data.id,
-                module : "mgr",
-                action : "delete",
-                title : "删除用户",
-                confirm : true,
-                finish : function(d){
-                    MgrUser.search();
-                }
-            });
-        } else if (layEvent === 'reset') {
-            Feng.doAction({
-                id : data.id,
-                module : "mgr",
-                action : "reset",
-                title : "重置用户密码",
-                confirm : true,
-                finish : function(d){
+                id: data.id,
+                module: "mgr",
+                action: layEvent,
+                title: layEvent == "delete" ? "删除用户" : "重置用户密码",
+                confirm: true,
+                finish: function (d) {
                     MgrUser.search();
                 }
             });
         }
     });
-
-    // 修改状态
+    /**
+     * 修改状态
+     */
     form.on('switch(status)', function (obj) {
         Feng.doAction({
-            id : obj.elem.value,
-            module : "mgr",
-            action : obj.elem.checked ? "unfreeze" : "freeze",
-            title : obj.elem.checked ? "解冻" : "冻结",
-            finish : function(d){
+            id: obj.elem.value,
+            module: "mgr",
+            action: obj.elem.checked ? "unfreeze" : "freeze",
+            title: obj.elem.checked ? "解冻" : "冻结",
+            finish: function (d) {
                 MgrUser.search();
             }
         });
     });
-
 });

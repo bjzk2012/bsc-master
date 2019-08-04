@@ -17,7 +17,7 @@ Feng.confirm = function (tip, ensure) {
 };
 Feng.doAction = function (options) {
     var func = function (id, module, action, title, finish) {
-        var ajax = new layui.ax(Feng.ctxPath + "/" + module + "/" + action + "/" + id, function (data) {
+        var ajax = new top.layui.ax(Feng.ctxPath + "/" + module + "/" + action + "/" + id, function (data) {
             Feng.success(title + "成功!");
             if (finish != undefined){
                 finish(data)

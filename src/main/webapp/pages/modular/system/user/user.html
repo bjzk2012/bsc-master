@@ -7,7 +7,7 @@
 <div class="layui-fluid">
     <table class="layui-table" id="userTable" lay-filter="userTable"></table>
 </div>
-<script type="text/html" id="toolBar">
+<script type="text/html" id="toolbar">
     <div class="layui-form toolbar">
         <div class="layui-form-item">
             <div class="layui-inline">
@@ -17,11 +17,10 @@
                 <input id="timeLimit" class="layui-input" type="text" placeholder="注册时间" style="width:182px"/>
             </div>
             <div class="layui-inline">
-                <button class="layui-btn icon-btn" lay-click="search"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <button class="layui-btn icon-btn" lay-event="search"><i class="layui-icon">&#xe615;</i>搜索</button>
                  @if(shiro.hasPermission("mgr_add")){
-                <button class="layui-btn icon-btn" lay-click="onAdd"><i class="layui-icon">&#xe654;</i>添加</button>
+                <button class="layui-btn icon-btn" lay-event="openAdd"><i class="layui-icon">&#xe654;</i>添加</button>
                  @}
-                <button class="layui-btn icon-btn" lay-click="exportExcel"><i class="layui-icon">&#xe67d;</i>导出</button>
             </div>
         </div>
     </div>

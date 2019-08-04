@@ -36,15 +36,18 @@ public class Work extends TableDomain {
     @JoinColumn(name = "work_id")
     @JSONField(serialize = false, deserialize = false)
     private Set<WorkRecord> records;
-    public String getStatusMessage(){
+    public WorkStatus getStatus(){
         if (records == null || records.isEmpty()){
-            return WorkStatus.DRAFT.getMessage();
+            return WorkStatus.DRAFT;
         }
         for (WorkRecord record : records){
             if (record.getStatus().equals(WorkStatus.REFUSE)){
-                return WorkStatus.REFUSE.getMessage();
+                return WorkStatus.REFUSE;
             }
         }
-        return records.iterator().next().getStatus().getMessage();
+        return records.iterator().next().getStatus();
+    }
+    public String getStatusMessage(){
+        return getStatus().getMessage();
     }
 }
