@@ -25,7 +25,6 @@ public class VisitInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        System.out.println(SecurityUtils.getSubject());
         long time = System.currentTimeMillis();
         time = System.currentTimeMillis() - time;
         String uri = request.getRequestURI();

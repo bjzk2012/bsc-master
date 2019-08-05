@@ -108,6 +108,7 @@ public class User extends TableDomain {
             joinColumns={@JoinColumn(name="user_id",referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="roles_id",referencedColumnName="id")}
     )
+    @JoinColumn(name = "roles_id")
     @JSONField(serialize = false, deserialize = false)
     private Set<Role> roles;
     public String getRoleId(){

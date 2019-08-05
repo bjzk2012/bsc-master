@@ -30,7 +30,7 @@ layui.use(['form', 'admin', 'laydate', 'ax', 'treeSelect', 'jquery', 'formSelect
             $("#deptId").val(d.current.id);
         },
         success: function (d) {
-            treeSelect.checkNode('tree', result.data.deptId);
+            treeSelect.checkNode('tree', result.deptId);
         }
     });
 
