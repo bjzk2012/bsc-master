@@ -1,0 +1,52 @@
+@layout("/common/_container.html",{bg:"bg-white", js:["/assets/modular/business/chart/total/total.js"]}){
+<div class="layui-body-header">
+    <span class="layui-body-header-title">工作总览</span>
+</div>
+
+<div class="layui-fluid">
+    <table id="totalTable" lay-filter="totalTable">
+        <thead>
+        <tr>
+            <th lay-data="{field: 'time', align: 'center'}">时间</th>
+            @for(user in users) {
+                <th lay-data="{field:'${user.id}', align: 'center'}">${user.name}</th>
+            @}
+        </tr>
+        </thead>
+        @for(object in objects) {
+            <tr>
+                <td>${object.time}</td>
+                @for(user in users) {
+                    <td>
+                        @if(object[user.id] == 'DRAFT'){
+                        <button class="layui-btn layui-btn-xs layui-btn-primary">未提交</button>
+                        @}else if(object[user.id] == 'SUBMIT'){
+                        <button class="layui-btn layui-btn-xs action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已提交</button>
+                        @}else if(object[user.id] == 'FINISH'){
+                        <button class="layui-btn layui-btn-xs layui-btn-normal action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已完成</button>
+                        @}else if(object[user.id] == 'REFUSE'){
+                        <button class="layui-btn layui-btn-xs layui-btn-danger action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已退回</button>
+                        @}else{
+                        <button class="layui-btn layui-btn-xs layui-btn-disabled">无记录</button>
+                        @}
+                    </td>
+                @}
+            </tr>
+        @}
+    </table>
+</div>
+<script type="text/html" id="toolbar">
+    <div class="layui-form toolbar">
+        <div class="layui-form-item">
+            <form id="totalForm" lay-filter="totalForm">
+                <div class="layui-inline">
+                    <input id="timeLimit" name="timeLimit" class="layui-input" type="text" placeholder="时间" style="width:182px" value="${timeLimit!}"/>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn icon-btn" lay-event="search"><i class="layui-icon">&#xe615;</i>搜索</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+@}

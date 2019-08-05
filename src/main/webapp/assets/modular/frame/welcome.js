@@ -11,8 +11,6 @@ layui.use(['jquery', 'layer', 'ax'], function () {
     }, function (data) {
         Feng.error("获取PV信息错误!" + data.message + "!");
     });
-    allPvAjax.type = "get";
-    allPvAjax.start();
 
     // 渲染活动情况预测
     var myCharts1 = echarts.init(document.getElementById('hdqkyc'), myEchartsTheme);
@@ -56,8 +54,6 @@ layui.use(['jquery', 'layer', 'ax'], function () {
     }, function (data) {
         Feng.error("获取PV信息错误!" + data.message + "!");
     });
-    hourPvAjax.type = "get";
-    hourPvAjax.start();
 
     // 渲染访问有效率图表
     var myCharts2 = echarts.init(document.getElementById('hjxl'), myEchartsTheme);
@@ -100,97 +96,98 @@ layui.use(['jquery', 'layer', 'ax'], function () {
             }
         ]
     };
-    myCharts2.setOption(option2);
 
     var myCharts3 = echarts.init(document.getElementById('map'), myEchartsTheme);
-    $.getJSON("/assets/common/json/data-china.json", function (geoJson) {
-        echarts.registerMap('zhongguo', geoJson);
-        var option3 = {
-            title: {
-                text: '访问量分布',
-                x: 'center'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: function (params) {
-                    return params.name + ' : ' + params.value[2];
-                }
-            },
-            geo: {
-                show: true,
-                map: 'zhongguo',
-                label: {
-                    normal: {
-                        show: false
+    var myCharts3Init = function() {
+        $.getJSON("/assets/common/json/data-china.json", function (geoJson) {
+            echarts.registerMap('zhongguo', geoJson);
+            var option3 = {
+                title: {
+                    text: '访问量分布',
+                    x: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return params.name + ' : ' + params.value[2];
+                    }
+                },
+                geo: {
+                    show: true,
+                    map: 'zhongguo',
+                    label: {
+                        normal: {
+                            show: false
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                color: '#FFF'
+                            }
+                        }
                     },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            color: '#FFF'
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#05988b',
+                            borderColor: '#eee'
+                        },
+                        emphasis: {
+                            areaColor: '#05988b',
+                            borderColor: '#eee'
                         }
                     }
                 },
-                itemStyle: {
-                    normal: {
-                        areaColor: '#05988b',
-                        borderColor: '#eee'
+                series: [{
+                    name: '访问量',
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        brushType: 'stroke'
                     },
-                    emphasis: {
-                        areaColor: '#05988b',
-                        borderColor: '#eee'
-                    }
-                }
-            },
-            series: [{
-                name: '访问量',
-                type: 'effectScatter',
-                coordinateSystem: 'geo',
-                showEffectOn: 'render',
-                rippleEffect: {
-                    brushType: 'stroke'
-                },
-                hoverAnimation: true,
-                label: {
-                    normal: {
-                        show: false
+                    hoverAnimation: true,
+                    label: {
+                        normal: {
+                            show: false
+                        },
+                        emphasis: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: true
+                        }
                     },
-                    emphasis: {
-                        formatter: '{b}',
-                        position: 'right',
-                        show: true
+                    itemStyle: {
+                        normal: {
+                            color: '#C1232B',
+                            shadowBlur: 10,
+                            shadowColor: '#fe994e'
+                        }
                     }
-                },
-                itemStyle: {
-                    normal: {
-                        color: '#C1232B',
-                        shadowBlur: 10,
-                        shadowColor: '#fe994e'
-                    }
+                }]
+            };
+            var regionPvAjax = new $ax(Feng.ctxPath + "/system/regionpv", function (data) {
+                if (data.code == 200) {
+                    var all = 0;
+                    data = $.map(data.data, function (n) {
+                        all += n.count;
+                        return {name: n.name, value: n.count}
+                    });
+                    var result = convertData(data.sort(function (a, b) {
+                        return b.value - a.value;
+                    }));
+                    option3.series[0].symbolSize = function (val) {
+                        return val[2] / (all / 30);
+                    },
+                        option3.series[0].data = result;
+                    myCharts3.setOption(option3);
                 }
-            }]
-        };
-        var regionPvAjax = new $ax(Feng.ctxPath + "/system/regionpv", function (data) {
-            if (data.code == 200) {
-                var all = 0;
-                data = $.map(data.data, function (n) {
-                    all += n.count;
-                    return {name: n.name, value: n.count}
-                });
-                var result = convertData(data.sort(function (a, b) {
-                    return b.value - a.value;
-                }));
-                option3.series[0].symbolSize = function (val) {
-                    return val[2] / (all / 30);
-                },
-                    option3.series[0].data = result;
-                myCharts3.setOption(option3);
-            }
-        }, function (data) {
-            Feng.error("获取PV信息错误!" + data.message + "!");
+            }, function (data) {
+                Feng.error("获取PV信息错误!" + data.message + "!");
+            });
+            regionPvAjax.type = "get";
+            regionPvAjax.start();
         });
-        regionPvAjax.type = "get";
-        regionPvAjax.start();
-    });
+    };
     // 渲染网站注册量图表
     var myCharts4 = echarts.init(document.getElementById('fwl'), myEchartsTheme);
     var monthPvAjax = new $ax(Feng.ctxPath + "/system/monthpv", function (data) {
@@ -224,8 +221,7 @@ layui.use(['jquery', 'layer', 'ax'], function () {
     }, function (data) {
         Feng.error("获取PV信息错误!" + data.message + "!");
     });
-    monthPvAjax.type = "get";
-    monthPvAjax.start();
+
 
     // 渲染用户访问排行
     var userPvAjax = new $ax(Feng.ctxPath + "/system/userpv", function (data) {
@@ -256,6 +252,18 @@ layui.use(['jquery', 'layer', 'ax'], function () {
     $("[lay-id='/system/welcome']", top.document).click(function(){
         myCharts2.setOption(option2);
     });
+    try{
+        allPvAjax.type = "get";
+        allPvAjax.start();
+        hourPvAjax.type = "get";
+        hourPvAjax.start();
+        myCharts2.setOption(option2);
+        myCharts3Init();
+        monthPvAjax.type = "get";
+        monthPvAjax.start();
+    }catch (e) {
+
+    }
     // 窗口大小改变事件
     window.onresize = function () {
         myCharts1.resize();
