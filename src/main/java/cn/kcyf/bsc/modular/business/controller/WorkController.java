@@ -1,9 +1,11 @@
 
 package cn.kcyf.bsc.modular.business.controller;
 
+import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.core.enumerate.WorkStatus;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
+import cn.kcyf.bsc.modular.business.entity.Project;
 import cn.kcyf.bsc.modular.business.entity.Work;
 import cn.kcyf.bsc.modular.business.entity.WorkRecord;
 import cn.kcyf.bsc.modular.business.service.ProjectService;
@@ -28,13 +30,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 工作日志控制器
+ * 工单控制器
  *
  * @author Tom
  */
 @Controller
 @RequestMapping("/work")
-@Api(tags = "工作日志管理", description = "工作日志管理")
+@Api(tags = "工单管理", description = "工单管理")
 public class WorkController extends BasicController {
 
     private static String PREFIX = "/modular/business/work";
@@ -46,16 +48,34 @@ public class WorkController extends BasicController {
     @Autowired
     private WorkRecordService workRecordService;
 
+    private void setProjects(Model model) {
+        Criteria<Project> criteria = new Criteria<Project>();
+        criteria.add(Restrictions.eq("status", Status.ENABLE));
+        model.addAttribute("projects", projectService.findList(criteria));
+    }
+
+    /**
+     * 工单申请
+     *
+     * @param model
+     * @return
+     */
     @GetMapping("/apply")
     public String index(Model model) {
-        model.addAttribute("projects", projectService.findAll());
+        setProjects(model);
         return PREFIX + "/apply.html";
     }
 
+    /**
+     * 工单审核
+     *
+     * @param model
+     * @return
+     */
     @GetMapping("/audit")
     public String audit(Model model) {
         Map<String, String> statuses = new HashMap<String, String>();
-        for (WorkStatus status : WorkStatus.values()){
+        for (WorkStatus status : WorkStatus.values()) {
             if (!status.equals(WorkStatus.DRAFT)) {
                 statuses.put(status.name(), status.getMessage());
             }
@@ -67,13 +87,13 @@ public class WorkController extends BasicController {
     @GetMapping(value = "/workRecord_add")
     public String workRecordAdd(Long workId, Model model) {
         model.addAttribute("workId", workId);
-        model.addAttribute("projects", projectService.findAll());
+        setProjects(model);
         return PREFIX + "/workRecord_add.html";
     }
 
     @GetMapping(value = "/workRecord_edit")
     public String projectEdit(Long workRecordId, Model model) {
-        model.addAttribute("projects", projectService.findAll());
+        setProjects(model);
         model.addAttribute("workRecordId", workRecordId);
         return PREFIX + "/workRecord_edit.html";
     }
@@ -82,7 +102,7 @@ public class WorkController extends BasicController {
     public String workRecordDetail(@PathVariable Long workRecordId, Model model) {
         model.addAttribute("workRecordId", workRecordId);
         model.addAttribute("entity", workRecordService.getOne(workRecordId));
-        model.addAttribute("projects", projectService.findAll());
+        setProjects(model);
         return PREFIX + "/workRecord_detail.html";
     }
 
@@ -141,7 +161,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/add")
     @ResponseBody
-    @BussinessLog(value = "新增工作日志")
+    @BussinessLog(value = "新增工单")
     public ResponseData add(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -156,14 +176,14 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/edit")
     @ResponseBody
-    @BussinessLog(value = "修改工作日志")
+    @BussinessLog(value = "修改工单")
     public ResponseData edit(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         WorkRecord dbWorkRecord = workRecordService.getOne(workRecord.getId());
         if (dbWorkRecord.getStatus().equals(WorkStatus.FINISH)) {
-            return ResponseData.error("工作日志已审核通过，无法修改！");
+            return ResponseData.error("工单已审核通过，无法修改！");
         }
         update(dbWorkRecord);
         dbWorkRecord.setStatus(WorkStatus.DRAFT);
@@ -183,11 +203,11 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/delete/{workRecordId}")
     @ResponseBody
-    @BussinessLog(value = "删除工作日志")
+    @BussinessLog(value = "删除工单")
     public ResponseData delete(@PathVariable Long workRecordId) {
         WorkRecord dbWorkRecord = workRecordService.getOne(workRecordId);
         if (dbWorkRecord.getStatus().equals(WorkStatus.FINISH)) {
-            return ResponseData.error("工作日志已审核通过，无法删除！");
+            return ResponseData.error("工单已审核通过，无法删除！");
         }
         workRecordService.delete(workRecordId);
         return SUCCESS_TIP;
@@ -195,19 +215,19 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/submit/{workId}")
     @ResponseBody
-    @BussinessLog(value = "提交工作日志")
+    @BussinessLog(value = "提交工单")
     public ResponseData submit(@PathVariable Long workId) {
         try {
             workService.submit(workId);
-        } catch (RuntimeException e){
-            ResponseData.error(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseData.error(e.getMessage());
         }
         return SUCCESS_TIP;
     }
 
     @PostMapping(value = "/workRecord/audit/{workRecordId}")
     @ResponseBody
-    @BussinessLog(value = "审核工作日志")
+    @BussinessLog(value = "审核工单")
     public ResponseData audit(@PathVariable Long workRecordId, boolean flag, String suggestions) {
         workRecordService.audit(workRecordId, flag, suggestions);
         return SUCCESS_TIP;

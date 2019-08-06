@@ -74,17 +74,12 @@ public class DeptController extends BasicController{
 
     @GetMapping(value = "/list")
     @ResponseBody
-    public ResponseData list(String condition, Long deptId, int page, int limit) {
+    public ResponseData list(String name) {
         Criteria<Dept> criteria = new Criteria<Dept>();
-        if (!StringUtils.isEmpty(condition)) {
-            criteria.add(Restrictions.like("fullName", condition));
+        if (!StringUtils.isEmpty(name)) {
+            criteria.add(Restrictions.like("fullName", name));
         }
-        if (deptId != null) {
-            criteria.add(Restrictions.eq("parentId", deptId));
-        } else {
-            criteria.add(Restrictions.isNull("parentId"));
-        }
-        return ResponseData.list(deptService.findList(criteria, PageRequest.of(page - 1, limit)));
+        return ResponseData.list(deptService.findList(criteria));
     }
 
     @PostMapping(value = "/add")

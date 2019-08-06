@@ -96,8 +96,9 @@ public class ProjectController extends BasicController {
     @ResponseBody
     @BussinessLog(value = "删除项目")
     public ResponseData delete(@PathVariable Long projectId) {
-        projectService.delete(projectId);
-        return SUCCESS_TIP;
+//        projectService.delete(projectId);
+//        return SUCCESS_TIP;
+        return ResponseData.error("暂不支持删除项目，请使用禁用启用功能");
     }
 
     @PostMapping("/freeze/{projectId}")

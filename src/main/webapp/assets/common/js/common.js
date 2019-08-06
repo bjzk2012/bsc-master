@@ -16,7 +16,8 @@ Feng.confirm = function (tip, ensure) {
     });
 };
 Feng.doAction = function (options) {
-    var func = function (id, module, action, title, finish) {
+    console.log(Feng.ctxPath)
+    var func = function (id, module, action, title, finish, params) {
         var ajax = new top.layui.ax(Feng.ctxPath + "/" + module + "/" + action + "/" + id, function (data) {
             Feng.success(title + "成功!");
             if (finish != undefined){
@@ -28,14 +29,17 @@ Feng.doAction = function (options) {
                 finish(data)
             }
         });
+        if (params) {
+            ajax.set(params);
+        }
         ajax.start();
     };
     if (options.confirm) {
         Feng.confirm("是否" + options.title + "?", function () {
-            func(options.id, options.module, options.action, options.title, options.finish)
+            func(options.id, options.module, options.action, options.title, options.finish, options.params)
         });
     } else {
-        func(options.id, options.module, options.action, options.title, options.finish)
+        func(options.id, options.module, options.action, options.title, options.finish, options.params)
     }
 };
 Feng.currentDate = function () {

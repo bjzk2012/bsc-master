@@ -13,10 +13,11 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
      */
     MgrUser.initColumn = function () {
         return [[
-            {type: 'checkbox'},
+            {title: '序号', type: 'numbers'},
             {field: 'id', hide: true, title: '用户id'},
             {field: 'account', sort: true, title: '账号'},
             {field: 'name', sort: true, title: '姓名'},
+            {field: 'avatar', templet: '#avatarTpl', title: '图像', align: 'center'},
             {field: 'sexMessage', title: '性别'},
             {field: 'roleName', title: '角色'},
             {field: 'deptName', title: '部门'},
@@ -31,10 +32,12 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
      * 检索
      */
     MgrUser.search = function () {
-        var queryData = {};
-        queryData['name'] = $("#name").val();
-        queryData['timeLimit'] = $("#timeLimit").val();
-        MgrUser.table.reload({where: queryData});
+        MgrUser.table.reload({
+            where: {
+                name: $("#name").val(),
+                timeLimit: $("#timeLimit").val()
+            }
+        });
     };
     /**
      * 弹出添加对话框
@@ -75,17 +78,20 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
         url: Feng.ctxPath + '/mgr/list',
         page: true,
         toolbar: "#toolbar",
-        height: "full-125",
+        height: "full-30",
         cellMinWidth: 100,
-        cols: MgrUser.initColumn()
-    });
-    /**
-     * 渲染时间选择框
-     */
-    laydate.render({
-        elem: '#timeLimit',
-        range: true,
-        max: Feng.currentDate()
+        cols: MgrUser.initColumn(),
+        where: {
+            name: '',
+            timeLimit: ''
+        },
+        done: function () {
+            laydate.render({
+                elem: '#timeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
+        }
     });
     /**
      * 头工具栏事件

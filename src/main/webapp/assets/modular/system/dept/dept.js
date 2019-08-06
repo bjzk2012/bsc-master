@@ -1,9 +1,8 @@
-layui.use(['table', 'admin', 'ax', 'ztree'], function () {
+layui.use(['table', 'treetable', 'admin'], function () {
     var $ = layui.$;
     var table = layui.table;
-    var $ax = layui.ax;
+    var treetable = layui.treetable;
     var admin = layui.admin;
-    var $ZTree = layui.ztree;
 
     /**
      * 系统管理--部门管理
@@ -15,25 +14,12 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
         }
     };
 
-    Dept.initTree = function(){
-        Dept.condition.deptId = '';
-        $("#name").val('');
-        var ztree = new $ZTree("deptTree", "/dept/tree");
-        ztree.bindOnClick(function (e, treeId, treeNode) {
-            Dept.condition.deptId = treeNode.id;
-            Dept.search();
-        });
-        ztree.init();
-    };
-
-    Dept.initTree();
-
     /**
      * 初始化表格的列
      */
     Dept.initColumn = function () {
         return [[
-            {type: 'checkbox'},
+            {title: '序号', type: 'numbers'},
             {field: 'id', hide: true, title: 'id'},
             {field: 'simpleName', sort: true, title: '部门简称'},
             {field: 'fullName', sort: true, title: '部门全称'},
@@ -43,32 +29,41 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
         ]];
     };
 
+    Dept.reload = function(data){
+        treetable.render({
+            elem: '#deptTable',
+            url: Feng.ctxPath + '/dept/list',
+            page: false,
+            toolbar: '#toolbar',
+            height: "full-30",
+            cellMinWidth: 100,
+            cols: Dept.initColumn(),
+            treeColIndex: 2,
+            treeSpid: "0",
+            treeIdName: 'id',
+            treePidName: 'pId',
+            treeDefaultClose: false,
+            treeLinkage: true,
+            where: data
+        });
+    };
+    Dept.reload({
+        name: ''
+    });
+
     /**
      * 点击查询按钮
      */
     Dept.search = function () {
-        var queryData = {};
-        queryData['condition'] = $("#name").val();
-        queryData['deptId'] = Dept.condition.deptId;
-        table.reload(Dept.tableId, {where: queryData});
-    };
-
-    /**
-     * 导出excel按钮
-     */
-    Dept.exportExcel = function () {
-        var checkRows = table.checkStatus(Dept.tableId);
-        if (checkRows.data.length === 0) {
-            Feng.error("请选择要导出的数据");
-        } else {
-            table.exportFile(tableResult.config.id, checkRows.data, 'xls');
-        }
+        Dept.reload({
+            name: $("#name").val()
+        });
     };
 
     /**
      * 弹出添加
      */
-    Dept.openAddDept = function () {
+    Dept.openAdd = function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -76,7 +71,6 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
             title: '添加部门',
             content: Feng.ctxPath + '/dept/dept_add?parentId=' + Dept.condition.deptId,
             end: function () {
-                admin.getTempData('formOk') && Dept.initTree();
                 admin.getTempData('formOk') && Dept.search();
             }
         });
@@ -87,7 +81,7 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
      *
      * @param data 点击按钮时候的行数据
      */
-    Dept.onEditDept = function (data) {
+    Dept.openEdit = function (data) {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -95,71 +89,45 @@ layui.use(['table', 'admin', 'ax', 'ztree'], function () {
             title: '修改部门',
             content: Feng.ctxPath + '/dept/dept_edit?deptId=' + data.id,
             end: function () {
-                admin.getTempData('formOk') && Dept.initTree();
                 admin.getTempData('formOk') && Dept.search();
             }
         });
     };
 
-    /**
-     * 点击删除部门
-     *
-     * @param data 点击按钮时候的行数据
-     */
-    Dept.onDeleteDept = function (data) {
-        var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/dept/delete/" + data.id, function () {
-                Feng.success("删除成功!");
-                Dept.initTree();
-                Dept.search();
-            }, function (data) {
-                Feng.error("删除失败!" + data.message + "!");
-            });
-            ajax.start();
-        };
-        Feng.confirm("是否删除部门 " + data.simpleName + "?", operation);
+    Dept.expandAll = function(){
+        treetable.expandAll('#deptTable');
     };
 
-    // 渲染表格
-    var tableResult = table.render({
-        elem: '#' + Dept.tableId,
-        url: Feng.ctxPath + '/dept/list',
-        page: true,
-        height: "full-125",
-        cellMinWidth: 100,
-        cols: Dept.initColumn()
-    });
+    Dept.foldAll = function(){
+        treetable.foldAll('#deptTable');
+    };
 
-    // 搜索按钮点击事件
-    $('#btnSearch').click(function () {
-        Dept.search();
-    });
-
-    // 刷新按钮点击事件
-    $('#refreshSearch').click(function () {
-        Dept.initTree();
-        Dept.search();
-    });
-
-    // 添加按钮点击事件
-    $('#btnAdd').click(function () {
-        Dept.openAddDept();
-    });
-
-    // 导出excel
-    $('#btnExp').click(function () {
-        Dept.exportExcel();
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(deptTable)', function (obj) {
+        var layEvent = obj.event;
+        Dept[layEvent]()
     });
 
     // 工具条点击事件
-    table.on('tool(' + Dept.tableId + ')', function (obj) {
+    table.on('tool(deptTable)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
 
         if (layEvent === 'edit') {
-            Dept.onEditDept(data);
+            Dept.openEdit(data);
         } else if (layEvent === 'delete') {
-            Dept.onDeleteDept(data);
+            Feng.doAction({
+                id: data.id,
+                module: "dept",
+                action: layEvent,
+                title: "删除部门",
+                confirm: true,
+                finish: function (d) {
+                    Dept.search();
+                }
+            });
         }
     });
 });

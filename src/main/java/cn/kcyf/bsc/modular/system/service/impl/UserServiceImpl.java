@@ -67,4 +67,11 @@ public class UserServiceImpl extends AbstractBasicService<User, Long> implements
     public List<User> findAllByDeptId(Long deptId) {
         return userDao.findAllByDeptId(deptId);
     }
+
+    @Override
+    @Transactional
+    public void delete(Long userId) {
+        User user = userDao.getOne(userId);
+        super.update(user);
+    }
 }

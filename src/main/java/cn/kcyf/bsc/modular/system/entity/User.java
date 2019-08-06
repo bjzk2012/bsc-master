@@ -96,7 +96,22 @@ public class User extends TableDomain {
     @Pattern(regexp = "(^\\.{0}$)|(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)", message = "电话必须是固定电话或手机号码")
     private String phone;
     /**
-     *
+     * QQ号码
+     */
+    @Column(name = "qq")
+    private String qq;
+    /**
+     * 微信号
+     */
+    @Column(name = "wechat")
+    private String wechat;
+    /**
+     * 微博账号
+     */
+    @Column(name = "weibo")
+    private String weibo;
+    /**
+     * 地址
      */
     @Column(name = "address")
     private String address;

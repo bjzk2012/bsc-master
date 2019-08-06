@@ -118,7 +118,9 @@ html {
 
 .layui-fluid {
     padding: 15px;
-    padding-bottom: 0;
+}
+.layui-table, .layui-table-view {
+    margin: 0;
 }
 
 .admin-iframe {

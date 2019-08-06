@@ -5,41 +5,29 @@
 </div>
 
 <div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm12 layui-col-md3 layui-col-lg2">
-            <div class="layui-card">
-                <div class="layui-card-body mini-bar">
-                    <div class="ztree" id="deptTree"></div>
-                </div>
+    <table class="layui-table" id="deptTable" lay-filter="deptTable"></table>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-form toolbar">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <input id="name" class="layui-input" type="text" placeholder="简称/全称" value="{{d.where.name}}"/>
             </div>
-        </div>
-        <div class="layui-col-sm12 layui-col-md9 layui-col-lg10">
-            <div class="layui-card">
-                <div class="layui-card-body">
-                    <div class="layui-form toolbar">
-                        <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <input id="name" class="layui-input" type="text" placeholder="部门名称"/>
-                            </div>
-                            <div class="layui-inline">
-                                <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
-                                <button id="refreshSearch" class="layui-btn icon-btn"><i class="layui-icon">&#xe669;</i>刷新</button>
-                                @if(shiro.hasPermission("dept_add")){
-                                <button id="btnAdd" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
-                                @}
-                                <button id="btnExp" class="layui-btn icon-btn"><i class="layui-icon">&#xe67d;</i>导出</button>
-                            </div>
-                        </div>
-                    </div>
-                    <table class="layui-table" id="deptTable" lay-filter="deptTable"></table>
-                </div>
+            <div class="layui-inline">
+                <button class="layui-btn icon-btn" lay-event="search"><i class="layui-icon">&#xe615;</i>搜索</button>
+                @if(shiro.hasPermission("dept_add")){
+                <button class="layui-btn icon-btn" lay-event="openAdd"><i class="layui-icon">&#xe654;</i>添加</button>
+                @}
+                <button class="layui-btn icon-btn" lay-event="expandAll"><i class="layui-icon">&#xe654;</i>展开所有</button>
+                <button class="layui-btn icon-btn" lay-event="foldAll"><i class="layui-icon">&#xe656;</i>折叠所有</button>
             </div>
         </div>
     </div>
-</div>
+</script>
 
 <script type="text/html" id="tableBar">
-    @if(shiro.hasPermission("dept_update")){
+    @if(shiro.hasPermission("dept_edit")){
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     @}
     @if(shiro.hasPermission("dept_delete")){

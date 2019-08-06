@@ -54,13 +54,10 @@ public class MenuController extends BasicController {
 
     @GetMapping(value = "/list")
     @ResponseBody
-    public ResponseData list(String menuName, String level) {
+    public ResponseData list(String menuName) {
         Criteria<Menu> criteria = new Criteria<Menu>();
         if (!StringUtils.isEmpty(menuName)){
             criteria.add(Restrictions.or(Restrictions.like("name", menuName), Restrictions.like("code", menuName)));
-        }
-        if (!StringUtils.isEmpty(level)){
-            criteria.add(Restrictions.eq("levels", level));
         }
         return ResponseData.list(menuService.findList(criteria));
     }

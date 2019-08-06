@@ -1,7 +1,7 @@
-layui.use(['layer', 'table', 'ax', 'laydate'], function () {
+layui.use(['form', 'jquery', 'table', 'ax', 'laydate'], function () {
     var $ = layui.$;
     var $ax = layui.ax;
-    var layer = layui.layer;
+    var form = layui.form;
     var table = layui.table;
     var laydate = layui.laydate;
 
@@ -17,7 +17,7 @@ layui.use(['layer', 'table', 'ax', 'laydate'], function () {
      */
     Log.initColumn = function () {
         return [[
-            {type: 'checkbox'},
+            {title: '序号', type: 'numbers'},
             {field: 'id', hide: true, sort: true, title: 'id'},
             {field: 'logTypeMessage', sort: true, title: '日志类型'},
             {field: 'logName', sort: true, title: '日志名称'},
@@ -34,30 +34,20 @@ layui.use(['layer', 'table', 'ax', 'laydate'], function () {
      * 点击查询按钮
      */
     Log.search = function () {
-        var queryData = {};
-        queryData['timeLimit'] = $("#timeLimit").val();
-        queryData['logName'] = $("#logName").val();
-        queryData['logType'] = $("#logType").val();
-        table.reload(Log.tableId, {where: queryData});
-    };
-
-    /**
-     * 导出excel按钮
-     */
-    Log.exportExcel = function () {
-        var checkRows = table.checkStatus(Log.tableId);
-        if (checkRows.data.length === 0) {
-            Feng.error("请选择要导出的数据");
-        } else {
-            table.exportFile(tableResult.config.id, checkRows.data, 'xls');
-        }
+        Log.table.reload({
+            where: {
+                timeLimit: $("#timeLimit").val(),
+                logName: $("#logName").val(),
+                logType: $("#logType").val()
+            }
+        });
     };
 
     /**
      * 日志详情
      */
-    Log.logDetail = function (param) {
-        var ajax = new $ax(Feng.ctxPath + "/log/detail/" + param.id, function (data) {
+    Log.openDetail = function (data) {
+        var ajax = new $ax(Feng.ctxPath + "/log/detail/" + data.id, function (data) {
             Feng.infoDetail("日志详情", data.data.message);
         }, function (data) {
             Feng.error("获取详情失败!");
@@ -69,7 +59,7 @@ layui.use(['layer', 'table', 'ax', 'laydate'], function () {
     /**
      * 清空日志
      */
-    Log.cleanLog = function () {
+    Log.clear = function () {
         Feng.confirm("是否清空所有日志?", function () {
             var ajax = new $ax(Feng.ctxPath + "/log/delete", function (data) {
                 Feng.success("清空日志成功!");
@@ -81,40 +71,45 @@ layui.use(['layer', 'table', 'ax', 'laydate'], function () {
         });
     };
 
-    //渲染时间选择框
-    laydate.render({
-        elem: '#timeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
-
     // 渲染表格
-    var tableResult = table.render({
-        elem: '#' + Log.tableId,
+    Log.table = table.render({
+        elem: '#logTable',
         url: Feng.ctxPath + '/log/list',
         page: true,
-        height: "full-125",
+        toolbar: '#toolbar',
+        height: "full-30",
         cellMinWidth: 100,
-        cols: Log.initColumn()
+        cols: Log.initColumn(),
+        where: {
+            timeLimit: '',
+            logName: '',
+            logType: ''
+        },
+        done: function(d){
+            $("#logType").val(this.where.logType);
+            form.render('select');
+            laydate.render({
+                elem: '#timeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
+        }
     });
 
-    // 搜索按钮点击事件
-    $('#btnSearch').click(function () {
-        Log.search();
-    });
-
-    // 搜索按钮点击事件
-    $('#btnClean').click(function () {
-        Log.cleanLog();
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(logTable)', function (obj) {
+        var layEvent = obj.event;
+        Log[layEvent]()
     });
 
     // 工具条点击事件
-    table.on('tool(' + Log.tableId + ')', function (obj) {
+    table.on('tool(logTable)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
-
         if (layEvent === 'detail') {
-            Log.logDetail(data);
+            Log.openDetail(data);
         }
     });
 });

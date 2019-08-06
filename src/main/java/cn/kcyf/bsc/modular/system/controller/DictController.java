@@ -73,7 +73,7 @@ public class DictController extends BasicController {
     public ResponseData list(String condition) {
         Criteria<Dict> criteria = new Criteria<Dict>();
         if (!StringUtils.isEmpty(condition)) {
-            criteria.add(Restrictions.or(Restrictions.like("name", condition), Restrictions.like("description", condition)));
+            criteria.add(Restrictions.or(Restrictions.like("name", condition), Restrictions.like("code", condition), Restrictions.like("description", condition)));
         }
         return ResponseData.list(dictService.findList(criteria));
     }

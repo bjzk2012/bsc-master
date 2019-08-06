@@ -60,7 +60,7 @@ public class RoleController extends BasicController {
     public ResponseData list(String roleName, int page, int limit) {
         Criteria<Role> criteria = new Criteria<Role>();
         if (!StringUtils.isEmpty(roleName)) {
-            criteria.add(Restrictions.like("name", roleName));
+            criteria.add(Restrictions.or(Restrictions.like("name", roleName), Restrictions.like("description", roleName)));
         }
         return ResponseData.list(roleService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
@@ -100,6 +100,10 @@ public class RoleController extends BasicController {
     @ResponseBody
     @BussinessLog(value = "删除角色")
     public ResponseData delete(@PathVariable Long roleId) {
+        Role role = roleService.getOne(roleId);
+        if (role.getDescription().equals("administrator")){
+            return ResponseData.error("超级管理员角色不允许被删除!");
+        }
         roleService.delete(roleId);
         return SUCCESS_TIP;
     }

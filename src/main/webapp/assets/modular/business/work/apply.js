@@ -1,30 +1,17 @@
-layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], function () {
+layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
     var $ = layui.$;
-    var form = layui.form;
     var table = layui.table;
-    var $ax = layui.ax;
     var admin = layui.admin;
-    var element = layui.element;
     var laydate = layui.laydate;
 
     /**
      * 系统管理--项目管理
      */
     var WorkApply = {
-        workTableId: "workTable",
-        workRecordTableId: "workRecordTable",
         condition: {
             workId: null,
-            timeLimit: ""
         }
     };
-
-    //渲染时间选择框
-    laydate.render({
-        elem: '#timeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
 
     /**
      * 初始化表格的列
@@ -53,39 +40,55 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
 
     // 渲染表格
     WorkApply.workTable = table.render({
-        elem: '#' + WorkApply.workTableId,
+        elem: '#workTable',
         url: Feng.ctxPath + '/work/list',
         page: true,
-        height: "full-125",
+        toolbar: '#workToolbar',
+        height: "full-30",
         cellMinWidth: 100,
         cols: WorkApply.initWorkColumn(),
+        where: {
+            timeLimit: ''
+        },
         done: function () {
-            WorkApply.workRecordTable.reload()
-            table.reload(WorkApply.workRecordTableId, {where: {workId: null}});
+            laydate.render({
+                elem: '#timeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
             WorkApply.condition.workId = null;
+            WorkApply.workRecordSearch();
         }
     });
+
     WorkApply.workRecordTable = table.render({
-        elem: '#' + WorkApply.workRecordTableId,
+        elem: '#workRecordTable',
         url: Feng.ctxPath + '/work/records',
         page: true,
-        height: "full-125",
+        toolbar: '#workRecordToolbar',
+        height: "full-30",
         cellMinWidth: 100,
         cols: WorkApply.initWorkRecordColumn()
     });
-    WorkApply.openAddWorkRecord = function(workId){
+
+    WorkApply.openAdd = function(){
+        if(!WorkApply.condition.workId){
+            Feng.error("请选择日期!");
+            return;
+        }
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
             title: '添加工作日志',
-            content: Feng.ctxPath + '/work/workRecord_add?workId=' + workId,
+            content: Feng.ctxPath + '/work/workRecord_add?workId=' + WorkApply.condition.workId,
             end: function () {
-                admin.getTempData('formOk') && table.reload(WorkApply.workRecordTableId);
+                admin.getTempData('formOk') && WorkApply.workRecordSearch();
             }
         });
     };
-    WorkApply.openEditWorkRecord = function(workRecordId){
+
+    WorkApply.openEdit = function(workRecordId){
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -93,65 +96,74 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
             title: '修改工作日志',
             content: Feng.ctxPath + '/work/workRecord_edit?workRecordId=' + workRecordId,
             end: function () {
-                admin.getTempData('formOk') && table.reload(WorkApply.workRecordTableId);
+                admin.getTempData('formOk') && WorkApply.workRecordSearch();
             }
         });
     };
-    $("#btnSearch").click(function(){
-        table.reload(WorkApply.workTableId, {where: {timeLimit: $("#timeLimit").val()}});
-    });
-    $("#btnAdd").click(function(){
-        if(!WorkApply.condition.workId){
-            Feng.error("请选择日期!");
-            return;
-        }
-        WorkApply.openAddWorkRecord(WorkApply.condition.workId);
-    });
-    $("#btnSubmitWork").click(function(){
-        if(!WorkApply.condition.workId){
-            Feng.error("请选择日期!");
-            return;
-        }
-        WorkApply.submitWork(WorkApply.condition.workId);
-    });
+
+    WorkApply.search = function(){
+        WorkApply.workTable.reload({where: {timeLimit: $("#timeLimit").val()}});
+    };
+
+    WorkApply.workRecordSearch = function(){
+        WorkApply.workRecordTable.reload({where: {workId: WorkApply.condition.workId}});
+    };
+
     WorkApply.submitWork = function(workId){
-        WorkApply.doAction(workId, "submit", "提交", true)
-    };
-
-    WorkApply.doAction = function (id, action, title, confirm) {
-        var func = function (id, action, title) {
-            var ajax = new $ax(Feng.ctxPath + "/work/workRecord/" + action + "/" + id, function (data) {
-                Feng.success(title + "成功!");
-                table.reload(WorkApply.workRecordTableId);
-            }, function (data) {
-                console.log(data)
-                Feng.error(title + "失败!" + data.message + "!");
-            });
-            ajax.start();
-        };
-        if (confirm) {
-            Feng.confirm("是否" + title + "?", function () {
-                admin.closeThisDialog()
-                func(id, action, title)
-            });
-        } else {
-            func(id, action, title)
+        if(!WorkApply.condition.workId){
+            Feng.error("请选择日期!");
+            return;
         }
+        Feng.doAction({
+            id: WorkApply.condition.workId,
+            module: "work/workRecord",
+            action: "submit",
+            title: "提交",
+            confirm: true,
+            finish: function (d) {
+                WorkApply.workRecordSearch();
+            }
+        });
     };
 
-    table.on('tool(' + WorkApply.workRecordTableId + ')', function (obj) {
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(workTable)', function (obj) {
+        var layEvent = obj.event;
+        WorkApply[layEvent]()
+    });
+
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(workRecordTable)', function (obj) {
+        var layEvent = obj.event;
+        WorkApply[layEvent]()
+    });
+
+    table.on('row(workTable)', function (obj) {
+        var data = obj.data;
+        WorkApply.condition.workId = data.id;
+        WorkApply.workRecordSearch();
+        obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+    });
+
+    table.on('tool(workRecordTable)', function (obj) {
         if (obj.event === 'edit') {
-            WorkApply.openEditWorkRecord(obj.data.id);
+            WorkApply.openEdit(obj.data.id);
         }
         if (obj.event === 'delete') {
-            WorkApply.openEditWorkRecord();
+            Feng.doAction({
+                id: obj.data.id,
+                module: "work/workRecord",
+                action: "delete",
+                title: "删除",
+                confirm: true,
+                finish: function (d) {
+                    WorkApply.workRecordSearch();
+                }
+            });
         }
-    });
-
-    table.on('row(' + WorkApply.workTableId + ')', function (obj) {
-        var data = obj.data;
-        table.reload(WorkApply.workRecordTableId, {where: {workId: data.id}});
-        WorkApply.condition.workId = data.id;
-        obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
     });
 });

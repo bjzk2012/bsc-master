@@ -1,10 +1,23 @@
-layui.use(['form', 'admin', 'ax', 'jquery'], function () {
+layui.use(['treeSelect', 'form', 'admin', 'ax', 'jquery'], function () {
     var form = layui.form;
     var admin = layui.admin;
     var $ax = layui.ax;
     var $ = layui.jquery;
+    var treeSelect = layui.treeSelect;
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
+
+    // 渲染父级部门信息
+    treeSelect.render({
+        elem: '#pName',
+        data: Feng.ctxPath + "/dept/treeSelect",
+        type: 'get',
+        placeholder: '请选择上级部门',
+        search: true,
+        click: function(d){
+            $("#pid").val(d.current.id);
+        }
+    });
 
     // 添加表单验证方法
     form.verify({

@@ -1,43 +1,17 @@
-layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], function () {
+layui.use(['form', 'jquery', 'table', 'laydate'], function () {
     var $ = layui.$;
-    var form = layui.form;
     var table = layui.table;
-    var $ax = layui.ax;
-    var admin = layui.admin;
-    var element = layui.element;
     var laydate = layui.laydate;
+    var form = layui.form;
 
     /**
      * 系统管理--项目管理
      */
     var WorkAudit = {
-        workAuditTableId: "workAuditTable",
         condition: {
-            workId: null,
-            timeLimit: ""
+            workId: null
         }
     };
-
-    //渲染时间选择框
-    laydate.render({
-        elem: '#timeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
-
-    //渲染时间选择框
-    laydate.render({
-        elem: '#submitTimeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
-
-    //渲染时间选择框
-    laydate.render({
-        elem: '#auditTimeLimit',
-        range: true,
-        max: Feng.currentDate()
-    });
 
     /**
      * 初始化表格的列
@@ -53,22 +27,57 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
             {field: 'submitTime', title: '提交时间'},
             {field: 'lastAuditTime', title: '终审时间'},
             {field: 'statusMessage', title: '状态', templet: '#statusTpl'},
-            {align: 'center', toolbar: '#workAuditTableBar', title: '操作', minWidth: 200}
+            {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
     };
-    WorkAudit.workRecordTable = table.render({
-        elem: '#' + WorkAudit.workAuditTableId,
+
+    WorkAudit.table = table.render({
+        elem: '#workAuditTable',
         url: Feng.ctxPath + '/work/audits',
         page: true,
-        height: "full-125",
+        toolbar: '#toolbar',
+        height: "full-30",
         cellMinWidth: 100,
-        cols: WorkAudit.initWorkRecordColumn()
-    });
-    $("#btnSearch").click(function(){
-        table.reload(WorkAudit.workAuditTableId, {where: {timeLimit: $("#timeLimit").val(),submitTimeLimit: $("#submitTimeLimit").val(),auditTimeLimit: $("#auditTimeLimit").val(),status: $("#status").val(),}});
+        cols: WorkAudit.initWorkRecordColumn(),
+        where: {
+            timeLimit: '',
+            submitTimeLimit: '',
+            auditTimeLimit: '',
+            status: '',
+        },
+        done:function(d){
+            $("#status").val(this.where.status);
+            form.render('select');
+            laydate.render({
+                elem: '#timeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
+            laydate.render({
+                elem: '#submitTimeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
+            laydate.render({
+                elem: '#auditTimeLimit',
+                range: true,
+                max: Feng.currentDate()
+            });
+        }
     });
 
-    WorkAudit.openDetail = function(id){
+    WorkAudit.search = function () {
+        WorkAudit.table.reload({
+            where: {
+                timeLimit: $("#timeLimit").val(),
+                submitTimeLimit: $("#submitTimeLimit").val(),
+                auditTimeLimit: $("#auditTimeLimit").val(),
+                status: $("#status").val(),
+            }
+        });
+    };
+
+    WorkAudit.openDetail = function (id) {
         top.layui.admin.open({
             type: 2,
             area: ['600px', '800px'],
@@ -77,33 +86,40 @@ layui.use(['layer', 'form', 'table', 'admin', 'ax', 'element', 'laydate'], funct
         });
     };
 
-    WorkAudit.doAction = function (id, action, title, confirm, data) {
-        var func = function (id, action, title, data) {
-            var ajax = new $ax(Feng.ctxPath + "/work/workRecord/" + action + "/" + id, function (data) {
-                Feng.success(title + "成功!");
-                table.reload(WorkAudit.workAuditTableId);
-            }, function (data) {
-                Feng.error(title + "失败!" + data.message + "!");
-            });
-            ajax.set(data);
-            ajax.start();
-        };
-        if (confirm) {
-            Feng.confirm("是否" + title + "?", function () {
-                admin.closeThisDialog()
-                func(id, action, title, data);
-            });
-        } else {
-            func(id, action, title, data);
-        }
-    };
+    /**
+     * 头工具栏事件
+     */
+    table.on('toolbar(workAuditTable)', function (obj) {
+        var layEvent = obj.event;
+        WorkAudit[layEvent]()
+    });
 
-    table.on('tool(' + WorkAudit.workAuditTableId + ')', function (obj) {
+    table.on('tool(workAuditTable)', function (obj) {
         if (obj.event === 'adopt') {
-            WorkAudit.doAction(obj.data.id, "audit", "审核通过", true, {flag : true});
+            Feng.doAction({
+                id: obj.data.id,
+                module: "work/workRecord",
+                action: "audit",
+                title: "通过审核",
+                confirm: true,
+                finish: function (d) {
+                    WorkAudit.search();
+                },
+                params: {flag: true}
+            });
         }
         if (obj.event === 'refuse') {
-            WorkAudit.doAction(obj.data.id, "audit", "审核拒绝", true, {flag : false});
+            Feng.doAction({
+                id: obj.data.id,
+                module: "work/workRecord",
+                action: "audit",
+                title: "拒绝审核",
+                confirm: true,
+                finish: function (d) {
+                    WorkAudit.search();
+                },
+                params: {flag: false}
+            });
         }
         if (obj.event === 'detail') {
             WorkAudit.openDetail(obj.data.id);

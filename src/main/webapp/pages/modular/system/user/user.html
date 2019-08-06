@@ -11,10 +11,10 @@
     <div class="layui-form toolbar">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <input id="name" class="layui-input" type="text" placeholder="账号/姓名/手机号"/>
+                <input id="name" class="layui-input" type="text" placeholder="账号/邮箱/姓名/手机号" value="{{d.where.name}}"/>
             </div>
             <div class="layui-inline">
-                <input id="timeLimit" class="layui-input" type="text" placeholder="注册时间" style="width:182px"/>
+                <input id="timeLimit" class="layui-input" type="text" placeholder="注册时间" style="width:182px" value="{{d.where.timeLimit}}"/>
             </div>
             <div class="layui-inline">
                 <button class="layui-btn icon-btn" lay-event="search"><i class="layui-icon">&#xe615;</i>搜索</button>
@@ -36,6 +36,10 @@
     @if(shiro.hasPermission("mgr_reset")){
     <a class="layui-btn layui-btn-xs" lay-event="reset">重置密码</a>
     @}
+</script>
+
+<script type="text/html" id="avatarTpl">
+    <img src="{{d.avatar}}" width="28" height="28">
 </script>
 
 <script type="text/html" id="statusTpl">

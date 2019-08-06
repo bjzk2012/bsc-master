@@ -1,5 +1,4 @@
-layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
-    var $ax = layui.ax;
+layui.use(['admin', 'table', 'treetable', 'jquery', 'form'], function () {
     var $ = layui.jquery;
     var admin = layui.admin;
     var table = layui.table;
@@ -9,25 +8,18 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
     /**
      * 系统管理--菜单管理
      */
-    var Menu = {
-        tableId: "menuTable",    //表格id
-        condition: {
-            menuId: "",
-            menuName: "",
-            level: ""
-        }
-    };
+    var Menu = {};
 
     /**
      * 初始化表格的列
      */
     Menu.initColumn = function () {
         return [[
-            {type: 'numbers'},
+            {title: '序号', type: 'numbers'},
             {field: 'id', hide: true, title: 'id'},
             {field: 'name', title: '菜单名称'},
             {field: 'code', title: '菜单编码'},
-            {field: 'icon', title: '图标', templet: '#iconTpl', align : 'center'},
+            {field: 'icon', title: '图标', templet: '#iconTpl', align: 'center'},
             {field: 'url', title: '请求地址'},
             {field: 'sort', sort: true, title: '排序'},
             {field: 'levels', sort: true, title: '层级'},
@@ -37,20 +29,40 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
         ]];
     };
 
+    Menu.reload = function(data){
+        treetable.render({
+            elem: '#menuTable',
+            url: Feng.ctxPath + '/menu/list',
+            page: false,
+            toolbar: '#toolbar',
+            height: "full-30",
+            cellMinWidth: 100,
+            cols: Menu.initColumn(),
+            treeColIndex: 2,
+            treeSpid: "0",
+            treeIdName: 'id',
+            treePidName: 'pId',
+            treeDefaultClose: false,
+            treeLinkage: true,
+            where: data
+        });
+    };
+    Menu.reload({
+        menuName: ''
+    });
     /**
      * 点击查询按钮
      */
     Menu.search = function () {
-        var queryData = {};
-        queryData['menuName'] = $("#menuName").val();
-        queryData['level'] = $("#level").val();
-        Menu.initTable(Menu.tableId, queryData);
+        Menu.reload({
+            menuName: $("#menuName").val()
+        });
     };
 
     /**
      * 弹出添加菜单对话框
      */
-    Menu.openAddMenu = function () {
+    Menu.openAdd = function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -58,7 +70,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
             title: '添加菜单',
             content: Feng.ctxPath + '/menu/menu_add',
             end: function () {
-                admin.getTempData('formOk') && Menu.initTable(Menu.tableId);
+                admin.getTempData('formOk') && Menu.search();
             }
         });
     };
@@ -68,7 +80,7 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
      *
      * @param data 点击按钮时候的行数据
      */
-    Menu.onEditMenu = function (data) {
+    Menu.openEdit = function (data) {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
@@ -81,86 +93,53 @@ layui.use(['admin', 'ax', 'table', 'treetable', 'jquery', 'form'], function () {
         });
     };
 
-    /**
-     * 冻结，解锁，删除等的动作执行
-     * @param menuId 点击按钮时候的行数据
-     * @param action 执行动作
-     * @param title 动作描述
-     * @param confirm 是否再次确认
-     */
-    Menu.doAction = function (menuId, action, title, confirm) {
-        var func = function (menuId, action, title) {
-            var ajax = new $ax(Feng.ctxPath + "/menu/" + action + "/" + menuId, function (data) {
-                Feng.success(title + "成功!");
-                Menu.initTable(Menu.tableId);
-            }, function (data) {
-                Feng.error(title + "失败!" + data.message + "!");
-            });
-            ajax.start();
-        };
-        if (confirm) {
-            Feng.confirm("是否" + title + "?", function () {
-                func(menuId, action, title)
-            });
-        } else {
-            func(menuId, action, title)
-        }
+    Menu.expandAll = function(){
+        treetable.expandAll('#menuTable');
+    };
+
+    Menu.foldAll = function(){
+        treetable.foldAll('#menuTable');
     };
 
     /**
-     * 初始化表格
+     * 头工具栏事件
      */
-    Menu.initTable = function (tableId, data) {
-        return treetable.render({
-            elem: '#' + tableId,
-            url: Feng.ctxPath + '/menu/list',
-            where: data,
-            page: false,
-            height: "full-125",
-            cellMinWidth: 100,
-            cols: Menu.initColumn(),
-            treeColIndex: 2,
-            treeSpid: "0",
-            treeIdName: 'id',
-            treePidName: 'pId',
-            treeDefaultClose: false,
-            treeLinkage: true
-        });
-    };
-
-    // 渲染表格
-    var tableResult = Menu.initTable(Menu.tableId);
-    $('#expandAll').click(function () {
-        treetable.expandAll('#' + Menu.tableId);
-    });
-    $('#foldAll').click(function () {
-        treetable.foldAll('#' + Menu.tableId);
-    });
-
-    // 搜索按钮点击事件
-    $('#btnSearch').click(function () {
-        Menu.search();
-    });
-
-    // 添加按钮点击事件
-    $('#btnAdd').click(function () {
-        Menu.openAddMenu();
+    table.on('toolbar(menuTable)', function (obj) {
+        var layEvent = obj.event;
+        Menu[layEvent]()
     });
 
     // 工具条点击事件
-    table.on('tool(' + Menu.tableId + ')', function (obj) {
+    table.on('tool(menuTable)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
 
         if (layEvent === 'edit') {
-            Menu.onEditMenu(data);
+            Menu.openEdit(data);
         } else if (layEvent === 'delete') {
-            Menu.doAction(data.id, "delete", "删除", true);
+            Feng.doAction({
+                id: data.id,
+                module: "menu",
+                action: layEvent,
+                title: "删除",
+                confirm: true,
+                finish: function (d) {
+                    Menu.search();
+                }
+            });
         }
     });
 
     // 修改状态
     form.on('switch(status)', function (obj) {
-        Menu.doAction(obj.elem.value, obj.elem.checked ? "unfreeze" : "freeze", obj.elem.checked ? "启用" : "禁用", false);
+        Feng.doAction({
+            id: obj.elem.value,
+            module: "menu",
+            action: obj.elem.checked ? "unfreeze" : "freeze",
+            title: obj.elem.checked ? "启用" : "禁用",
+            finish: function (d) {
+                Menu.search();
+            }
+        });
     });
 });

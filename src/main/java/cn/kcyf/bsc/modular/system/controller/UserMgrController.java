@@ -76,7 +76,7 @@ public class UserMgrController extends BasicController {
             criteria.add(Restrictions.lte("createTime", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
         }
         if (!StringUtils.isEmpty(name)) {
-            criteria.add(Restrictions.or(Restrictions.like("name", name), Restrictions.like("email", name), Restrictions.like("phone", name)));
+            criteria.add(Restrictions.or(Restrictions.like("account", name), Restrictions.like("name", name), Restrictions.like("email", name), Restrictions.like("phone", name)));
         }
 
         return ResponseData.list(userService.findList(criteria, PageRequest.of(page - 1, limit)));
@@ -140,6 +140,7 @@ public class UserMgrController extends BasicController {
         dbuser.setPhone(user.getPhone());
         dbuser.setAddress(user.getAddress());
         dbuser.setAvatar(user.getAvatar());
+        dbuser.setName(user.getName());
         userService.update(dbuser);
         return SUCCESS_TIP;
     }
@@ -148,8 +149,9 @@ public class UserMgrController extends BasicController {
     @ResponseBody
     @BussinessLog(value = "删除用户")
     public ResponseData delete(@PathVariable Long userId) {
-        userService.delete(userId);
-        return SUCCESS_TIP;
+//        userService.delete(userId);
+//        return SUCCESS_TIP;
+        return ResponseData.error("暂不支持删除用户，请使用锁定解锁功能");
     }
 
     @GetMapping("/detail/{userId}")
