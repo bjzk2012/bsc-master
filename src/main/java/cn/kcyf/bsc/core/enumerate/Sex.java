@@ -4,13 +4,13 @@ public enum Sex {
     MAN("男"),
     WOMAN("女");
 
-    Sex(String remark) {
-        this.remark = remark;
+    Sex(String message) {
+        this.message = message;
     }
 
-    private String remark;
+    private String message;
 
-    public String getRemark() {
-        return remark;
+    public String getMessage() {
+        return message;
     }
 }

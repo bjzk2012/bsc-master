@@ -50,7 +50,7 @@ public class ShiroServiceImpl implements ShiroService {
         Set<String> roles = new HashSet<String>();
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             for (Role role : user.getRoles()) {
-                roles.add(role.getDescription());
+                roles.add(role.getCode());
             }
         }
         return roles;
@@ -65,10 +65,12 @@ public class ShiroServiceImpl implements ShiroService {
             }
         }
         Set<String> menus = new HashSet<String>();
-        List<Menu> menuAll = menuDao.findByRoleIds(Arrays.asList(new Integer[]{0, 1}), roleIds);
-        if (menuAll != null && !menuAll.isEmpty()) {
-            for (Menu menu : menuAll) {
-                menus.add(menu.getCode());
+        if (roleIds != null && !roleIds.isEmpty()) {
+            List<Menu> menuAll = menuDao.findByRoleIds(Arrays.asList(new Integer[]{0, 1}), roleIds);
+            if (menuAll != null && !menuAll.isEmpty()) {
+                for (Menu menu : menuAll) {
+                    menus.add(menu.getCode());
+                }
             }
         }
         return menus;

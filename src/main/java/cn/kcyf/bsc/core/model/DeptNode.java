@@ -1,10 +1,12 @@
 package cn.kcyf.bsc.core.model;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@ApiModel("部门树形节点")
 public class DeptNode {
     private Long id;
     /**

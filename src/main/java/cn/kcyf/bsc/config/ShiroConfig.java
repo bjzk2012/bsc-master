@@ -184,7 +184,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setSuccessUrl("/");
-        shiroFilterFactoryBean.setUnauthorizedUrl("/global/error");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/global/unauthorized");
         return shiroFilterFactoryBean;
     }
 

@@ -17,7 +17,7 @@ layui.use(['jquery', 'form', 'table', 'admin'], function () {
             {title: '序号', type: 'numbers'},
             {field: 'roleId', hide: true, sort: true, title: '角色id'},
             {field: 'name', title: '名称'},
-            {field: 'description', title: '别名'},
+            {field: 'code', title: '标识'},
             {field: 'status', sort: true, templet: '#statusTpl', title: '状态'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];

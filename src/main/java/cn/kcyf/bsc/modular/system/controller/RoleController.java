@@ -11,6 +11,9 @@ import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -30,6 +33,7 @@ import javax.validation.constraints.NotBlank;
 @Controller
 @RequestMapping("/role")
 @Api(tags = "角色管理", description = "角色管理")
+@RequiresRoles(value = "administrator")
 public class RoleController extends BasicController {
 
     private static String PREFIX = "/modular/system/role";
@@ -40,16 +44,19 @@ public class RoleController extends BasicController {
     private MenuService menuService;
 
     @GetMapping("")
+    @RequiresPermissions(value = "role")
     public String index() {
         return PREFIX + "/role.html";
     }
 
     @GetMapping(value = "/role_add")
+    @RequiresPermissions(value = "role_add")
     public String roleAdd() {
         return PREFIX + "/role_add.html";
     }
 
     @GetMapping(value = "/role_edit")
+    @RequiresPermissions(value = "role_edit")
     public String roleEdit(Long roleId, Model model) {
         model.addAttribute("roleId", roleId);
         return PREFIX + "/role_edit.html";
@@ -57,17 +64,21 @@ public class RoleController extends BasicController {
 
     @GetMapping(value = "/list")
     @ResponseBody
+    @ApiOperation("查询角色列表")
+    @RequiresPermissions(value = "role_list")
     public ResponseData list(String roleName, int page, int limit) {
         Criteria<Role> criteria = new Criteria<Role>();
         if (!StringUtils.isEmpty(roleName)) {
-            criteria.add(Restrictions.or(Restrictions.like("name", roleName), Restrictions.like("description", roleName)));
+            criteria.add(Restrictions.or(Restrictions.like("name", roleName), Restrictions.like("code", roleName), Restrictions.like("description", roleName)));
         }
         return ResponseData.list(roleService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
     @PostMapping(value = "/add")
     @ResponseBody
-    @BussinessLog(value = "新增角色")
+    @BussinessLog("新增角色")
+    @ApiOperation("新增角色")
+    @RequiresPermissions(value = "role_add")
     public ResponseData add(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -81,14 +92,20 @@ public class RoleController extends BasicController {
 
     @PostMapping(value = "/edit")
     @ResponseBody
-    @BussinessLog(value = "修改角色")
+    @BussinessLog("修改角色")
+    @ApiOperation("修改角色")
+    @RequiresPermissions(value = "role_edit")
     public ResponseData edit(@Valid Role role, @NotBlank(message = "菜单未选择") String menuId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Role dbrole = roleService.getOne(role.getId());
+        if (dbrole.getCode().equals("administrator") && !dbrole.getCode().equals(role.getCode())) {
+            return ResponseData.error("超级管理员角色标识不允许被修改!");
+        } else {
+            dbrole.setCode(role.getCode());
+        }
         update(dbrole);
-        dbrole.setName(role.getName());
         dbrole.setDescription(role.getDescription());
         dbrole.setSort(role.getSort());
         dbrole.setMenus(menuService.findByIdIn(ArrayUtils.convertStrArrayToLong(menuId.split(","))));
@@ -98,10 +115,12 @@ public class RoleController extends BasicController {
 
     @PostMapping(value = "/delete/{roleId}")
     @ResponseBody
-    @BussinessLog(value = "删除角色")
+    @BussinessLog("删除角色")
+    @ApiOperation("删除角色")
+    @RequiresPermissions(value = "role_delete")
     public ResponseData delete(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
-        if (role.getDescription().equals("administrator")){
+        if (role.getCode().equals("administrator")) {
             return ResponseData.error("超级管理员角色不允许被删除!");
         }
         roleService.delete(roleId);
@@ -110,9 +129,14 @@ public class RoleController extends BasicController {
 
     @PostMapping("/freeze/{roleId}")
     @ResponseBody
-    @BussinessLog(value = "禁用角色")
+    @BussinessLog("禁用角色")
+    @ApiOperation("禁用角色")
+    @RequiresPermissions(value = "role_freeze")
     public ResponseData freeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
+        if (role.getCode().equals("administrator")) {
+            return ResponseData.error("超级管理员角色不允许被禁用!");
+        }
         role.setStatus(Status.DISABLE);
         roleService.update(role);
         return SUCCESS_TIP;
@@ -120,7 +144,9 @@ public class RoleController extends BasicController {
 
     @PostMapping("/unfreeze/{roleId}")
     @ResponseBody
-    @BussinessLog(value = "启用角色")
+    @BussinessLog("启用角色")
+    @ApiOperation("启用角色")
+    @RequiresPermissions(value = "role_freeze")
     public ResponseData unfreeze(@PathVariable Long roleId) {
         Role role = roleService.getOne(roleId);
         role.setStatus(Status.ENABLE);
@@ -130,6 +156,7 @@ public class RoleController extends BasicController {
 
     @GetMapping(value = "/detail/{roleId}")
     @ResponseBody
+    @RequiresPermissions(value = "role_detail")
     public ResponseData detail(@PathVariable Long roleId) {
         return ResponseData.success(roleService.getOne(roleId));
     }

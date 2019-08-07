@@ -18,6 +18,7 @@ import cn.kcyf.orm.jpa.criteria.Restrictions;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -61,7 +62,7 @@ public class WorkController extends BasicController {
      * @return
      */
     @GetMapping("/apply")
-    public String index(Model model) {
+    public String apply(Model model) {
         setProjects(model);
         return PREFIX + "/apply.html";
     }
@@ -92,10 +93,14 @@ public class WorkController extends BasicController {
     }
 
     @GetMapping(value = "/workRecord_edit")
-    public String projectEdit(Long workRecordId, Model model) {
+    public String workRecordEdit(Long workRecordId, Model model) {
         setProjects(model);
         model.addAttribute("workRecordId", workRecordId);
         return PREFIX + "/workRecord_edit.html";
+    }
+    @GetMapping(value = "/workRecord_help")
+    public String workRecordHelp() {
+        return PREFIX + "/workRecord_help.html";
     }
 
     @GetMapping(value = "/workRecord_detail/{workRecordId}")
@@ -116,7 +121,7 @@ public class WorkController extends BasicController {
             criteria.add(Restrictions.lte("today", DateUtils.parse(split[1] + " 23:59:59", "yyyy-MM-dd HH:mm:ss")));
         }
         criteria.add(Restrictions.eq("createUserId", getUser().getId()));
-        return ResponseData.list(workService.findList(criteria, PageRequest.of(page - 1, limit)));
+        return ResponseData.list(workService.findList(criteria, PageRequest.of(page - 1, limit, new Sort(Sort.Direction.DESC, "createTime"))));
     }
 
     @GetMapping(value = "/records")
@@ -161,7 +166,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/add")
     @ResponseBody
-    @BussinessLog(value = "新增工单")
+    @BussinessLog("新增工单")
     public ResponseData add(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -176,7 +181,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/edit")
     @ResponseBody
-    @BussinessLog(value = "修改工单")
+    @BussinessLog("修改工单")
     public ResponseData edit(@Valid WorkRecord workRecord, @NotBlank(message = "未选择项目") Long projectId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -203,7 +208,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/delete/{workRecordId}")
     @ResponseBody
-    @BussinessLog(value = "删除工单")
+    @BussinessLog("删除工单")
     public ResponseData delete(@PathVariable Long workRecordId) {
         WorkRecord dbWorkRecord = workRecordService.getOne(workRecordId);
         if (dbWorkRecord.getStatus().equals(WorkStatus.FINISH)) {
@@ -215,7 +220,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/submit/{workId}")
     @ResponseBody
-    @BussinessLog(value = "提交工单")
+    @BussinessLog("提交工单")
     public ResponseData submit(@PathVariable Long workId) {
         try {
             workService.submit(workId);
@@ -227,7 +232,7 @@ public class WorkController extends BasicController {
 
     @PostMapping(value = "/workRecord/audit/{workRecordId}")
     @ResponseBody
-    @BussinessLog(value = "审核工单")
+    @BussinessLog("审核工单")
     public ResponseData audit(@PathVariable Long workRecordId, boolean flag, String suggestions) {
         workRecordService.audit(workRecordId, flag, suggestions);
         return SUCCESS_TIP;

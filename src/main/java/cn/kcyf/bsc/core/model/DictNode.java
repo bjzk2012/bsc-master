@@ -1,11 +1,13 @@
 package cn.kcyf.bsc.core.model;
 
 import cn.kcyf.bsc.modular.system.entity.Dict;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@ApiModel("字典树形节点")
 public class DictNode {
     private Long id;
     /**

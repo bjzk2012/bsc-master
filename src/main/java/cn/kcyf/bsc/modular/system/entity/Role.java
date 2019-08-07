@@ -34,22 +34,28 @@ public class Role extends TableDomain {
      * 角色名称
      */
     @NotBlank(message = "角色名称不能为空")
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
     /**
-     * 提示
+     * 标识
+     */
+    @NotBlank(message = "角色标识不能为空")
+    @Column(name = "code", nullable = false)
+    private String code;
+    /**
+     * 描述
      */
     @Column(name = "description")
     private String description;
     /**
      * 序号
      */
-    @Column(name = "sort")
+    @Column(name = "sort", nullable = false)
     private Integer sort;
     /**
      * 状态
      */
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private Status status;
     public String getStatusMessage(){
         if (this.status != null){

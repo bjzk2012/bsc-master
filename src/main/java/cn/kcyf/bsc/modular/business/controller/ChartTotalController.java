@@ -122,6 +122,7 @@ public class ChartTotalController extends BasicController {
         // 对列表进行排序【按时间倒叙】
         Collections.sort(objects, new ChartTotalTimeComparator());
         model.addAttribute("objects", objects);
+        model.addAttribute("limit", objects.size());
         return PREFIX + "/total/total.html";
     }
 

@@ -3,12 +3,14 @@ package cn.kcyf.bsc.core.model;
 import cn.kcyf.bsc.core.enumerate.Status;
 import cn.kcyf.bsc.core.enumerate.YesOrNo;
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @Data
+@ApiModel("菜单树形节点")
 public class MenuNode {
     /**
      * 编号

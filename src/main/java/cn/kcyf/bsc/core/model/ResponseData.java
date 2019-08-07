@@ -1,5 +1,7 @@
 package cn.kcyf.bsc.core.model;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +15,7 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
+@ApiModel("响应信息")
 public class ResponseData {
     public static final String DEFAULT_SUCCESS_MESSAGE = "请求成功";
     public static final String DEFAULT_ERROR_MESSAGE = "网络异常";

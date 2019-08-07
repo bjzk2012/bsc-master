@@ -14,7 +14,9 @@ import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -49,17 +51,20 @@ public class UserMgrController extends BasicController {
     private DeptService deptService;
 
     @GetMapping("")
+    @RequiresPermissions(value = "mgr")
     public String index() {
         return PREFIX + "user.html";
     }
 
     @GetMapping("/user_add")
+    @RequiresPermissions(value = "mgr_add")
     public String add(Model model) {
         model.addAttribute("roles", roleService.findAll());
         return PREFIX + "user_add.html";
     }
 
     @GetMapping("/user_edit")
+    @RequiresPermissions(value = "mgr_edit")
     public String edit(Long userId, Model model) {
         model.addAttribute("userId", userId);
         model.addAttribute("roles", roleService.findAll());
@@ -68,6 +73,8 @@ public class UserMgrController extends BasicController {
 
     @GetMapping("/list")
     @ResponseBody
+    @ApiOperation("查询管理员列表")
+    @RequiresPermissions(value = "mgr_list")
     public ResponseData list(String name, String timeLimit, int page, int limit) {
         Criteria<User> criteria = new Criteria<User>();
         if (!StringUtils.isEmpty(timeLimit)) {
@@ -84,7 +91,9 @@ public class UserMgrController extends BasicController {
 
     @PostMapping("/add")
     @ResponseBody
-    @BussinessLog(value = "新增用户")
+    @BussinessLog("新增管理员")
+    @ApiOperation("新增管理员")
+    @RequiresPermissions(value = "mgr_add")
     public ResponseData add(@Valid User user,
                             @NotBlank(message = "确认密码不能为空")
                             @Size(min = 6, max = 12, message = "确认密码必须6到12位")
@@ -118,7 +127,9 @@ public class UserMgrController extends BasicController {
 
     @PostMapping("/edit")
     @ResponseBody
-    @BussinessLog(value = "修改用户")
+    @BussinessLog("修改管理员")
+    @ApiOperation("修改管理员")
+    @RequiresPermissions(value = "mgr_edit")
     public ResponseData edit(@Valid User user, @NotBlank(message = "部门未选择") Long deptId, @NotBlank(message = "角色未选择") String roleId, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -139,7 +150,7 @@ public class UserMgrController extends BasicController {
         }
         dbuser.setPhone(user.getPhone());
         dbuser.setAddress(user.getAddress());
-        dbuser.setAvatar(user.getAvatar());
+//        dbuser.setAvatar(user.getAvatar());
         dbuser.setName(user.getName());
         userService.update(dbuser);
         return SUCCESS_TIP;
@@ -147,22 +158,20 @@ public class UserMgrController extends BasicController {
 
     @PostMapping("/delete/{userId}")
     @ResponseBody
-    @BussinessLog(value = "删除用户")
+    @BussinessLog("删除管理员")
+    @ApiOperation("删除管理员")
+    @RequiresPermissions(value = "mgr_delete")
     public ResponseData delete(@PathVariable Long userId) {
 //        userService.delete(userId);
 //        return SUCCESS_TIP;
-        return ResponseData.error("暂不支持删除用户，请使用锁定解锁功能");
-    }
-
-    @GetMapping("/detail/{userId}")
-    @ResponseBody
-    public User detail(@PathVariable Long userId) {
-        return userService.getOne(userId);
+        return ResponseData.error("暂不支持删除管理员，请使用锁定解锁功能");
     }
 
     @PostMapping("/reset/{userId}")
     @ResponseBody
-    @BussinessLog(value = "重置密码")
+    @BussinessLog("重置密码")
+    @ApiOperation("重置密码")
+    @RequiresPermissions(value = "mgr_reset")
     public ResponseData reset(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setPassword(userService.md5(Constant.DEFAULT_PWD, user.getSalt()));
@@ -172,7 +181,9 @@ public class UserMgrController extends BasicController {
 
     @PostMapping("/freeze/{userId}")
     @ResponseBody
-    @BussinessLog(value = "冻结用户")
+    @BussinessLog("冻结管理员")
+    @ApiOperation("冻结管理员")
+    @RequiresPermissions(value = "mgr_freeze")
     public ResponseData freeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(LockStatus.LOCK);
@@ -182,11 +193,21 @@ public class UserMgrController extends BasicController {
 
     @PostMapping("/unfreeze/{userId}")
     @ResponseBody
-    @BussinessLog(value = "解冻用户")
+    @BussinessLog("解冻管理员")
+    @ApiOperation("解冻管理员")
+    @RequiresPermissions(value = "mgr_freeze")
     public ResponseData unfreeze(@PathVariable Long userId) {
         User user = userService.getOne(userId);
         user.setStatus(LockStatus.UNLOCK);
         userService.update(user);
         return SUCCESS_TIP;
+    }
+
+    @GetMapping("/detail/{userId}")
+    @ResponseBody
+    @ApiOperation("查看管理员详情")
+    @RequiresPermissions(value = "mgr_detail")
+    public User detail(@PathVariable Long userId) {
+        return userService.getOne(userId);
     }
 }

@@ -1,29 +1,26 @@
 package cn.kcyf.bsc.modular.system.controller;
 
-import cn.kcyf.bsc.core.constant.Constant;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
-import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/center")
+@Api(tags = "个人中心", description = "个人中心")
 public class CenterController extends BasicController {
 
     @Autowired
@@ -31,7 +28,8 @@ public class CenterController extends BasicController {
 
     @PostMapping("/user_info")
     @ResponseBody
-    @BussinessLog(value = "修改当前用户信息")
+    @BussinessLog("修改当前用户信息")
+    @ApiOperation("修改当前用户信息")
     public ResponseData user_info(User user) {
         User dbuser = userService.getOne(getUser().getId());
         dbuser.setName(user.getName());
@@ -46,7 +44,8 @@ public class CenterController extends BasicController {
 
     @PostMapping("/password")
     @ResponseBody
-    @BussinessLog(value = "设置当前用户新密码")
+    @BussinessLog("设置当前用户新密码")
+    @ApiOperation("设置当前用户新密码")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "旧密码", name = "oldPassword", required = true, format = "\\S{6-12}"),
             @ApiImplicitParam(value = "新密码", name = "newPassword", required = true, format = "\\S{6-12}"),
@@ -74,13 +73,5 @@ public class CenterController extends BasicController {
         dbuser.setPassword(userService.md5(newPassword, dbuser.getSalt()));
         userService.update(dbuser);
         return SUCCESS_TIP;
-    }
-
-    @PostMapping("/upload")
-    @ResponseBody
-    public ResponseData upload(@RequestPart("file") MultipartFile picture) {
-        Map<String, String> result = new HashMap<String, String>();
-        result.put("src", Constant.DEFAULT_HEAD);
-        return new SuccessResponseData(result);
     }
 }

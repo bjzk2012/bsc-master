@@ -146,9 +146,8 @@ layui.config({
         complete: function (XMLHttpRequest, textStatus) {
 
             //通过XMLHttpRequest取得响应头，sessionstatus，
-            var sessionstatus = XMLHttpRequest.getResponseHeader("sessionstatus");
-            if (sessionstatus === "timeout") {
-
+            var sessionstatus = XMLHttpRequest.getResponseHeader("session-status");
+            if (sessionstatus === "timeout" || sessionstatus === "unauth") {
                 //如果超时就处理 ，指定要跳转的页面
                 window.location = Feng.ctxPath + "/global/sessionError";
             }

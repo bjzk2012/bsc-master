@@ -47,12 +47,14 @@ public class User extends TableDomain {
     @NotBlank(message = "用户账号不能为空")
     @Size(min = 5, max = 36, message = "用户账号必须5到36位")
     @Pattern(regexp = "\\w+", message = "用户账号只能是单词字符（字母，数字，下划线，中横线）")
+    @ApiModelProperty(name = "account", value = "账号")
     private String account;
     /**
      * 密码
      */
     @Column(name = "password")
     @JSONField(serialize = false)
+    @ApiModelProperty(name = "password", value = "密码")
     private String password;
     /**
      * md5密码盐
@@ -64,22 +66,25 @@ public class User extends TableDomain {
      * 名字
      */
     @Column(name = "name")
+    @ApiModelProperty(name = "password", value = "名字")
     private String name;
     /**
      * 生日
      */
     @Column(name = "birthday")
     @Temporal(value = TemporalType.TIMESTAMP)
+    @ApiModelProperty(name = "birthday", value = "生日")
     private Date birthday;
     /**
      * 性别
      */
     @Column(name = "sex")
     @Enumerated
+    @ApiModelProperty(name = "sex", value = "性别")
     private Sex sex;
-    public String getSexName(){
+    public String getSexMessage(){
         if (this.sex != null){
-            return this.sex.getRemark();
+            return this.sex.getMessage();
         }
         return "--";
     }
@@ -88,31 +93,37 @@ public class User extends TableDomain {
      */
     @Column(name = "email")
     @Email(message = "电子邮件格式不正确")
+    @ApiModelProperty(name = "email", value = "电子邮件")
     private String email;
     /**
      * 电话
      */
     @Column(name = "phone")
     @Pattern(regexp = "(^\\.{0}$)|(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^0?[1][358][0-9]{9}$)", message = "电话必须是固定电话或手机号码")
+    @ApiModelProperty(name = "phone", value = "电话")
     private String phone;
     /**
      * QQ号码
      */
     @Column(name = "qq")
+    @ApiModelProperty(name = "qq", value = "QQ号码")
     private String qq;
     /**
      * 微信号
      */
     @Column(name = "wechat")
+    @ApiModelProperty(name = "wechat", value = "微信号")
     private String wechat;
     /**
      * 微博账号
      */
     @Column(name = "weibo")
+    @ApiModelProperty(name = "weibo", value = "微博账号")
     private String weibo;
     /**
      * 地址
      */
+    @ApiModelProperty(name = "address", value = "地址")
     @Column(name = "address")
     private String address;
     /**
@@ -169,6 +180,7 @@ public class User extends TableDomain {
      * 状态
      */
     @Column(name = "status")
+    @ApiModelProperty(name = "status", value = "状态")
     private LockStatus status;
     public String getStatusMessage(){
         if (this.status != null){

@@ -28,12 +28,14 @@ import java.util.List;
  * @author Tom
  */
 @Controller
+@Api(tags = "登录相关", description = "登录相关")
 public class LoginController extends BasicController{
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/")
+    @ApiOperation("跳转到首页")
     public String index(Model model) {
         List<MenuNode> menus = userService.getUserMenus(getUser().getId());
         Collections.sort(menus, new MenuNodeComparator());
@@ -42,6 +44,7 @@ public class LoginController extends BasicController{
     }
 
     @GetMapping("/login")
+    @ApiOperation("跳转到登录页")
     public String login() {
         if (SecurityUtils.getSubject().isAuthenticated() || SecurityUtils.getSubject().getPrincipals() != null) {
             return REDIRECT + "/";
@@ -51,6 +54,7 @@ public class LoginController extends BasicController{
     }
 
     @RequestMapping(value = "login")
+    @ApiOperation("登录")
     public String login(HttpServletRequest request, Model modelMap) {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null && subject.isAuthenticated()){

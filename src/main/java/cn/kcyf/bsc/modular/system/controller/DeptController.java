@@ -8,6 +8,11 @@ import cn.kcyf.bsc.modular.system.entity.Dept;
 import cn.kcyf.bsc.modular.system.service.DeptService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -22,6 +27,8 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/dept")
+@Api(tags = "部门管理", description = "部门管理")
+@RequiresRoles(value = "administrator")
 public class DeptController extends BasicController{
     protected static SuccessResponseData SUCCESS_TIP = new SuccessResponseData();
     @Autowired
@@ -31,11 +38,13 @@ public class DeptController extends BasicController{
 
 
     @GetMapping("")
+    @RequiresPermissions(value = "dept")
     public String index() {
         return PREFIX + "dept.html";
     }
 
     @GetMapping("/dept_add")
+    @RequiresPermissions(value = "dept_add")
     public String deptAdd(Long parentId, Model model) {
         if (parentId != null && parentId.equals(0L)){
             parentId = null;
@@ -45,6 +54,7 @@ public class DeptController extends BasicController{
     }
 
     @GetMapping("/dept_edit")
+    @RequiresPermissions(value = "dept_edit")
     public String deptUpdate(Long deptId, Model model) {
         model.addAttribute("deptId", deptId);
         String parentName = deptService.getParentName(deptId);
@@ -52,28 +62,18 @@ public class DeptController extends BasicController{
         return PREFIX + "dept_edit.html";
     }
 
-    @GetMapping(value = "/tree")
-    @ResponseBody
-    public ResponseData tree() {
-        List<Dept> list = deptService.findAll();
-        if (list == null || list.isEmpty()){
-            list = new ArrayList<Dept>();
-            Dept empty = new Dept();
-            empty.setId(0L);
-            empty.setSimpleName("暂无部门信息");
-            list.add(empty);
-        }
-        return ResponseData.success(list);
-    }
-
     @GetMapping(value = "/treeSelect")
     @ResponseBody
+    @ApiOperation("查询部门树形下拉列表")
+    @RequiresPermissions(value = {"dept_add", "dept_edit"}, logical = Logical.OR)
     public List<DeptNode> treeSelect() {
         return deptService.tree();
     }
 
     @GetMapping(value = "/list")
     @ResponseBody
+    @ApiOperation("查询部门树形结构")
+    @RequiresPermissions(value = "dept_list")
     public ResponseData list(String name) {
         Criteria<Dept> criteria = new Criteria<Dept>();
         if (!StringUtils.isEmpty(name)) {
@@ -84,7 +84,9 @@ public class DeptController extends BasicController{
 
     @PostMapping(value = "/add")
     @ResponseBody
-    @BussinessLog(value = "新增部门")
+    @BussinessLog("新增部门")
+    @ApiOperation("新增部门")
+    @RequiresPermissions(value = "dept_add")
     public ResponseData add(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -96,7 +98,9 @@ public class DeptController extends BasicController{
 
     @PostMapping(value = "/edit")
     @ResponseBody
-    @BussinessLog(value = "修改部门")
+    @BussinessLog("修改部门")
+    @ApiOperation("修改部门")
+    @RequiresPermissions(value = "dept_edit")
     public ResponseData edit(@Valid Dept dept, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -114,7 +118,9 @@ public class DeptController extends BasicController{
 
     @PostMapping(value = "/delete/{deptId}")
     @ResponseBody
-    @BussinessLog(value = "删除部门")
+    @BussinessLog("删除部门")
+    @ApiOperation("删除部门")
+    @RequiresPermissions(value = "dept_delete")
     public ResponseData delete(@PathVariable("deptId") Long deptId) {
         deptService.delete(deptId);
         return SUCCESS_TIP;
@@ -122,6 +128,8 @@ public class DeptController extends BasicController{
 
     @GetMapping(value = "/detail/{deptId}")
     @ResponseBody
+    @ApiOperation("查看部门详情")
+    @RequiresPermissions(value = "dept_detail")
     public Dept detail(@PathVariable("deptId") Long deptId) {
         return deptService.getOne(deptId);
     }

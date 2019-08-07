@@ -1,23 +1,22 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.constant.Constant;
 import cn.kcyf.bsc.core.model.ResponseData;
+import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.bsc.modular.system.service.VisitService;
 import cn.kcyf.commons.utils.DateUtils;
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 通用控制器
@@ -144,6 +143,15 @@ public class SystemController extends BasicController {
     public ResponseData userpv(){
         List<Map<String, String>> data = visitService.uv();
         return ResponseData.success(data);
+    }
+
+    @PostMapping("/upload")
+    @ResponseBody
+    @ApiOperation("文件上传")
+    public ResponseData upload(@RequestPart("file") MultipartFile picture) {
+        Map<String, String> result = new HashMap<String, String>();
+        result.put("src", Constant.DEFAULT_HEAD);
+        return new SuccessResponseData(result);
     }
 
 }

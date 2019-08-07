@@ -9,7 +9,7 @@ layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
      */
     var WorkApply = {
         condition: {
-            workId: null,
+            workId: null
         }
     };
 
@@ -103,6 +103,15 @@ layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
 
     WorkApply.search = function(){
         WorkApply.workTable.reload({where: {timeLimit: $("#timeLimit").val()}});
+    };
+
+    WorkApply.help = function(){
+        top.layui.admin.open({
+            type: 2,
+            area: ['600px', '800px'],
+            title: '操作说明',
+            content: Feng.ctxPath + '/work/workRecord_help'
+        });
     };
 
     WorkApply.workRecordSearch = function(){

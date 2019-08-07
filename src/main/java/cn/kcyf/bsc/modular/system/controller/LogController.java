@@ -10,6 +10,8 @@ import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,7 @@ public class LogController extends BasicController {
     private OperationLogService operationLogService;
 
     @GetMapping("")
+    @RequiresPermissions(value = "log")
     public String index(Model model) {
         Map<String, String> types = new HashMap<String, String>();
         for (LogType type : LogType.values()){
@@ -49,6 +52,7 @@ public class LogController extends BasicController {
 
     @GetMapping("/list")
     @ResponseBody
+    @RequiresPermissions(value = "log_list")
     public ResponseData list(String timeLimit, String logName, LogType logType, int page, int limit) {
         Criteria<OperationLog> criteria = new Criteria<OperationLog>();
         if (!StringUtils.isEmpty(timeLimit)) {
@@ -65,15 +69,11 @@ public class LogController extends BasicController {
         return ResponseData.list(operationLogService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
 
-    @GetMapping("/detail/{id}")
-    @ResponseBody
-    public ResponseData detail(@PathVariable Long id) {
-        return ResponseData.success(operationLogService.getOne(id));
-    }
-
     @PostMapping("/delete")
     @ResponseBody
-    @BussinessLog(value = "清空业务日志")
+    @BussinessLog("清空业务日志")
+    @ApiOperation("清空业务日志")
+    @RequiresPermissions(value = "log_delete")
     public ResponseData delete() {
         List<OperationLog> list = operationLogService.findAll();
         if (list != null && !list.isEmpty()){
@@ -84,5 +84,13 @@ public class LogController extends BasicController {
             operationLogService.deletes(ids);
         }
         return SUCCESS_TIP;
+    }
+
+    @GetMapping("/detail/{id}")
+    @ResponseBody
+    @ApiOperation("查看日志详情")
+    @RequiresPermissions(value = "log_detail")
+    public ResponseData detail(@PathVariable Long id) {
+        return ResponseData.success(operationLogService.getOne(id));
     }
 }

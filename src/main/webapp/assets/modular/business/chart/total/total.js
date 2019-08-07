@@ -28,10 +28,7 @@ layui.use(['table', 'laydate', 'jquery'], function () {
             type: 2,
             area: ['1100px', '480px'],
             title: '查看详情',
-            content: Feng.ctxPath + '/chart/total/detail?userId=' + data.userId + "&time="+data.time,
-            end: function () {
-                admin.getTempData('formOk') && MgrUser.search();
-            }
+            content: Feng.ctxPath + '/chart/total/detail?userId=' + data.userId + "&time="+data.time
         });
     };
 });

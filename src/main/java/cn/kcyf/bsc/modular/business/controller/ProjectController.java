@@ -64,7 +64,7 @@ public class ProjectController extends BasicController {
 
     @PostMapping(value = "/add")
     @ResponseBody
-    @BussinessLog(value = "新增项目")
+    @BussinessLog("新增项目")
     public ResponseData add(@Valid Project project, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -78,7 +78,7 @@ public class ProjectController extends BasicController {
 
     @PostMapping(value = "/edit")
     @ResponseBody
-    @BussinessLog(value = "修改项目")
+    @BussinessLog("修改项目")
     public ResponseData edit(@Valid Project project, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -94,7 +94,7 @@ public class ProjectController extends BasicController {
 
     @PostMapping(value = "/delete/{projectId}")
     @ResponseBody
-    @BussinessLog(value = "删除项目")
+    @BussinessLog("删除项目")
     public ResponseData delete(@PathVariable Long projectId) {
 //        projectService.delete(projectId);
 //        return SUCCESS_TIP;
@@ -103,7 +103,7 @@ public class ProjectController extends BasicController {
 
     @PostMapping("/freeze/{projectId}")
     @ResponseBody
-    @BussinessLog(value = "禁用项目")
+    @BussinessLog("禁用项目")
     public ResponseData freeze(@PathVariable Long projectId) {
         Project project = projectService.getOne(projectId);
         project.setStatus(Status.DISABLE);
@@ -113,7 +113,7 @@ public class ProjectController extends BasicController {
 
     @PostMapping("/unfreeze/{projectId}")
     @ResponseBody
-    @BussinessLog(value = "启用项目")
+    @BussinessLog("启用项目")
     public ResponseData unfreeze(@PathVariable Long projectId) {
         Project project = projectService.getOne(projectId);
         project.setStatus(Status.ENABLE);
