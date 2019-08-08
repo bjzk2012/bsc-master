@@ -31,8 +31,6 @@ public class Project extends TableDomain {
      * 项目编码
      */
     @Column(name = "code")
-    @NotBlank(message = "项目编码不能为空")
-    @Pattern(regexp = "^[\\w]{4,20}$", message = "项目编号必须4到20位，只能是单词字符（字母，数字，下划线，中横线）")
     private String code;
     /**
      * 项目名称

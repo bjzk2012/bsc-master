@@ -10,6 +10,7 @@ import cn.kcyf.bsc.modular.business.entity.Work;
 import cn.kcyf.bsc.modular.business.entity.WorkAudit;
 import cn.kcyf.bsc.modular.business.entity.WorkRecord;
 import cn.kcyf.bsc.modular.business.service.WorkRecordService;
+import cn.kcyf.commons.utils.ArrayUtils;
 import cn.kcyf.orm.jpa.dao.BasicDao;
 import cn.kcyf.orm.jpa.service.AbstractBasicService;
 import cn.kcyf.security.domain.ShiroUser;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long> implements WorkRecordService {
@@ -36,9 +38,21 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
     }
 
     @Transactional
-    public void audit(Long workRecordId, boolean flag, String suggestions) {
+    public void audit(String ids, boolean flag, String suggestions) {
+        List<Long> idlist = ArrayUtils.convertStrArrayToLong(ids.split(","));
+        if (idlist != null && !idlist.isEmpty()) {
+            for (Long id : idlist) {
+                audit(id, flag, suggestions);
+            }
+        }
+    }
+
+    private void audit(Long id, boolean flag, String suggestions) {
         WorkStatus status = flag ? WorkStatus.FINISH : WorkStatus.REFUSE;
-        WorkRecord dbWorkRecord = workRecordDao.getOne(workRecordId);
+        WorkRecord dbWorkRecord = workRecordDao.getOne(id);
+        if (!dbWorkRecord.getStatus().equals(WorkStatus.SUBMIT)) {
+            return;
+        }
         ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
         dbWorkRecord.setLastUpdateTime(new Date());
         dbWorkRecord.setLastUpdateUserId(shiroUser.getId());
@@ -67,6 +81,5 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
             dbproject.setLastUpdateUserName(shiroUser.getUsername());
             projectDao.save(dbproject);
         }
-
     }
 }

@@ -60,23 +60,27 @@ layui.use(['form', 'admin', 'laydate', 'ax', 'treeSelect', 'jquery', 'formSelect
             layer.msg("角色未选择", {icon: 5, anim: 6});
             return false;
         }
+        var func = function(){
+            var ajax = new $ax(Feng.ctxPath + "/mgr/edit", function (data) {
+                Feng.success("修改成功！");
+
+                //传给上个页面，刷新table用
+                admin.putTempData('formOk', true);
+
+                //关掉对话框
+                admin.closeThisDialog();
+            }, function (data) {
+                Feng.error("修改成功！" + data.message)
+            });
+            ajax.set(data.field);
+            ajax.start();
+        };
         if (!data.field.password) {
             Feng.confirm("未输入密码则不修改密码，请确认是否提交？", function(r){
-                console.log(r)
-                var ajax = new $ax(Feng.ctxPath + "/mgr/edit", function (data) {
-                    Feng.success("修改成功！");
-
-                    //传给上个页面，刷新table用
-                    admin.putTempData('formOk', true);
-
-                    //关掉对话框
-                    admin.closeThisDialog();
-                }, function (data) {
-                    Feng.error("修改成功！" + data.message)
-                });
-                ajax.set(data.field);
-                ajax.start();
+                func();
             });
+        } else {
+            func();
         }
         return false;
     });

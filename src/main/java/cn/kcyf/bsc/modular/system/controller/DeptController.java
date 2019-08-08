@@ -65,7 +65,7 @@ public class DeptController extends BasicController{
     @GetMapping(value = "/treeSelect")
     @ResponseBody
     @ApiOperation("查询部门树形下拉列表")
-    @RequiresPermissions(value = {"dept_add", "dept_edit"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"dept_add", "dept_edit", "mgr_add", "mgr_edit"}, logical = Logical.OR)
     public List<DeptNode> treeSelect() {
         return deptService.tree();
     }
@@ -129,7 +129,7 @@ public class DeptController extends BasicController{
     @GetMapping(value = "/detail/{deptId}")
     @ResponseBody
     @ApiOperation("查看部门详情")
-    @RequiresPermissions(value = "dept_detail")
+    @RequiresPermissions(value = {"dept_detail", "dept_edit"}, logical = Logical.OR)
     public Dept detail(@PathVariable("deptId") Long deptId) {
         return deptService.getOne(deptId);
     }

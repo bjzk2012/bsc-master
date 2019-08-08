@@ -12,6 +12,9 @@
     <div class="layui-form toolbar">
         <div class="layui-form-item">
             <div class="layui-inline">
+                <input id="condition" class="layui-input" type="text" placeholder="姓名/项目/工作内容" style="width:182px" value="{{d.where.condition}}"/>
+            </div>
+            <div class="layui-inline">
                 <input id="timeLimit" class="layui-input" type="text" placeholder="工作时间" style="width:182px" value="{{d.where.timeLimit}}"/>
             </div>
             <div class="layui-inline">
@@ -30,6 +33,12 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn icon-btn" lay-event="search"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-event="adopt">批量通过</button>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-danger" lay-event="refuse">批量拒绝</button>
             </div>
         </div>
     </div>

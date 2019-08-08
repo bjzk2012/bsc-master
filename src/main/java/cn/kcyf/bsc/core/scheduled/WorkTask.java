@@ -7,6 +7,7 @@ import cn.kcyf.bsc.modular.business.service.WorkRecordService;
 import cn.kcyf.bsc.modular.business.service.WorkService;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import cn.kcyf.commons.utils.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ public class WorkTask {
             List<User> users = userService.findAll();
             for (User user : users){
                 Work work = new Work();
+                work.setCode("WT" + System.currentTimeMillis() + RandomUtils.generateNumString(4));
                 work.setToday(today);
                 work.setCreateTime(today);
                 work.setCreateUserId(user.getId());

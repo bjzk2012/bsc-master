@@ -21,6 +21,11 @@ import java.util.Set;
 @ApiModel("日工作记录")
 public class Work extends TableDomain {
     /**
+     * 日志编码
+     */
+    @Column(name = "code")
+    private String code;
+    /**
      * 工作日期
      */
     @Column(name = "today")

@@ -16,9 +16,12 @@ Feng.confirm = function (tip, ensure) {
     });
 };
 Feng.doAction = function (options) {
-    console.log(Feng.ctxPath)
     var func = function (id, module, action, title, finish, params) {
-        var ajax = new top.layui.ax(Feng.ctxPath + "/" + module + "/" + action + "/" + id, function (data) {
+        var url = Feng.ctxPath + "/" + module + "/" + action;
+        if (id){
+            url += "/" + id;
+        }
+        var ajax = new top.layui.ax(url, function (data) {
             Feng.success(title + "成功!");
             if (finish != undefined){
                 finish(data)

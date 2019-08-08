@@ -7,6 +7,7 @@ import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.business.entity.Project;
 import cn.kcyf.bsc.modular.business.service.ProjectService;
 import cn.kcyf.bsc.modular.system.controller.BasicController;
+import cn.kcyf.commons.utils.RandomUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import io.swagger.annotations.Api;
@@ -71,6 +72,7 @@ public class ProjectController extends BasicController {
         }
         create(project);
         project.setUsed(0);
+        project.setCode("PJ" + System.currentTimeMillis() + RandomUtils.generateNumString(4));
         project.setStatus(Status.ENABLE);
         projectService.create(project);
         return SUCCESS_TIP;

@@ -20,6 +20,7 @@ layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
         return [[
             {title: '序号', type: 'numbers'},
             {field: 'todayRemark', title: '时间'},
+            {field: 'code', title: '编码', minWidth:200},
             {field: 'statusMessage', title: '状态', templet: '#workStatusTpl'}
         ]];
     };

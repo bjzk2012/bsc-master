@@ -18,6 +18,7 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
      */
     WorkAudit.initWorkRecordColumn = function () {
         return [[
+            {type:'checkbox'},
             {title: '序号', type: 'numbers'},
             {field: 'todayRemark', title: '工作时间'},
             {field: 'submitUserName', title: '姓名'},
@@ -44,6 +45,7 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
             submitTimeLimit: '',
             auditTimeLimit: '',
             status: '',
+            condition: ''
         },
         done:function(d){
             $("#status").val(this.where.status);
@@ -73,6 +75,7 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
                 submitTimeLimit: $("#submitTimeLimit").val(),
                 auditTimeLimit: $("#auditTimeLimit").val(),
                 status: $("#status").val(),
+                condition: $("#condition").val()
             }
         });
     };
@@ -86,6 +89,39 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
         });
     };
 
+    WorkAudit.adopt = function(){
+        var nodes = table.checkStatus('workAuditTable');
+        if (nodes.data.length == 0){
+            Feng.error("未选择工作日志");
+            return;
+        }
+        var ids = $.map(nodes.data, function(n){return n.id;}).join(",");
+        WorkAudit.audit({ids:ids, title: "批量通过审核",flag: true});
+    };
+
+    WorkAudit.refuse = function(){
+        var nodes = table.checkStatus('workAuditTable');
+        if (nodes.data.length == 0){
+            Feng.error("未选择工作日志");
+            return;
+        }
+        var ids = $.map(nodes.data, function(n){return n.id;}).join(",");
+        WorkAudit.audit({ids:ids, title: "批量审核拒绝",flag: false});
+    };
+
+    WorkAudit.audit = function(params){
+        Feng.doAction({
+            module: "work/workRecord",
+            action: "audit",
+            title: params.title,
+            confirm: true,
+            finish: function (d) {
+                WorkAudit.search();
+            },
+            params: params
+        });
+    };
+
     /**
      * 头工具栏事件
      */
@@ -96,30 +132,10 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
 
     table.on('tool(workAuditTable)', function (obj) {
         if (obj.event === 'adopt') {
-            Feng.doAction({
-                id: obj.data.id,
-                module: "work/workRecord",
-                action: "audit",
-                title: "通过审核",
-                confirm: true,
-                finish: function (d) {
-                    WorkAudit.search();
-                },
-                params: {flag: true}
-            });
+            WorkAudit.audit({ids:obj.data.id, title: "通过审核",flag: true});
         }
         if (obj.event === 'refuse') {
-            Feng.doAction({
-                id: obj.data.id,
-                module: "work/workRecord",
-                action: "audit",
-                title: "拒绝审核",
-                confirm: true,
-                finish: function (d) {
-                    WorkAudit.search();
-                },
-                params: {flag: false}
-            });
+            WorkAudit.audit({ids:obj.data.id, title: "审核拒绝",flag: false});
         }
         if (obj.event === 'detail') {
             WorkAudit.openDetail(obj.data.id);

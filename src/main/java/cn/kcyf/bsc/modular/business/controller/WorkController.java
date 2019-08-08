@@ -139,8 +139,11 @@ public class WorkController extends BasicController {
 
     @GetMapping(value = "/audits")
     @ResponseBody
-    public ResponseData audits(String timeLimit, String submitTimeLimit, String auditTimeLimit, WorkStatus status, int page, int limit) {
+    public ResponseData audits(String condition, String timeLimit, String submitTimeLimit, String auditTimeLimit, WorkStatus status, int page, int limit) {
         Criteria<WorkRecord> criteria = new Criteria<WorkRecord>();
+        if (!StringUtils.isEmpty(condition)){
+            criteria.add(Restrictions.or(Restrictions.like("project.name", condition), Restrictions.like("submitUserName", condition), Restrictions.like("content", condition)));
+        }
         if (status != null) {
             criteria.add(Restrictions.eq("status", status));
         } else {
@@ -201,7 +204,7 @@ public class WorkController extends BasicController {
 
     @GetMapping(value = "/workRecord/audits/{workRecordId}")
     @ResponseBody
-    public ResponseData edit(@PathVariable Long workRecordId) {
+    public ResponseData audits(@PathVariable Long workRecordId) {
         WorkRecord record = workRecordService.getOne(workRecordId);
         return ResponseData.list(record.getAudits());
     }
@@ -230,11 +233,11 @@ public class WorkController extends BasicController {
         return SUCCESS_TIP;
     }
 
-    @PostMapping(value = "/workRecord/audit/{workRecordId}")
+    @PostMapping(value = "/workRecord/audit")
     @ResponseBody
     @BussinessLog("审核工单")
-    public ResponseData audit(@PathVariable Long workRecordId, boolean flag, String suggestions) {
-        workRecordService.audit(workRecordId, flag, suggestions);
+    public ResponseData audit(String ids, boolean flag, String suggestions) {
+        workRecordService.audit(ids, flag, suggestions);
         return SUCCESS_TIP;
     }
 

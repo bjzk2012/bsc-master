@@ -64,7 +64,7 @@ public class ChartTotalController extends BasicController {
         if (!isAdmin) {
             criteria.add(Restrictions.eq("dept.id", user.getDept().getId()));
         }
-//        criteria.add(Restrictions.ne("roles.description",  "administrator"));
+        criteria.add(Restrictions.ne("roles.code",  "administrator"));
         List<User> users = userService.findList(criteria);
         model.addAttribute("users", users);
         // 初始化时间
