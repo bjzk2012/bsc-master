@@ -35,7 +35,7 @@ layui.use(['admin', 'table', 'treetable', 'jquery'], function () {
             title: '添加字典',
             content: Feng.ctxPath + '/dict/dict_add',
             end: function () {
-                admin.getTempData('formOk') && Dict.initTable(Dict.tableId);
+                admin.getTempData('formOk') && Dict.search();
             }
         });
     };

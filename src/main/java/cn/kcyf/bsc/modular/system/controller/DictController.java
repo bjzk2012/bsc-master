@@ -1,11 +1,11 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.DictNode;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.Dict;
-import cn.kcyf.bsc.modular.system.entity.Menu;
 import cn.kcyf.bsc.modular.system.service.DictService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
@@ -15,7 +15,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -104,6 +103,9 @@ public class DictController extends BasicController {
             dict.setParentId(null);
             dict.setParentName(null);
         }
+        if (dictService.existsByCode(dict.getCode(), dict.getParentId())){
+            return ResponseData.error("字典编码已存在");
+        }
         dictService.create(dict);
         return SUCCESS_TIP;
     }
@@ -125,6 +127,9 @@ public class DictController extends BasicController {
         } else {
             dbdict.setParentId(dict.getParentId());
             dbdict.setParentName(dict.getParentName());
+        }
+        if (dictService.existsByCode(dict.getCode(), dict.getParentId())){
+            return ResponseData.error("字典编码已存在");
         }
         dbdict.setCode(dict.getCode());
         dbdict.setName(dict.getName());

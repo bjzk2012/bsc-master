@@ -1,6 +1,7 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.security.util.AjaxUtils;
 import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;

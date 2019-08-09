@@ -1,5 +1,6 @@
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.system.entity.User;

@@ -25,7 +25,9 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
             $("#parentId").val(d.current.id);
         },
         success: function (d) {
-            treeSelect.checkNode('tree', result.data.parentId);
+            if (result.data.parentId) {
+                treeSelect.checkNode('tree', result.data.parentId);
+            }
         }
     });
 
@@ -44,5 +46,6 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
         });
         ajax.set(data.field);
         ajax.start();
+        return false;
     });
 });

@@ -1,38 +1,27 @@
 package cn.kcyf.bsc.modular.business.controller;
 
 import cn.kcyf.bsc.core.model.ChartTotalTimeComparator;
-import cn.kcyf.bsc.core.model.MenuNode;
-import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.business.entity.Work;
 import cn.kcyf.bsc.modular.business.entity.WorkAudit;
-import cn.kcyf.bsc.modular.business.entity.WorkRecord;
 import cn.kcyf.bsc.modular.business.service.WorkAuditService;
-import cn.kcyf.bsc.modular.business.service.WorkRecordService;
 import cn.kcyf.bsc.modular.business.service.WorkService;
-import cn.kcyf.bsc.modular.system.controller.BasicController;
-import cn.kcyf.bsc.modular.system.entity.Role;
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
 import cn.kcyf.security.service.ShiroService;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.persistence.criteria.*;
 import java.util.*;
 
 @Controller

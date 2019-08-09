@@ -8,7 +8,7 @@ import cn.kcyf.bsc.modular.business.entity.Key;
 import cn.kcyf.bsc.modular.business.entity.Project;
 import cn.kcyf.bsc.modular.business.service.KeyService;
 import cn.kcyf.bsc.modular.business.service.ProjectService;
-import cn.kcyf.bsc.modular.system.controller.BasicController;
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.orm.jpa.criteria.Criteria;
@@ -50,10 +50,10 @@ public class KeyController extends BasicController {
         model.addAttribute("projects", projectService.findList(criteria));
     }
 
-    private void setUsers(Model model, String key) {
+    private void setUsers(Model model) {
         Criteria<User> criteria = new Criteria<User>();
         criteria.add(Restrictions.eq("status", LockStatus.UNLOCK));
-        model.addAttribute(key, userService.findList(criteria));
+        model.addAttribute("users", userService.findList(criteria));
     }
 
     @GetMapping("")
@@ -64,8 +64,7 @@ public class KeyController extends BasicController {
     @GetMapping(value = "/key_add")
     public String keyAdd(Model model) {
         setProjects(model);
-        setUsers(model, "managers");
-        setUsers(model, "backupManagers");
+        setUsers(model);
         return PREFIX + "/key_add.html";
     }
 
@@ -73,8 +72,7 @@ public class KeyController extends BasicController {
     public String keyEdit(Long keyId, Model model) {
         model.addAttribute("keyId", keyId);
         setProjects(model);
-        setUsers(model, "managers");
-        setUsers(model, "backupManagers");
+        setUsers(model);
         return PREFIX + "/key_edit.html";
     }
 
@@ -155,6 +153,7 @@ public class KeyController extends BasicController {
 
     @PostMapping(value = "/password/{keyId}")
     @ResponseBody
+    @BussinessLog("查看口令")
     public ResponseData password(@PathVariable Long keyId, String password) {
         Key key = keyService.getOne(keyId);
         User manager = key.getManager();

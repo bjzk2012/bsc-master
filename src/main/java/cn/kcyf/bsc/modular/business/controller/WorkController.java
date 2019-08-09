@@ -11,7 +11,7 @@ import cn.kcyf.bsc.modular.business.entity.WorkRecord;
 import cn.kcyf.bsc.modular.business.service.ProjectService;
 import cn.kcyf.bsc.modular.business.service.WorkRecordService;
 import cn.kcyf.bsc.modular.business.service.WorkService;
-import cn.kcyf.bsc.modular.system.controller.BasicController;
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;

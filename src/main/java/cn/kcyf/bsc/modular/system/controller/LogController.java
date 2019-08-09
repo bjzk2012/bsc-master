@@ -1,6 +1,7 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.core.enumerate.LogType;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.ResponseData;

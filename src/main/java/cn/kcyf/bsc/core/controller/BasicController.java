@@ -1,4 +1,4 @@
-package cn.kcyf.bsc.modular.system.controller;
+package cn.kcyf.bsc.core.controller;
 
 import cn.kcyf.bsc.core.model.SuccessResponseData;
 import cn.kcyf.orm.jpa.entity.TableDomain;
@@ -21,17 +21,19 @@ public abstract class BasicController {
         return (ShiroUser) SecurityUtils.getSubject().getPrincipal();
     }
 
+    protected Boolean isAuthenticated(){
+        return SecurityUtils.getSubject().isAuthenticated();
+    }
+
     protected void create(TableDomain domain) {
         ShiroUser shiroUser = getUser();
         domain.setId(null);
-        domain.setCreateTime(new Date());
         domain.setCreateUserId(shiroUser.getId());
         domain.setCreateUserName(shiroUser.getUsername());
     }
 
     protected void update(TableDomain domain) {
         ShiroUser shiroUser = getUser();
-        domain.setLastUpdateTime(new Date());
         domain.setLastUpdateUserId(shiroUser.getId());
         domain.setLastUpdateUserName(shiroUser.getUsername());
     }

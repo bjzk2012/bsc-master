@@ -38,4 +38,12 @@ public class DictServiceImpl extends AbstractBasicService<Dict, Long> implements
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    public Boolean existsByCode(String code, Long parentId) {
+        if (parentId == null || parentId.equals(0L)) {
+            return dictDao.existsByCodeEqualsAndParentIdIsNull(code);
+        }
+        return dictDao.existsByCodeEqualsAndParentIdEquals(code, parentId);
+    }
 }

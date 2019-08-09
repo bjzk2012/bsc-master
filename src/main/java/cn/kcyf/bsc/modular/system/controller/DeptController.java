@@ -1,5 +1,6 @@
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.DeptNode;
 import cn.kcyf.bsc.core.model.ResponseData;
@@ -14,7 +15,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,14 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/dept")
 @Api(tags = "部门管理", description = "部门管理")
 @RequiresRoles(value = "administrator")
-public class DeptController extends BasicController{
+public class DeptController extends BasicController {
     protected static SuccessResponseData SUCCESS_TIP = new SuccessResponseData();
     @Autowired
     private DeptService deptService;

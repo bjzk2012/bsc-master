@@ -1,6 +1,7 @@
 
 package cn.kcyf.bsc.modular.system.controller;
 
+import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.core.model.MenuNode;
 import cn.kcyf.bsc.core.model.MenuNodeComparator;
 import cn.kcyf.bsc.modular.system.service.UserService;
@@ -29,7 +30,7 @@ import java.util.List;
  */
 @Controller
 @Api(tags = "登录相关", description = "登录相关")
-public class LoginController extends BasicController{
+public class LoginController extends BasicController {
 
     @Autowired
     private UserService userService;

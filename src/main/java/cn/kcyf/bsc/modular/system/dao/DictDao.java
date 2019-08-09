@@ -15,4 +15,8 @@ public interface DictDao extends BasicDao<Dict, Long> {
     List<BigInteger> getChildIdById(@Param(value = "id") Long id);
 
     Dict findFirstByParentIdIsNullAndCodeEquals(@Param(value = "code") String code);
+
+    Boolean existsByCodeEqualsAndParentIdIsNull(@Param(value = "code") String code);
+
+    Boolean existsByCodeEqualsAndParentIdEquals(@Param(value = "code") String code, @Param(value = "parentId") Long parentId);
 }
