@@ -9,10 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @ToString
@@ -40,6 +37,7 @@ public class QuestionRecord extends TableDomain {
      * 操作内容
      */
     @Column(name = "description")
+    @Lob
     private String description;
     /**
      * 处理后问题的状态

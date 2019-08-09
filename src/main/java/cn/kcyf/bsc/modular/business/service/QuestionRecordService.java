@@ -5,5 +5,5 @@ import cn.kcyf.bsc.modular.business.entity.QuestionRecord;
 import cn.kcyf.orm.jpa.service.BasicService;
 
 public interface QuestionRecordService extends BasicService<QuestionRecord, Long> {
-    void create(Long questionId, QuestionRecordType type, String description);
+    QuestionRecord create(Long questionId, QuestionRecordType type, String description);
 }

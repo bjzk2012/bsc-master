@@ -2,6 +2,7 @@ package cn.kcyf.bsc.modular.business.controller;
 
 import cn.kcyf.bsc.core.enumerate.*;
 import cn.kcyf.bsc.core.log.BussinessLog;
+import cn.kcyf.bsc.core.model.QuestionRecordComparator;
 import cn.kcyf.bsc.core.model.ResponseData;
 import cn.kcyf.bsc.modular.business.entity.Project;
 import cn.kcyf.bsc.modular.business.entity.Question;
@@ -12,6 +13,7 @@ import cn.kcyf.bsc.modular.business.service.QuestionService;
 import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
+import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.commons.utils.RandomUtils;
 import cn.kcyf.commons.web.RequestUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
@@ -28,8 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/question")
@@ -74,11 +75,20 @@ public class QuestionController extends BasicController {
         model.addAttribute("causes", causes);
     }
 
+    private void setQuomodo(Model model) {
+        Map<String, String> quomodos = new HashMap<String, String>();
+        for (QuestionQuomodo quomodo : QuestionQuomodo.values()) {
+            quomodos.put(quomodo.name(), quomodo.getMessage());
+        }
+        model.addAttribute("quomodos", quomodos);
+    }
+
     private void setModel(Model model){
         setProjects(model);
         setUsers(model);
         setCategorys(model);
         setCauses(model);
+        setQuomodo(model);
     }
 
     @GetMapping("")
@@ -96,7 +106,8 @@ public class QuestionController extends BasicController {
     @GetMapping(value = "/question_edit")
     public String questionEdit(Long questionId, Model model) {
         model.addAttribute("questionId", questionId);
-        model.addAttribute("title", questionService.getOne(questionId).getTitle());
+        Question question = questionService.getOne(questionId);
+        model.addAttribute("title", question.getTitle());
         setModel(model);
         return PREFIX + "/question_edit.html";
     }
@@ -114,7 +125,7 @@ public class QuestionController extends BasicController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("title", questionService.getOne(questionId).getTitle());
         setModel(model);
-        return PREFIX + "/question_appoint.html";
+        return PREFIX + "/question_solve.html";
     }
 
     @GetMapping(value = "/question_active")
@@ -122,7 +133,19 @@ public class QuestionController extends BasicController {
         model.addAttribute("questionId", questionId);
         model.addAttribute("title", questionService.getOne(questionId).getTitle());
         setModel(model);
-        return PREFIX + "/question_solve.html";
+        return PREFIX + "/question_active.html";
+    }
+
+    @GetMapping(value = "/question_detail")
+    public String questionDetail(Long questionId, Model model) {
+        Question question = questionService.getOne(questionId);
+        model.addAttribute("question", question);
+        Set<QuestionRecord> recordSet = question.getRecords();
+        List<QuestionRecord> records = new ArrayList<QuestionRecord>();
+        records.addAll(recordSet);
+        Collections.sort(records, new QuestionRecordComparator());
+        model.addAttribute("records", records);
+        return PREFIX + "/question_detail.html";
     }
 
 
@@ -131,7 +154,14 @@ public class QuestionController extends BasicController {
     public ResponseData list(String condition, int page, int limit) {
         Criteria<Question> criteria = new Criteria<Question>();
         if (!StringUtils.isEmpty(condition)) {
-            criteria.add(Restrictions.or(Restrictions.like("code", condition), Restrictions.like("title", condition)));
+            criteria.add(Restrictions.or(
+                    Restrictions.like("title", condition),
+                    Restrictions.like("project.name", condition),
+                    Restrictions.like("phone", condition),
+                    Restrictions.like("sponsor", condition),
+                    Restrictions.like("liable.name", condition),
+                    Restrictions.like("description", condition)
+            ));
         }
         return ResponseData.list(questionService.findList(criteria, PageRequest.of(page - 1, limit)));
     }
@@ -148,9 +178,6 @@ public class QuestionController extends BasicController {
         question.setStatus(QuestionStatus.DRAFT);
         question.setIp(RequestUtils.getIpAddr(request));
         question.setBrowse(request.getHeader("user-agent"));
-        if (StringUtils.isEmpty(question.getDescription())){
-            question.setDescription("");
-        }
         if (projectId != null) {
             question.setProject(projectService.getOne(projectId));
         }
@@ -158,7 +185,9 @@ public class QuestionController extends BasicController {
             question.setSponsor(getUser().getUsername());
         }
         questionService.create(question);
-        questionRecordService.create(question.getId(), QuestionRecordType.INITIATE, null);
+        QuestionRecord record = questionRecordService.create(question.getId(), QuestionRecordType.INITIATE, null);
+        question.setDescription(record.getDescription());
+        questionService.update(question);
         return SUCCESS_TIP;
     }
 
@@ -169,36 +198,38 @@ public class QuestionController extends BasicController {
         Question dbquestion = questionService.getOne(questionId);
         QuestionRecordType type = QuestionRecordType.CONFIRM;
         dbquestion.setStatus(type.getStatus());
+        QuestionRecord record = questionRecordService.create(questionId, type, null);
+        dbquestion.setDescription(dbquestion + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
-        questionRecordService.create(questionId, type, null);
         return SUCCESS_TIP;
     }
 
-    @PostMapping(value = "/appoint/{questionId}")
+    @PostMapping(value = "/appoint")
     @ResponseBody
     @BussinessLog("指派问题")
-    public ResponseData appoint(@PathVariable Long questionId, @NotBlank(message = "责任人未选择") Long liableId, String description) {
-        Question dbquestion = questionService.getOne(questionId);
+    public ResponseData appoint(Long id, @NotBlank(message = "责任人未选择") Long liableId, @NotBlank(message = "问题原因未选择") QuestionCause cause, String description) {
+        Question dbquestion = questionService.getOne(id);
         QuestionRecordType type = QuestionRecordType.APPOINT;
         dbquestion.setStatus(type.getStatus());
+        dbquestion.setCause(cause);
         dbquestion.setLiable(userService.getOne(liableId));
-        dbquestion.setDescription(dbquestion.getDescription() + description);
+        QuestionRecord record = questionRecordService.create(id, type, description);
+        dbquestion.setDescription(dbquestion + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
-        questionRecordService.create(questionId, type, description);
         return SUCCESS_TIP;
     }
 
-    @PostMapping(value = "/solve/{questionId}")
+    @PostMapping(value = "/solve")
     @ResponseBody
     @BussinessLog("解决问题")
-    public ResponseData solve(@PathVariable Long questionId, @NotBlank(message = "解决方案未选择") QuestionQuomodo quomodo, String description) {
-        Question dbquestion = questionService.getOne(questionId);
+    public ResponseData solve(Long id, @NotBlank(message = "解决方案未选择") QuestionQuomodo quomodo, String description) {
+        Question dbquestion = questionService.getOne(id);
         QuestionRecordType type = QuestionRecordType.SOLVE;
         dbquestion.setStatus(type.getStatus());
         dbquestion.setQuomodo(quomodo);
-        dbquestion.setDescription(dbquestion.getDescription() + description);
+        QuestionRecord record = questionRecordService.create(id, type, description);
+        dbquestion.setDescription(dbquestion + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
-        questionRecordService.create(questionId, type, description);
         return SUCCESS_TIP;
     }
 
@@ -207,37 +238,51 @@ public class QuestionController extends BasicController {
     @BussinessLog("关闭问题")
     public ResponseData close(@PathVariable Long questionId) {
         Question dbquestion = questionService.getOne(questionId);
-        QuestionRecordType type = QuestionRecordType.SOLVE;
+        QuestionRecordType type = QuestionRecordType.CLOSE;
         dbquestion.setStatus(type.getStatus());
+        QuestionRecord record = questionRecordService.create(questionId, type, null);
+        dbquestion.setDescription(dbquestion + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
-        questionRecordService.create(questionId, type, null);
         return SUCCESS_TIP;
     }
 
-    @PostMapping(value = "/active/{questionId}")
+    @PostMapping(value = "/active")
     @ResponseBody
     @BussinessLog("激活问题")
-    public ResponseData active(@PathVariable Long questionId, String description) {
-        Question dbquestion = questionService.getOne(questionId);
+    public ResponseData active(Long id, String description) {
+        Question dbquestion = questionService.getOne(id);
         QuestionRecordType type = QuestionRecordType.ACTIVE;
         dbquestion.setStatus(type.getStatus());
-        dbquestion.setDescription(dbquestion.getDescription() + description);
+        QuestionRecord record = questionRecordService.create(id, type, description);
+        dbquestion.setDescription(dbquestion + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
-        questionRecordService.create(questionId, type, description);
         return SUCCESS_TIP;
     }
 
     @PostMapping(value = "/edit")
     @ResponseBody
     @BussinessLog("编辑问题")
-    public ResponseData edit(@Valid Question question, BindingResult bindingResult) {
+    public ResponseData edit(@Valid Question question, Long projectId, Long liableId, String remark, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
         Question dbquestion = questionService.getOne(question.getId());
         update(dbquestion);
+        dbquestion.setTitle(question.getTitle());
+        if (projectId != null) {
+            dbquestion.setProject(projectService.getOne(projectId));
+        }
         dbquestion.setTime(question.getTime());
-        dbquestion.setDescription(question.getDescription());
+        dbquestion.setSponsor(question.getSponsor());
+        dbquestion.setPhone(question.getPhone());
+        dbquestion.setCategory(question.getCategory());
+        if (liableId != null) {
+            dbquestion.setLiable(userService.getOne(liableId));
+        }
+        dbquestion.setCause(question.getCause());
+        dbquestion.setQuomodo(question.getQuomodo());
+        QuestionRecord record = questionRecordService.create(dbquestion.getId(), QuestionRecordType.EDIT, remark);
+        dbquestion.setDescription(question.getDescription() + "<br/>" + record.getDescription());
         questionService.update(dbquestion);
         return SUCCESS_TIP;
     }

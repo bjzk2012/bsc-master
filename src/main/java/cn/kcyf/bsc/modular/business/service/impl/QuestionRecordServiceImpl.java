@@ -27,7 +27,7 @@ public class QuestionRecordServiceImpl extends AbstractBasicService<QuestionReco
     }
 
     @Transactional
-    public void create(Long questionId, QuestionRecordType type, String description) {
+    public QuestionRecord create(Long questionId, QuestionRecordType type, String description) {
         ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
         QuestionRecord record = new QuestionRecord();
         record.setQuestionId(questionId);
@@ -37,10 +37,11 @@ public class QuestionRecordServiceImpl extends AbstractBasicService<QuestionReco
         record.setCreateUserId(shiroUser.getId());
         record.setCreateUserName(shiroUser.getUsername());
         if (StringUtils.isEmpty(description)) {
-            description = "";
+            description = "无";
         }
         description = String.format(DESCRIPTION_TPL, record.getOperator(), DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"), type.getMessage(), questionId, type.getStatus().getMessage(), description);
         record.setDescription(description);
         questionRecordDao.save(record);
+        return record;
     }
 }

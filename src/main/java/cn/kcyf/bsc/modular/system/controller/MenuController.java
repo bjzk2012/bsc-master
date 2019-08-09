@@ -151,7 +151,7 @@ public class MenuController extends BasicController {
 
     @GetMapping("/detail/{menuId}")
     @ResponseBody
-    @RequiresPermissions(value = "menu_detail")
+    @RequiresPermissions(value = "menu_edit")
     public ResponseData detail(@PathVariable Long menuId) {
         Menu menu = menuService.getOne(menuId);
         return ResponseData.success(menu);

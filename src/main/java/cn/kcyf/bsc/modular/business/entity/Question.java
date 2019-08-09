@@ -59,6 +59,7 @@ public class Question extends TableDomain {
      * 描述
      */
     @Column(name = "description")
+    @Lob
     private String description;
     /**
      * 发生时间
@@ -78,18 +79,21 @@ public class Question extends TableDomain {
     @JoinColumn(name = "liable_id")
     @JSONField(serialize = false, deserialize = false)
     private User liable;
-    public Long getLiableId(){
-        if (this.liable == null){
+
+    public Long getLiableId() {
+        if (this.liable == null) {
             return null;
         }
         return liable.getId();
     }
-    public String getLiableName(){
-        if (this.liable == null){
+
+    public String getLiableName() {
+        if (this.liable == null) {
             return "";
         }
         return liable.getName();
     }
+
     /**
      * 问题状态
      */
@@ -125,14 +129,16 @@ public class Question extends TableDomain {
         }
         return cause.getMessage();
     }
+
     /**
      * 处理方式
      */
     @Column(name = "quomodo")
     @Enumerated
     private QuestionQuomodo quomodo;
-    public String getQuomodoMessage(){
-        if (quomodo == null){
+
+    public String getQuomodoMessage() {
+        if (quomodo == null) {
             return null;
         }
         return quomodo.getMessage();

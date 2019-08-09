@@ -152,7 +152,7 @@ public class SystemController extends BasicController {
     public ResponseData upload(@RequestPart("file") MultipartFile picture) {
         Map<String, String> result = new HashMap<String, String>();
         result.put("src", Constant.DEFAULT_HEAD);
-        return new SuccessResponseData(result);
+        return ResponseData.success(0, "文件上传成功", result);
     }
 
 }

@@ -21,12 +21,13 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
             {field: 'title', title: '标题'},
             {field: 'projectName', title: '项目'},
             {field: 'categoryMessage', title: '问题类型'},
+            {field: 'causeMessage', title: '问题原因'},
             {field: 'statusMessage', title: '状态'},
             {field: 'createTime', title: '发起时间'},
             {field: 'sponsor', title: '发起人'},
             {field: 'liableName', title: '负责人'},
             {field: 'ip', title: 'IP地址'},
-            {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 350}
+            {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 380}
         ]];
     };
 
@@ -48,7 +49,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
-            area: ['600px', '800px'],
+            area: ['1200px', '800px'],
             title: '添加问题',
             content: Feng.ctxPath + '/question/question_add',
             end: function () {
@@ -66,7 +67,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
-            area: ['600px', '800px'],
+            area: ['1200px', '800px'],
             title: '修改问题',
             content: Feng.ctxPath + '/question/question_edit?questionId=' + data.id,
             end: function () {
@@ -140,13 +141,16 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
             case 'active':
                 Question.openActive(data);
                 break;
+            case 'detail':
+                Question.openDetail(data);
+                break;
         }
     });
     Question.openAppoint = function(data){
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
-            area: ['600px', '800px'],
+            area: ['1200px', '800px'],
             title: '指派问题',
             content: Feng.ctxPath + '/question/question_appoint?questionId=' + data.id,
             end: function () {
@@ -154,11 +158,19 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
             }
         });
     };
+    Question.openDetail = function(data){
+        top.layui.admin.open({
+            type: 2,
+            area: ['1200px', '1000px'],
+            title: '查看问题',
+            content: Feng.ctxPath + '/question/question_detail?questionId=' + data.id,
+        });
+    };
     Question.openSolve = function(data){
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
-            area: ['600px', '800px'],
+            area: ['1200px', '800px'],
             title: '解决问题',
             content: Feng.ctxPath + '/question/question_solve?questionId=' + data.id,
             end: function () {
@@ -170,7 +182,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         admin.putTempData('formOk', false);
         top.layui.admin.open({
             type: 2,
-            area: ['600px', '800px'],
+            area: ['1200px', '800px'],
             title: '激活问题',
             content: Feng.ctxPath + '/question/question_active?questionId=' + data.id,
             end: function () {
