@@ -43,6 +43,17 @@ public class CenterController extends BasicController {
         return SUCCESS_TIP;
     }
 
+    @PostMapping("/user_avatar")
+    @ResponseBody
+    @BussinessLog("修改当前用户图像")
+    @ApiOperation("修改当前用户图像")
+    public ResponseData user_avatar(String avatar) {
+        User dbuser = userService.getOne(getUser().getId());
+        dbuser.setAvatar(avatar);
+        userService.update(dbuser);
+        return SUCCESS_TIP;
+    }
+
     @PostMapping("/password")
     @ResponseBody
     @BussinessLog("设置当前用户新密码")

@@ -21,7 +21,8 @@ layui.use(['table', 'laydate', 'jquery'], function () {
             $(".action_detail").click(function(){
                 ChartTotal.openDetail(JSON.parse($(this).attr("lay-data")));
             })
-        }
+        },
+        autoSort: true
     });
     ChartTotal.openDetail = function(data){
         top.layui.admin.open({

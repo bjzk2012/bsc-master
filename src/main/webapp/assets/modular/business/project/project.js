@@ -86,7 +86,8 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         },
         done: function () {
             element.render();
-        }
+        },
+        autoSort: true
     });
     /**
      * 头工具栏事件

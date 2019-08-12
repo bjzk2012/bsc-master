@@ -33,7 +33,8 @@ layui.use(['jquery', 'form', 'table', 'admin'], function () {
         cols: Role.initColumn(),
         where: {
             roleName: ''
-        }
+        },
+        autoSort: true
     });
 
     /**

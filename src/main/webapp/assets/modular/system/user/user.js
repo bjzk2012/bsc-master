@@ -91,7 +91,8 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        }
+        },
+        autoSort: true
     });
     /**
      * 头工具栏事件

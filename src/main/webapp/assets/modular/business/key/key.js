@@ -109,7 +109,8 @@ layui.use(['table', 'admin', 'element', 'ax'], function () {
             $(".read_password").click(function(){
                 Key.openPassword($(this).attr("lay-data"))
             });
-        }
+        },
+        autoSort: true
     });
     /**
      * 头工具栏事件

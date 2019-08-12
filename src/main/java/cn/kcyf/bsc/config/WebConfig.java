@@ -3,6 +3,7 @@ package cn.kcyf.bsc.config;
 import cn.kcyf.bsc.core.converter.StringToDateConverter;
 import cn.kcyf.bsc.core.filter.VisitInterceptor;
 import cn.kcyf.bsc.core.view.ErrorView;
+import cn.kcyf.commons.utils.FtpUtils;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.google.code.kaptcha.util.Config;
@@ -73,5 +74,10 @@ public class WebConfig implements WebMvcConfigurer {
 
         }
 
+    }
+
+    @Bean
+    public FtpUtils ftpUtils(){
+        return new FtpUtils();
     }
 }

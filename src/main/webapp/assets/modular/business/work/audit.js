@@ -20,13 +20,13 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
         return [[
             {type:'checkbox'},
             {title: '序号', type: 'numbers'},
-            {field: 'todayRemark', title: '工作时间'},
+            {field: 'todayRemark', title: '工作时间', sort: true},
             {field: 'submitUserName', title: '姓名'},
             {field: 'projectName', title: '项目'},
             {field: 'content', title: '工作内容'},
-            {field: 'time', title: '工时(h)'},
-            {field: 'submitTime', title: '提交时间'},
-            {field: 'lastAuditTime', title: '终审时间'},
+            {field: 'time', title: '工时(h)', sort: true},
+            {field: 'submitTime', title: '提交时间', sort: true},
+            {field: 'lastAuditTime', title: '终审时间', sort: true},
             {field: 'statusMessage', title: '状态', templet: '#statusTpl'},
             {align: 'center', toolbar: '#tableBar', title: '操作', minWidth: 200}
         ]];
@@ -65,7 +65,8 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        }
+        },
+        autoSort: true
     });
 
     WorkAudit.search = function () {

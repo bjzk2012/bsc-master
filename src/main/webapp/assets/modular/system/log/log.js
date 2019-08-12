@@ -93,7 +93,8 @@ layui.use(['form', 'jquery', 'table', 'ax', 'laydate'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        }
+        },
+        autoSort: true
     });
 
     /**

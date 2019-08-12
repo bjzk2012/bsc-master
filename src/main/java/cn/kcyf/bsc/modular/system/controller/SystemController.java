@@ -9,14 +9,19 @@ import cn.kcyf.bsc.modular.system.entity.User;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.bsc.modular.system.service.VisitService;
 import cn.kcyf.commons.utils.DateUtils;
+import cn.kcyf.commons.utils.FtpUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -27,6 +32,9 @@ import java.util.*;
 @Controller
 @RequestMapping("/system")
 public class SystemController extends BasicController {
+
+    @Autowired
+    private FtpUtils ftpUtils;
 
     @Autowired
     private UserService userService;
@@ -151,7 +159,14 @@ public class SystemController extends BasicController {
     @ApiOperation("文件上传")
     public ResponseData upload(@RequestPart("file") MultipartFile picture) {
         Map<String, String> result = new HashMap<String, String>();
-        result.put("src", Constant.DEFAULT_HEAD);
+        String pictureName = UUID.randomUUID().toString() + "." + picture.getOriginalFilename().substring(picture.getOriginalFilename().lastIndexOf(".") + 1);
+        try {
+            ftpUtils.upload("/bsc", pictureName, picture.getInputStream());
+            result.put("title", picture.getOriginalFilename());
+            result.put("src", "http://www.file-server.com/bsc/" + pictureName);
+        } catch (Exception e) {
+            return ResponseData.error("文件上传失败");
+        }
         return ResponseData.success(0, "文件上传成功", result);
     }
 

@@ -90,7 +90,8 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         },
         done: function () {
             element.render();
-        }
+        },
+        autoSort: true
     });
     /**
      * 头工具栏事件
@@ -161,7 +162,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
     Question.openDetail = function(data){
         top.layui.admin.open({
             type: 2,
-            area: ['1200px', '1000px'],
+            area: ['1200px', '800px'],
             title: '查看问题',
             content: Feng.ctxPath + '/question/question_detail?questionId=' + data.id,
         });

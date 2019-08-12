@@ -128,7 +128,9 @@ layui.config({
     citypicker: 'city-picker/city-picker',
     tableSelect: 'tableSelect/tableSelect',
     ax: 'ax/ax',
-    ztree: 'ztree/ztree-object'
+    ztree: 'ztree/ztree-object',
+    cropper: 'cropper/cropper',
+    croppers: 'cropper/croppers'
 }).use(['admin'], function () {
     var $ = layui.$;
     var admin = layui.admin;

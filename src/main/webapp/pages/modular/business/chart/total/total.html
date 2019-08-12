@@ -7,7 +7,7 @@
     <table id="totalTable" lay-filter="totalTable" lay-data="{limit:${limit}}">
         <thead>
         <tr>
-            <th lay-data="{field: 'time', align: 'center', minWidth:'120'}">时间</th>
+            <th lay-data="{field: 'time', align: 'center', minWidth:'120', sort: true}">时间</th>
             @for(user in users) {
                 <th lay-data="{field:'${user.id}', align: 'center'}">${user.name}</th>
             @}

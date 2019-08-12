@@ -59,7 +59,8 @@ layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
             });
             WorkApply.condition.workId = null;
             WorkApply.workRecordSearch();
-        }
+        },
+        autoSort: true
     });
 
     WorkApply.workRecordTable = table.render({
@@ -69,7 +70,8 @@ layui.use(['jquery', 'table', 'admin', 'laydate'], function () {
         toolbar: '#workRecordToolbar',
         height: "full-30",
         cellMinWidth: 100,
-        cols: WorkApply.initWorkRecordColumn()
+        cols: WorkApply.initWorkRecordColumn(),
+        autoSort: true
     });
 
     WorkApply.openAdd = function(){

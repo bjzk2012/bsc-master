@@ -44,7 +44,8 @@ layui.use(['admin', 'table', 'treetable', 'jquery', 'form'], function () {
             treePidName: 'pId',
             treeDefaultClose: false,
             treeLinkage: true,
-            where: data
+            where: data,
+            autoSort: true
         });
     };
     Menu.reload({
