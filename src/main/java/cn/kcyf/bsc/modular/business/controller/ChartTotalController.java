@@ -41,7 +41,7 @@ public class ChartTotalController extends BasicController {
     @GetMapping("")
     public String total(String timeLimit, Model model) {
         // 获取当前用户角色列表
-        Set<String> roles = shiroService.getRoles(getUser().getUsername());
+        Set<String> roles = getUser().getRoles();
         // 判断当前用户是否为超级管理员
         boolean isAdmin = roles.contains("administrator");
         // 获取当前用户对象

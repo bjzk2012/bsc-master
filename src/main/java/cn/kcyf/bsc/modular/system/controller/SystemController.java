@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +38,13 @@ public class SystemController extends BasicController {
     private FtpUtils ftpUtils;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private VisitService visitService;
+
+    @Value("${ftp.domain}")
+    private static String domain;
+
+    @Value("${ftp.path}")
+    private static String path;
 
     @GetMapping("/welcome")
     public String console() {
@@ -64,18 +68,18 @@ public class SystemController extends BasicController {
 
     @GetMapping("/user_info")
     public String userInfo(Model model) {
-        User user = this.userService.getOne(getUser().getId());
-        model.addAttribute("entity", user);
+        model.addAttribute("entity", getUser().getDetail());
         return "/modular/frame/user_info.html";
     }
 
     /**
      * 按照时间统计PV
+     *
      * @return
      */
     @GetMapping(value = "/pv")
     @ResponseBody
-    public ResponseData pv(){
+    public ResponseData pv() {
         Date time = new Date();
         JSONObject result = new JSONObject();
         // 总PV
@@ -84,21 +88,21 @@ public class SystemController extends BasicController {
         Date startTime = DateUtils.getStartTime(time);
         Date endTime = DateUtils.getEndTime(time);
         List<Map<String, String>> day = visitService.day(startTime, endTime);
-        if (day != null && !day.isEmpty()){
+        if (day != null && !day.isEmpty()) {
             result.put("day", day.get(0).get("count"));
         }
         // 月PV
         startTime = DateUtils.setTime(time, Calendar.DAY_OF_MONTH, 1);
         endTime = DateUtils.setTime(time, Calendar.DAY_OF_MONTH, DateUtils.getTimeIndex(time, Calendar.DAY_OF_MONTH));
         List<Map<String, String>> month = visitService.month(startTime, endTime);
-        if (month != null && !month.isEmpty()){
+        if (month != null && !month.isEmpty()) {
             result.put("month", month.get(0).get("count"));
         }
         startTime = DateUtils.setTime(time, Calendar.DAY_OF_YEAR, 1);
         endTime = DateUtils.setTime(time, Calendar.DAY_OF_YEAR, DateUtils.getTimeIndex(time, Calendar.DAY_OF_YEAR));
         // 年度PV
         List<Map<String, String>> year = visitService.year(startTime, endTime);
-        if (year != null && !year.isEmpty()){
+        if (year != null && !year.isEmpty()) {
             result.put("year", year.get(0).get("count"));
         }
         return ResponseData.success(result);
@@ -106,22 +110,24 @@ public class SystemController extends BasicController {
 
     /**
      * 按照地区统计Pv
+     *
      * @return
      */
     @GetMapping(value = "/regionpv")
     @ResponseBody
-    public ResponseData regionpv(){
+    public ResponseData regionpv() {
         List<Map<String, String>> data = visitService.city();
         return ResponseData.success(data);
     }
 
     /**
      * 按照地区统计Pv
+     *
      * @return
      */
     @GetMapping(value = "/hourpv")
     @ResponseBody
-    public ResponseData hourpv(){
+    public ResponseData hourpv() {
         Date time = new Date();
         Date startTime = DateUtils.addTime(time, Calendar.HOUR, -12);
         Date endTime = time;
@@ -131,11 +137,12 @@ public class SystemController extends BasicController {
 
     /**
      * 1年内按照月统计Pv
+     *
      * @return
      */
     @GetMapping(value = "/monthpv")
     @ResponseBody
-    public ResponseData monthpv(){
+    public ResponseData monthpv() {
         Date time = new Date();
         Date startTime = DateUtils.addTime(time, Calendar.YEAR, -1);
         Date endTime = time;
@@ -145,11 +152,12 @@ public class SystemController extends BasicController {
 
     /**
      * 按照登录人统计Pv
+     *
      * @return
      */
     @GetMapping(value = "/userpv")
     @ResponseBody
-    public ResponseData userpv(){
+    public ResponseData userpv() {
         List<Map<String, String>> data = visitService.uv();
         return ResponseData.success(data);
     }
@@ -163,7 +171,7 @@ public class SystemController extends BasicController {
         try {
             ftpUtils.upload("/bsc", pictureName, picture.getInputStream());
             result.put("title", picture.getOriginalFilename());
-            result.put("src", "http://www.file-server.com/bsc/" + pictureName);
+            result.put("src", domain + path + pictureName);
         } catch (Exception e) {
             return ResponseData.error("文件上传失败");
         }

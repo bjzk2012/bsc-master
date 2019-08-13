@@ -36,6 +36,7 @@ layui.use(['table', 'treetable', 'admin'], function () {
             page: false,
             toolbar: '#toolbar',
             height: "full-30",
+            even: true,
             cellMinWidth: 100,
             cols: Dept.initColumn(),
             treeColIndex: 2,
@@ -44,8 +45,7 @@ layui.use(['table', 'treetable', 'admin'], function () {
             treePidName: 'pId',
             treeDefaultClose: false,
             treeLinkage: true,
-            where: data,
-            autoSort: true
+            where: data
         });
     };
     Dept.reload({

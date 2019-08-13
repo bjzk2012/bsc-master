@@ -1,4 +1,35 @@
 @layout("/common/_container.html",{bg:"bg-white", js:["/assets/modular/business/chart/total/total.js"]}){
+<style>
+    .iconfont {
+        font-size: 28px;
+        width: 28px;
+        cursor: pointer;
+    }
+
+    .icon-draft:before {
+        color: #E0620D;
+    }
+
+    .icon-none:before {
+        color: #0C0C0C;
+    }
+
+    .icon-submit:before {
+        color: #1296DB;
+    }
+
+    .icon-refuse:before {
+        color: #D81E06;
+    }
+
+    .icon-finish:before {
+        color: #1AFA29;
+    }
+
+    .layui-layer-tips .layui-layer-content {
+        color: #0C0C0C;
+    }
+</style>
 <div class="layui-body-header">
     <span class="layui-body-header-title">工作总览</span>
 </div>
@@ -19,15 +50,15 @@
                 @for(user in users) {
                     <td>
                         @if(object[user.id] == 'DRAFT'){
-                        <button class="layui-btn layui-btn-xs layui-btn-primary">未提交</button>
+                            <div class="iconfont icon-draft layui-layer-tips" _title="未提交"></div>
                         @}else if(object[user.id] == 'SUBMIT'){
-                        <button class="layui-btn layui-btn-xs action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已提交</button>
+                            <div class="iconfont icon-submit layui-layer-tips action_detail" _title="已提交" aria-hidden="true" lay-data='{"userId":"${user.id}","time":"${object.time}"}'></div>
                         @}else if(object[user.id] == 'FINISH'){
-                        <button class="layui-btn layui-btn-xs layui-btn-normal action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已完成</button>
+                            <div class="iconfont icon-finish layui-layer-tips action_detail" _title="已完成" aria-hidden="true" lay-data='{"userId":"${user.id}","time":"${object.time}"}'></div>
                         @}else if(object[user.id] == 'REFUSE'){
-                        <button class="layui-btn layui-btn-xs layui-btn-danger action_detail" lay-data='{"userId":"${user.id}","time":"${object.time}"}'>已退回</button>
+                            <div class="iconfont icon-refuse layui-layer-tips action_detail" _title="已拒绝" aria-hidden="true" lay-data='{"userId":"${user.id}","time":"${object.time}"}'></div>
                         @}else{
-                        <button class="layui-btn layui-btn-xs layui-btn-disabled">无记录</button>
+                            <div class="iconfont icon-none layui-layer-tips" _title="无记录" aria-hidden="true"></div>
                         @}
                     </td>
                 @}

@@ -8,12 +8,11 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 public class ShiroSupport {
     private static final String NAMES_DELIMETER = ",";
-
-    @Autowired
-    private UserService userService;
 
     /**
      * 获取当前 Subject
@@ -33,16 +32,8 @@ public class ShiroSupport {
         if (isGuest()) {
             return null;
         } else {
-            return (ShiroUser) getSubject().getPrincipals().getPrimaryPrincipal();
+            return (ShiroUser) getSubject().getPrincipal();
         }
-    }
-
-    public User getInfo(){
-        ShiroUser shiroUser = getUser();
-        if (shiroUser == null){
-            return null;
-        }
-        return userService.getOne(shiroUser.getId());
     }
 
     /**
@@ -52,8 +43,12 @@ public class ShiroSupport {
      * @return 属于该角色：true，否则false
      */
     public boolean hasRole(String roleName) {
-        return getSubject() != null && roleName != null
-                && roleName.length() > 0 && getSubject().hasRole(roleName);
+        ShiroUser shiroUser = getUser();
+        if (shiroUser == null){
+            return false;
+        }
+        Set<String> roles = shiroUser.getRoles();
+        return roles.contains(roleName);
     }
 
     /**

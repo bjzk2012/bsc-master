@@ -97,6 +97,12 @@ public class QuestionController extends BasicController {
         return PREFIX + "/question.html";
     }
 
+    @GetMapping("/feedback")
+    public String  feedback(Model model) {
+        setModel(model);
+        return PREFIX + "/feedback.html";
+    }
+
     @GetMapping(value = "/question_add")
     public String questionAdd(Model model) {
         setModel(model);
@@ -182,7 +188,7 @@ public class QuestionController extends BasicController {
             question.setProject(projectService.getOne(projectId));
         }
         if (isAuthenticated()) {
-            question.setSponsor(getUser().getUsername());
+            question.setSponsor(getUser().getDetail().getString("name"));
         }
         questionService.create(question);
         QuestionRecord record = questionRecordService.create(question.getId(), QuestionRecordType.INITIATE, null);

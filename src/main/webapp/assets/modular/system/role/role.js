@@ -29,12 +29,12 @@ layui.use(['jquery', 'form', 'table', 'admin'], function () {
         page: true,
         toolbar: '#toolbar',
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: Role.initColumn(),
         where: {
             roleName: ''
-        },
-        autoSort: true
+        }
     });
 
     /**

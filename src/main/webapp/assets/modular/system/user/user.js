@@ -79,6 +79,7 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
         page: true,
         toolbar: "#toolbar",
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: MgrUser.initColumn(),
         where: {
@@ -91,8 +92,7 @@ layui.use(['form', 'table', 'laydate', 'admin', 'jquery'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        },
-        autoSort: true
+        }
     });
     /**
      * 头工具栏事件

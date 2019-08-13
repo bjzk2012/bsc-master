@@ -31,7 +31,7 @@ public class LogFactory {
         if (SecurityUtils.getSubject().isAuthenticated()) {
             ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
             operationLog.setUserId(shiroUser.getId());
-            operationLog.setUserName(shiroUser.getUsername());
+            operationLog.setUserName(shiroUser.getAccount());
         }
         operationLog.setCreateTime(new Date());
         operationLog.setClassName(clazzName);

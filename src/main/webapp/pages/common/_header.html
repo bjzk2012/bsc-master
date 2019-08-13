@@ -21,8 +21,8 @@
         </li>
         <li class="layui-nav-item" lay-unselect>
             <a>
-                <img src="${shiro.getInfo().avatar!}" class="layui-nav-img">
-                <cite>${shiro.principal()!"用户"}</cite>
+                <img src="${shiro.getUser().detail.avatar!}" class="layui-nav-img">
+                <cite>${shiro.getUser().detail.name!} | ${shiro.getUser().account!}</cite>
             </a>
             <dl class="layui-nav-child">
                 <dd lay-unselect>

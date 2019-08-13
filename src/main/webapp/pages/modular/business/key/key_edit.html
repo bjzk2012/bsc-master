@@ -41,7 +41,7 @@
         <div class="layui-input-block">
             <select id="managerId" name="managerId" lay-verify="required" required>
                 <option value="">管理人</option>
-                @for(user in managers) {
+                @for(user in users) {
                 <option value="${user.id}">${user.name}</option>
                 @}
             </select>
@@ -52,7 +52,7 @@
         <div class="layui-input-block">
             <select id="backupManagerId" name="backupManagerId">
                 <option value="">管理人</option>
-                @for(user in backupManagers) {
+                @for(user in users) {
                 <option value="${user.id}">${user.name}</option>
                 @}
             </select>

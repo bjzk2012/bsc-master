@@ -100,6 +100,7 @@ layui.use(['table', 'admin', 'element', 'ax'], function () {
         page: true,
         toolbar: "#toolbar",
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: Key.initColumn(),
         where: {
@@ -109,8 +110,7 @@ layui.use(['table', 'admin', 'element', 'ax'], function () {
             $(".read_password").click(function(){
                 Key.openPassword($(this).attr("lay-data"))
             });
-        },
-        autoSort: true
+        }
     });
     /**
      * 头工具栏事件

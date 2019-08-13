@@ -38,6 +38,7 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
         page: true,
         toolbar: '#toolbar',
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: WorkAudit.initWorkRecordColumn(),
         where: {
@@ -65,8 +66,7 @@ layui.use(['form', 'jquery', 'table', 'laydate'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        },
-        autoSort: true
+        }
     });
 
     WorkAudit.search = function () {

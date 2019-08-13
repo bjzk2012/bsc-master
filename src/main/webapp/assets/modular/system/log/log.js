@@ -78,6 +78,7 @@ layui.use(['form', 'jquery', 'table', 'ax', 'laydate'], function () {
         page: true,
         toolbar: '#toolbar',
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: Log.initColumn(),
         where: {
@@ -93,8 +94,7 @@ layui.use(['form', 'jquery', 'table', 'ax', 'laydate'], function () {
                 range: true,
                 max: Feng.currentDate()
             });
-        },
-        autoSort: true
+        }
     });
 
     /**

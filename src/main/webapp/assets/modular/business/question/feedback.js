@@ -1,4 +1,4 @@
-layui.use(['form', 'admin', 'laydate', 'layedit', 'ax'], function () {
+layui.use(['form', 'laydate', 'layedit', 'admin', 'ax'], function () {
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
@@ -8,26 +8,26 @@ layui.use(['form', 'admin', 'laydate', 'layedit', 'ax'], function () {
         elem:'#time',
         type: 'datetime'
     });
-    var layeditIndex = layedit.build('remark',{
+    var layeditIndex = layedit.build('description',{
         uploadImage: {
             url: '/system/upload'
         }
     });
     admin.iframeAuto();
-    var ajax = new $ax(Feng.ctxPath + "/question/detail/" + Feng.getUrlParam("questionId"));
-    ajax.type = "get";
-    var result = ajax.start();
-    form.val('questionForm',result.data);
+    // 添加表单验证方法
+    form.verify({
+        phone: [/^0?[1][358][0-9]{9}$/, '请输入正确的手机号码'],
+    });
 
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
-        data.field.remark = layedit.getContent(layeditIndex);
-        var ajax = new $ax(Feng.ctxPath + "/question/edit", function (data) {
-            Feng.success("编辑成功！");
+        data.field.description = layedit.getContent(layeditIndex);
+        var ajax = new $ax(Feng.ctxPath + "/question/feedback", function (data) {
+            Feng.success("添加成功！");
             admin.putTempData('formOk', true);
             admin.closeThisDialog();
         }, function (data) {
-            Feng.error("编辑失败！" + data.message)
+            Feng.error("添加失败！" + data.message)
         });
         ajax.set(data.field);
         ajax.start();

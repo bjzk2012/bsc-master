@@ -29,12 +29,12 @@ public abstract class BasicController {
         ShiroUser shiroUser = getUser();
         domain.setId(null);
         domain.setCreateUserId(shiroUser.getId());
-        domain.setCreateUserName(shiroUser.getUsername());
+        domain.setCreateUserName(shiroUser.getAccount());
     }
 
     protected void update(TableDomain domain) {
         ShiroUser shiroUser = getUser();
         domain.setLastUpdateUserId(shiroUser.getId());
-        domain.setLastUpdateUserName(shiroUser.getUsername());
+        domain.setLastUpdateUserName(shiroUser.getAccount());
     }
 }

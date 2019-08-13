@@ -69,6 +69,7 @@ layui.use(['admin', 'table', 'treetable', 'jquery'], function () {
             page: false,
             toolbar: '#toolbar',
             height: "full-30",
+            even: true,
             cellMinWidth: 100,
             cols: Dict.initColumn(),
             treeColIndex: 2,
@@ -76,8 +77,7 @@ layui.use(['admin', 'table', 'treetable', 'jquery'], function () {
             treeIdName: 'id',
             treePidName: 'pId',
             treeDefaultClose: false,
-            treeLinkage: true,
-            autoSort: true
+            treeLinkage: true
         });
     };
 

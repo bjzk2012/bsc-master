@@ -43,7 +43,7 @@ public class VisitInterceptor extends HandlerInterceptorAdapter {
         visit.setUri(uri);
         if (shiroUser != null && shiroUser.getId() != null) {
             visit.setLoginId(shiroUser.getId());
-            visit.setLoginName(shiroUser.getUsername());
+            visit.setLoginName(shiroUser.getAccount());
         } else {
             visit.setLoginName("游客");
         }

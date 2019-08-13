@@ -83,6 +83,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         page: true,
         toolbar: "#toolbar",
         height: "full-30",
+        even: true,
         cellMinWidth: 100,
         cols: Question.initColumn(),
         where: {
@@ -90,8 +91,7 @@ layui.use(['form', 'table', 'admin', 'element'], function () {
         },
         done: function () {
             element.render();
-        },
-        autoSort: true
+        }
     });
     /**
      * 头工具栏事件
