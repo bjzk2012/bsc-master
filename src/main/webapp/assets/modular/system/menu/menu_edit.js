@@ -1,10 +1,19 @@
-layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
+layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect', 'iconPicker'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
     var treeSelect = layui.treeSelect;
-
+    var iconPicker = layui.iconPicker;
+    iconPicker.render({
+        elem: '#icon',
+        type: 'fontClass',
+        search: true,
+        page: true,
+        click: function (data) {
+            $("#icon").val("layui-icon " + data.icon);
+        }
+    });
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
@@ -13,6 +22,7 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
     ajax.type = "get";
     var result = ajax.start();
     form.val('menuForm', result.data);
+    iconPicker.checkIcon("iconPicker", result.data.icon.replace("layui-icon ", ""))
 
     // 渲染父级菜单
     treeSelect.render({

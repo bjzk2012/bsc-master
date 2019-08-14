@@ -1,9 +1,20 @@
-layui.use(['form', 'admin', 'ax', 'treeSelect'], function () {
+layui.use(['form', 'admin', 'ax', 'treeSelect', 'iconPicker'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
     var treeSelect = layui.treeSelect;
+    var iconPicker = layui.iconPicker;
+
+    iconPicker.render({
+        elem: '#icon',
+        type: 'fontClass',
+        search: true,
+        page: true,
+        click: function (data) {
+            $("#icon").val("layui-icon " + data.icon);
+        }
+    });
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
