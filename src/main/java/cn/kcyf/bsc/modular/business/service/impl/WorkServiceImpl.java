@@ -58,7 +58,7 @@ public class WorkServiceImpl extends AbstractBasicService<Work, Long> implements
             }
             record.setLastUpdateTime(new Date());
             record.setLastUpdateUserId(shiroUser.getId());
-            record.setLastUpdateUserName(shiroUser.getUsername());
+            record.setLastUpdateUserName(shiroUser.getAccount());
             record.setSubmitUserName(userDao.getOne(shiroUser.getId()).getName());
             record.setSubmitTime(new Date());
             record.setStatus(WorkStatus.SUBMIT);
@@ -67,10 +67,10 @@ public class WorkServiceImpl extends AbstractBasicService<Work, Long> implements
             audit.setId(null);
             audit.setCreateTime(new Date());
             audit.setCreateUserId(shiroUser.getId());
-            audit.setCreateUserName(shiroUser.getUsername());
+            audit.setCreateUserName(shiroUser.getAccount());
             audit.setStatus(WorkStatus.SUBMIT);
             audit.setWorkRecordId(record.getId());
-            audit.setRemark(String.format("用户【%s】提交【%s】日工作日志【%s】", shiroUser.getUsername(), dbwork.getTodayRemark(), record.getContent()));
+            audit.setRemark(String.format("用户【%s】提交【%s】日工作日志【%s】", shiroUser.getAccount(), dbwork.getTodayRemark(), record.getContent()));
             workAuditDao.save(audit);
         }
     }

@@ -81,7 +81,12 @@ public class KeyController extends BasicController {
     public ResponseData list(String condition, int page, int limit) {
         Criteria<Key> criteria = new Criteria<Key>();
         if (!StringUtils.isEmpty(condition)) {
-            criteria.add(Restrictions.or(Restrictions.like("name", condition), Restrictions.like("useway", condition), Restrictions.like("project.name", condition)));
+            criteria.add(Restrictions.or(Restrictions.like("name", condition),
+                    Restrictions.like("useway", condition),
+                    Restrictions.like("project.name", condition),
+                    Restrictions.like("account", condition),
+                    Restrictions.like("manager.name", condition),
+                    Restrictions.like("backupManager.name", condition)));
         }
         return ResponseData.list(keyService.findList(criteria, PageRequest.of(page - 1, limit)));
     }

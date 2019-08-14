@@ -1,5 +1,6 @@
 package cn.kcyf.bsc.modular.business.controller;
 
+import cn.kcyf.bsc.core.constant.Constant;
 import cn.kcyf.bsc.core.enumerate.*;
 import cn.kcyf.bsc.core.log.BussinessLog;
 import cn.kcyf.bsc.core.model.QuestionRecordComparator;
@@ -12,12 +13,14 @@ import cn.kcyf.bsc.modular.business.service.QuestionRecordService;
 import cn.kcyf.bsc.modular.business.service.QuestionService;
 import cn.kcyf.bsc.core.controller.BasicController;
 import cn.kcyf.bsc.modular.system.entity.User;
+import cn.kcyf.bsc.modular.system.service.AuthCodeService;
 import cn.kcyf.bsc.modular.system.service.UserService;
 import cn.kcyf.commons.utils.DateUtils;
 import cn.kcyf.commons.utils.RandomUtils;
 import cn.kcyf.commons.web.RequestUtils;
 import cn.kcyf.orm.jpa.criteria.Criteria;
 import cn.kcyf.orm.jpa.criteria.Restrictions;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,8 +31,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.*;
 
 @Controller
@@ -37,6 +42,7 @@ import java.util.*;
 @Api(tags = "问题管理", description = "问题管理")
 public class QuestionController extends BasicController {
     private static String PREFIX = "/modular/business/question";
+    private static final java.util.regex.Pattern PHONE_PATTERN = java.util.regex.Pattern.compile("^0?[1][358][0-9]{9}$");
 
     @Autowired
     private QuestionService questionService;
@@ -46,6 +52,8 @@ public class QuestionController extends BasicController {
     private UserService userService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private AuthCodeService authCodeService;
 
     private void setProjects(Model model) {
         Criteria<Project> criteria = new Criteria<Project>();
@@ -83,7 +91,7 @@ public class QuestionController extends BasicController {
         model.addAttribute("quomodos", quomodos);
     }
 
-    private void setModel(Model model){
+    private void setModel(Model model) {
         setProjects(model);
         setUsers(model);
         setCategorys(model);
@@ -98,7 +106,7 @@ public class QuestionController extends BasicController {
     }
 
     @GetMapping("/feedback")
-    public String  feedback(Model model) {
+    public String feedback(Model model) {
         setModel(model);
         return PREFIX + "/feedback.html";
     }
@@ -154,6 +162,25 @@ public class QuestionController extends BasicController {
         return PREFIX + "/question_detail.html";
     }
 
+    @GetMapping(value = "/kaptcha")
+    @ResponseBody
+    public ResponseData kaptcha(HttpSession session,
+                                @NotBlank(message = "手机号码未填写")
+                                @Pattern(regexp = "^0?[1][358][0-9]{9}$", message = "手机号码格式不正确") String phone,
+                                @NotBlank(message = "图片验证码未填写")
+                                String kaptcha) {
+        String code = session.getAttribute(Constant.KAPTCHA_QUESTION_SESSION_KEY).toString();
+        if (!code.equalsIgnoreCase(kaptcha)) {
+            return ResponseData.error("图片验证码不正确");
+        }
+        authCodeService.send(phone, AuthType.REGISTER_AUTHCODE, null, RandomUtils.generateNumString(6));
+        Date startTime = new Date();
+        Date endTime = DateUtils.addTime(startTime, Calendar.MINUTE, 1);
+        JSONObject data = new JSONObject();
+        data.put("startTime", startTime);
+        data.put("endTime", endTime);
+        return ResponseData.success(data);
+    }
 
     @GetMapping(value = "/list")
     @ResponseBody
@@ -170,6 +197,37 @@ public class QuestionController extends BasicController {
             ));
         }
         return ResponseData.list(questionService.findList(criteria, PageRequest.of(page - 1, limit)));
+    }
+
+    @PostMapping(value = "/feedback")
+    @ResponseBody
+    @BussinessLog("反馈问题")
+    public ResponseData feedback(HttpServletRequest request, @Valid Question question, Long projectId,
+                                 @NotBlank(message = "图片验证码未填写") String kaptcha,
+                                 @NotBlank(message = "短信验证码未填写") String authcode, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseData.error(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        create(question);
+        question.setCode("Q" + System.currentTimeMillis() + RandomUtils.generateNumString(4));
+        question.setStatus(QuestionStatus.DRAFT);
+        String code = request.getSession().getAttribute(Constant.KAPTCHA_QUESTION_SESSION_KEY).toString();
+        if (!code.equalsIgnoreCase(kaptcha)) {
+            return ResponseData.error("图片验证码不正确");
+        }
+        if (!authCodeService.check(question.getPhone(), AuthType.REGISTER_AUTHCODE, authcode)) {
+            return ResponseData.error("短信验证码不正确或已过期");
+        }
+        question.setIp(RequestUtils.getIpAddr(request));
+        question.setBrowse(request.getHeader("user-agent"));
+        if (projectId != null) {
+            question.setProject(projectService.getOne(projectId));
+        }
+        questionService.create(question);
+        QuestionRecord record = questionRecordService.create(question.getId(), QuestionRecordType.INITIATE, null);
+        question.setDescription(record.getDescription());
+        questionService.update(question);
+        return SUCCESS_TIP;
     }
 
     @PostMapping(value = "/add")

@@ -82,12 +82,14 @@ public class User extends TableDomain {
     @Enumerated
     @ApiModelProperty(name = "sex", value = "性别")
     private Sex sex;
-    public String getSexMessage(){
-        if (this.sex != null){
+
+    public String getSexMessage() {
+        if (this.sex != null) {
             return this.sex.getMessage();
         }
         return "--";
     }
+
     /**
      * 电子邮件
      */
@@ -130,33 +132,36 @@ public class User extends TableDomain {
      * 角色
      */
     @ManyToMany(targetEntity = Role.class)
-    @JoinTable(name="sys_user_roles",
-            joinColumns={@JoinColumn(name="user_id",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="roles_id",referencedColumnName="id")}
+    @JoinTable(name = "sys_user_roles",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "roles_id", referencedColumnName = "id")}
     )
     @JoinColumn(name = "roles_id")
     @JSONField(serialize = false, deserialize = false)
     private Set<Role> roles;
-    public String getRoleId(){
-        if (this.roles != null){
+
+    public String getRoleId() {
+        if (this.roles != null) {
             List<Long> roleIds = new ArrayList<Long>();
-            for (Role role : this.roles){
+            for (Role role : this.roles) {
                 roleIds.add(role.getId());
             }
             return StringUtils.join(roleIds, ",");
         }
         return "";
     }
-    public String getRoleName(){
-        if (this.roles != null){
+
+    public String getRoleName() {
+        if (this.roles != null) {
             List<String> roleNames = new ArrayList<String>();
-            for (Role role : this.roles){
+            for (Role role : this.roles) {
                 roleNames.add(role.getName());
             }
             return StringUtils.join(roleNames, ",");
         }
         return "";
     }
+
     /**
      * 部门
      */
@@ -164,26 +169,30 @@ public class User extends TableDomain {
     @JoinColumn(name = "dept_id")
     @JSONField(serialize = false, deserialize = false)
     private Dept dept;
-    public Long getDeptId(){
-        if (this.dept != null){
+
+    public Long getDeptId() {
+        if (this.dept != null) {
             return this.dept.getId();
         }
         return null;
     }
-    public String getDeptName(){
-        if (this.dept != null){
+
+    public String getDeptName() {
+        if (this.dept != null) {
             return this.dept.getFullName();
         }
         return "";
     }
+
     /**
      * 状态
      */
     @Column(name = "status")
     @ApiModelProperty(name = "status", value = "状态")
     private LockStatus status;
-    public String getStatusMessage(){
-        if (this.status != null){
+
+    public String getStatusMessage() {
+        if (this.status != null) {
             return this.status.getMessage();
         }
         return "";

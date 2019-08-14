@@ -4,6 +4,7 @@ import cn.kcyf.bsc.core.converter.StringToDateConverter;
 import cn.kcyf.bsc.core.filter.VisitInterceptor;
 import cn.kcyf.bsc.core.view.ErrorView;
 import cn.kcyf.commons.utils.FtpUtils;
+import cn.kcyf.commons.utils.SmsUtils;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.google.code.kaptcha.util.Config;
@@ -22,26 +23,28 @@ import java.util.*;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private List<String> NONE_PERMISSION_RES = Arrays.asList(new String[]{"/assets/**", "/gunsApi/**", "/login", "/global/sessionError", "/kaptcha", "/error", "/global/error"});
+    private List<String> NONE_PERMISSION_RES = Arrays.asList(new String[]{"/assets/**", "/gunsApi/**", "/login", "/global/sessionError", "/kaptcha", "/kaptcha_register", "/kaptcha_feedback", "/error", "/global/error"});
 
     @Bean
-    public ServletRegistrationBean kaptcha(){
-        ServletRegistrationBean registrationBean = new ServletRegistrationBean(new KaptchaServlet(),"/kaptcha");
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("kaptcha.border", "no");
-        params.put("kaptcha.border.color", "105,179,90");
-        params.put("kaptcha.textproducer.font.color", "blue");
-        params.put("kaptcha.image.width", "200");
-        params.put("kaptcha.image.height", "75");
-        params.put("kaptcha.textproducer.font.size", "60");
-        params.put("kaptcha.session.key", "code");
-        params.put("kaptcha.textproducer.char.length", "4");
-        params.put("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
-        params.put("kaptcha.session.key", "KAPTCHA_SESSION_KEY");
-        registrationBean.setInitParameters(params);
-        return registrationBean;
+    public DefaultKaptcha defaultKaptcha(){
+        DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
+        Properties properties = new Properties();
+        properties.put("kaptcha.border", "no");
+        properties.put("kaptcha.border.color", "105,179,90");
+        properties.put("kaptcha.textproducer.font.color", "blue");
+        properties.put("kaptcha.image.width", "200");
+        properties.put("kaptcha.image.height", "75");
+        properties.put("kaptcha.textproducer.font.size", "60");
+        properties.put("kaptcha.textproducer.char.length", "4");
+        properties.put("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        Config config = new Config(properties);
+        defaultKaptcha.setConfig(config);
+        return defaultKaptcha;
     }
 
+    /**
+     * 登录用
+     */
     @Autowired
     private VisitInterceptor visitInterceptor;
 
@@ -79,5 +82,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FtpUtils ftpUtils(){
         return new FtpUtils();
+    }
+
+    @Bean
+    public SmsUtils smsUtils(){
+        return new SmsUtils();
     }
 }

@@ -178,8 +178,12 @@ public class ShiroConfig {
         map.put("/favicon.ico", "anon");
         map.put("/upload/**", "anon");
         map.put("/kaptcha", "anon");
+        map.put("/kaptcha_register", "anon");
+        map.put("/kaptcha_feedback", "anon");
         map.put("/assets/**", "anon");
         map.put("/v2/api-docs/", "anon");
+        map.put("/question/feedback", "anon");
+        map.put("/question/kaptcha", "anon");
         map.put("/**", "user");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         shiroFilterFactoryBean.setLoginUrl("/login");

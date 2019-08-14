@@ -20,3 +20,8 @@ ftp:
   port: 21
   username: ftpuser
   password: ftpuser
+sms:
+  ipyy:
+    signature: 军民融合标准资源共享平台
+    account: hyszzd00468
+    password: 654321

@@ -56,10 +56,10 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
         ShiroUser shiroUser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
         dbWorkRecord.setLastUpdateTime(new Date());
         dbWorkRecord.setLastUpdateUserId(shiroUser.getId());
-        dbWorkRecord.setLastUpdateUserName(shiroUser.getUsername());
+        dbWorkRecord.setLastUpdateUserName(shiroUser.getAccount());
         dbWorkRecord.setLastAuditTime(new Date());
         dbWorkRecord.setLastAuditUserId(shiroUser.getId());
-        dbWorkRecord.setLastAuditUserName(shiroUser.getUsername());
+        dbWorkRecord.setLastAuditUserName(shiroUser.getAccount());
         dbWorkRecord.setStatus(status);
         update(dbWorkRecord);
         Work dbwork = workDao.getOne(dbWorkRecord.getWorkId());
@@ -67,10 +67,10 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
         audit.setId(null);
         audit.setCreateTime(new Date());
         audit.setCreateUserId(shiroUser.getId());
-        audit.setCreateUserName(shiroUser.getUsername());
+        audit.setCreateUserName(shiroUser.getAccount());
         audit.setStatus(status);
         audit.setWorkRecordId(dbWorkRecord.getId());
-        audit.setRemark(String.format("用户【%s】%s用户【%s】的【%s】日工作日志【%s】审核", shiroUser.getUsername(), status.getAction(), dbwork.getCreateUserName(), dbwork.getTodayRemark(), dbWorkRecord.getContent()));
+        audit.setRemark(String.format("用户【%s】%s用户【%s】的【%s】日工作日志【%s】审核", shiroUser.getAccount(), status.getAction(), dbwork.getCreateUserName(), dbwork.getTodayRemark(), dbWorkRecord.getContent()));
         audit.setSuggestions(suggestions);
         workAuditDao.save(audit);
         if (flag) {
@@ -78,7 +78,7 @@ public class WorkRecordServiceImpl extends AbstractBasicService<WorkRecord, Long
             dbproject.setUsed(dbproject.getUsed() + dbWorkRecord.getTime());
             dbproject.setLastUpdateTime(new Date());
             dbproject.setLastUpdateUserId(shiroUser.getId());
-            dbproject.setLastUpdateUserName(shiroUser.getUsername());
+            dbproject.setLastUpdateUserName(shiroUser.getAccount());
             projectDao.save(dbproject);
         }
     }

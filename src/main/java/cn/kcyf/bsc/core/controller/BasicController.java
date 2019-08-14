@@ -28,13 +28,23 @@ public abstract class BasicController {
     protected void create(TableDomain domain) {
         ShiroUser shiroUser = getUser();
         domain.setId(null);
-        domain.setCreateUserId(shiroUser.getId());
-        domain.setCreateUserName(shiroUser.getAccount());
+        if (shiroUser != null) {
+            domain.setCreateUserId(shiroUser.getId());
+            domain.setCreateUserName(shiroUser.getAccount());
+        } else {
+            domain.setCreateUserId(1L);
+            domain.setCreateUserName("admin");
+        }
     }
 
     protected void update(TableDomain domain) {
         ShiroUser shiroUser = getUser();
-        domain.setLastUpdateUserId(shiroUser.getId());
-        domain.setLastUpdateUserName(shiroUser.getAccount());
+        if (shiroUser != null) {
+            domain.setLastUpdateUserId(shiroUser.getId());
+            domain.setLastUpdateUserName(shiroUser.getAccount());
+        } else {
+            domain.setLastUpdateUserId(1L);
+            domain.setLastUpdateUserName("admin");
+        }
     }
 }

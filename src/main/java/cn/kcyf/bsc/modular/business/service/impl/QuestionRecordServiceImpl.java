@@ -33,9 +33,9 @@ public class QuestionRecordServiceImpl extends AbstractBasicService<QuestionReco
         record.setQuestionId(questionId);
         record.setType(type);
         record.setStatus(type.getStatus());
-        record.setOperator(shiroUser.getUsername());
+        record.setOperator(shiroUser.getDetail().getString("name"));
         record.setCreateUserId(shiroUser.getId());
-        record.setCreateUserName(shiroUser.getUsername());
+        record.setCreateUserName(shiroUser.getAccount());
         if (StringUtils.isEmpty(description)) {
             description = "无";
         }
