@@ -1,4 +1,4 @@
-layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect', 'iconPicker'], function () {
+layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect', 'iconPicker', 'numinput'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
@@ -14,6 +14,10 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect', 'iconPicker'], function
             $("#icon").val("layui-icon " + data.icon);
         }
     });
+
+    var numinput = layui.numinput;
+    numinput.init({ rightBtns: true });
+
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 

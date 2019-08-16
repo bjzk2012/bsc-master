@@ -1,9 +1,12 @@
-layui.use(['form', 'admin', 'ax', 'treeSelect'], function () {
+layui.use(['form', 'admin', 'ax', 'treeSelect', 'numinput'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
     var treeSelect = layui.treeSelect;
+
+    var numinput = layui.numinput;
+    numinput.init({ rightBtns: true });
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();

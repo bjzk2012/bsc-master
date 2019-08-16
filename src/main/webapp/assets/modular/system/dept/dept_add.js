@@ -1,9 +1,13 @@
-layui.use(['treeSelect', 'form', 'admin', 'ax', 'jquery'], function () {
+layui.use(['treeSelect', 'form', 'admin', 'ax', 'jquery', 'numinput'], function () {
     var form = layui.form;
     var admin = layui.admin;
     var $ax = layui.ax;
     var $ = layui.jquery;
     var treeSelect = layui.treeSelect;
+
+    var numinput = layui.numinput;
+    numinput.init({ rightBtns: true });
+
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
 
@@ -18,7 +22,6 @@ layui.use(['treeSelect', 'form', 'admin', 'ax', 'jquery'], function () {
             $("#pid").val(d.current.id);
         }
     });
-
     // 添加表单验证方法
     form.verify({
         simpleName: [/^.{2,20}$/, '简称长度必须为2到20位'],

@@ -131,7 +131,9 @@ layui.config({
     ztree: 'ztree/ztree-object',
     cropper: 'cropper/cropper',
     croppers: 'cropper/croppers',
-    iconPicker: 'iconPicker/iconPicker'
+    numinput: 'numinput/numinput',
+    iconPicker: 'iconPicker/iconPicker',
+    ueditor: 'ueditor/ueditor-object'
 }).use(['admin'], function () {
     var $ = layui.$;
     var admin = layui.admin;

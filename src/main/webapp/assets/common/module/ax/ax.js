@@ -22,6 +22,8 @@ layui.define(['jquery'], function (exports) {
                 this.url = this.url + "&jstime=" + new Date().getTime();
             }
 
+            top.layer.load(2, {shade:[0.1], time: 500});
+
             $.ajax({
                 type: me.type,
                 url: me.url,

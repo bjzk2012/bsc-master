@@ -9,7 +9,7 @@
 @ * js             :  业务所需要的js，为数组
 @ * css            :  业务所需要的css，为数组
 @ * bg             :  背景颜色
-@ * plugins        :  需要用到的插件，目前有["ztree"]
+@ * plugins        :  需要用到的插件，目前有["ztree", "ueditor", "echart"]
 @ **/
 
 <head>
@@ -25,7 +25,19 @@
     <!--其他插件css-->
     @if(isNotEmpty(plugins)){
         @if(array.contain(plugins,"ztree")){
-        <link href="${ctxPath}/assets/common/plugins/ztree/zTreeStyle.css" rel="stylesheet" type="text/css" />
+            <link href="${ctxPath}/assets/common/plugins/ztree/zTreeStyle.css" rel="stylesheet" type="text/css" />
+            <script src="${ctxPath}/assets/common/plugins/jquery/jquery-3.2.1.min.js"></script>
+            <script src="${ctxPath}/assets/common/plugins/ztree/jquery.ztree.all.min.js"></script>
+        @}
+        @if(array.contain(plugins,"echart")){
+            <script src="${ctxPath}/assets/common/plugins/echarts/echarts.coord.js"></script>
+            <script src="${ctxPath}/assets/common/plugins/echarts/echarts.min.js"></script>
+            <script src="${ctxPath}/assets/common/plugins/echarts/echartsTheme.js"></script>
+        @}
+        @if(array.contain(plugins,"ueditor")){
+            <script type="text/javascript" charset="utf-8" src="${ctxPath}/assets/common/plugins/ueditor/ueditor.config.js"></script>
+            <script type="text/javascript" charset="utf-8" src="${ctxPath}/assets/common/plugins/ueditor/ueditor.all.min.js"> </script>
+            <script type="text/javascript" charset="utf-8" src="${ctxPath}/assets/common/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
         @}
     @}
 
@@ -42,44 +54,35 @@
 
 <body>
 
-@/* 页面加载loading */
-@ include("/common/loading.html"){}
+    @/* 页面加载loading */
+    @ include("/common/loading.html"){}
 
-@/* 正文 */
-${layoutContent}
-
-@/* 加入contextPath属性和session超时的配置 */
-<script type="text/javascript">
-    var Feng = {
-        ctxPath: "",
-        addCtx: function (ctx) {
-            if (this.ctxPath === "") {
-                this.ctxPath = ctx;
+    @/* 加入contextPath属性和session超时的配置 */
+    <script type="text/javascript">
+        var Feng = {
+            ctxPath: "",
+            addCtx: function (ctx) {
+                if (this.ctxPath === "") {
+                    this.ctxPath = ctx;
+                }
             }
-        }
-    };
-    Feng.addCtx("${ctxPath}");
-</script>
+        };
+        Feng.addCtx("${ctxPath}");
+    </script>
+    @/* js和业务用的js数组 */
+    <script type="text/javascript" src="${ctxPath}/assets/common/layui/layui.all.js"></script>
+    <script type="text/javascript" src="${ctxPath}/assets/common/js/common.js"></script>
 
-@/* js和业务用的js数组 */
-<script type="text/javascript" src="${ctxPath}/assets/common/layui/layui.all.js"></script>
-<script type="text/javascript" src="${ctxPath}/assets/common/js/common.js"></script>
+    @/* 正文 */
+    ${layoutContent}
 
-<!--其他插件js-->
-@if(isNotEmpty(plugins)){
-    @if(array.contain(plugins,"ztree")){
-    <script src="${ctxPath}/assets/common/plugins/jquery/jquery-3.2.1.min.js"></script>
-    <script src="${ctxPath}/assets/common/plugins/ztree/jquery.ztree.all.min.js"></script>
-    @}
-@}
-
-@if(isNotEmpty(js)){
-    @for(item in js){
-        @if(strutil.startWith(item,"/")){
-            @item = ctxPath + item;
+    @if(isNotEmpty(js)){
+        @for(item in js){
+            @if(strutil.startWith(item,"/")){
+                @item = ctxPath + item;
+            @}
+            <script src="${item}"></script>
         @}
-        <script src="${item}"></script>
     @}
-@}
 </body>
 </html>

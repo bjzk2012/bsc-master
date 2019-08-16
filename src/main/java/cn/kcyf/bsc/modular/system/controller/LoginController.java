@@ -43,6 +43,10 @@ public class LoginController extends BasicController {
         model.addAttribute("menus", menus);
         return "/index.html";
     }
+    @GetMapping("/test")
+    public String test(Model model) {
+        return "/test.html";
+    }
 
     @GetMapping("/login")
     @ApiOperation("跳转到登录页")

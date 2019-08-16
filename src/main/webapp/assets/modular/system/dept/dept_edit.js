@@ -1,9 +1,12 @@
-layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax'], function () {
+layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax', 'numinput'], function () {
     var $ax = layui.ax;
     var $ = layui.jquery;
     var form = layui.form;
     var admin = layui.admin;
     var treeSelect = layui.treeSelect;
+
+    var numinput = layui.numinput;
+    numinput.init({ rightBtns: true });
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
@@ -28,7 +31,6 @@ layui.use(['treeSelect', 'jquery', 'ztree', 'form', 'admin', 'ax'], function () 
             treeSelect.checkNode('tree', result.parentId);
         }
     });
-
     // 添加表单验证方法
     form.verify({
         simpleName: [/^.{2,20}$/, '简称长度必须为2到20位'],

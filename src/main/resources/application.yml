@@ -31,3 +31,6 @@ swagger:
     password: bsc
 server:
   port: 80
+logging:
+  level:
+    root: DEBUG

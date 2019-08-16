@@ -1,9 +1,12 @@
-layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
+layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect', 'numinput'], function () {
     var $ = layui.jquery;
     var $ax = layui.ax;
     var form = layui.form;
     var admin = layui.admin;
     var treeSelect = layui.treeSelect;
+
+    var numinput = layui.numinput;
+    numinput.init({ rightBtns: true });
 
     // 让当前iframe弹层高度适应
     admin.iframeAuto();
@@ -30,7 +33,6 @@ layui.use(['layer', 'form', 'admin', 'ax', 'treeSelect'], function () {
             }
         }
     });
-
     // 表单提交事件
     form.on('submit(btnSubmit)', function (data) {
         var ajax = new $ax(Feng.ctxPath + "/dict/edit", function (data) {
